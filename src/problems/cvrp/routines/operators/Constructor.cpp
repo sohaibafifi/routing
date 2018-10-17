@@ -1,0 +1,40 @@
+#include "Constructor.hpp"
+
+
+bool CVRP::Constructor::bestInsertion(routing::models::Solution *solution)
+{
+    while(solution->getNbTour() < solution->getProblem()->vehicles.size()) {
+        solution->pushTour(new Tour(static_cast<Problem*>(solution->getProblem()), solution->getNbTour() ));
+    }
+    bool insertion_found = true;
+    while (!solution->notserved.empty() && insertion_found) {
+        unsigned best_t = 0, best_p = 0, best_client_i = 0;
+        insertion_found = false;
+        routing::Duration bestCost = IloInfinity;
+        for (unsigned cc = 0; cc < solution->notserved.size(); ++cc) {
+            Client * client = static_cast<Client*>(solution->notserved[cc]);
+            for (unsigned r = 0; r < static_cast<Solution*>(solution)->getNbTour(); ++r) {
+                for (unsigned i = 0; i <= int(static_cast<Tour*>(static_cast<Solution*>(solution)->getTour(r))->getNbClient()); ++i) {
+                    bool possible = true;
+                    routing::Duration cost = static_cast<Tour*>(static_cast<Solution*>(solution)->getTour(r))->evaluateInsertion(client, i, possible);
+                    if(!possible) continue;
+                    if (bestCost > cost) {
+                        insertion_found = true;
+                        best_t = r;
+                        best_p = i;
+                        best_client_i = cc;
+                        bestCost = cost;
+                    }
+                }
+            }
+        }
+        if (insertion_found) {
+            static_cast<Solution*>(solution)->getTour(best_t)->addClient(static_cast<Solution*>(solution)->notserved[best_client_i], best_p );
+            static_cast<Solution*>(solution)->traveltime += bestCost;
+            static_cast<Solution*>(solution)->notserved.erase(static_cast<Solution*>(solution)->notserved.begin() + best_client_i);
+            static_cast<Solution*>(solution)->update();
+        }
+    }
+    return insertion_found;
+}
+
