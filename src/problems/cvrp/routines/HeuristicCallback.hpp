@@ -27,7 +27,6 @@ namespace CVRP
 
             virtual void main() override;
             virtual void initSolution() override {
-                std::cout << "CVRP :: initSolution " << std::endl;
                 solution = new Solution(problem);
             }
     };
