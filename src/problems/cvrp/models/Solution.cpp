@@ -18,9 +18,12 @@ void CVRP::Solution::addTour(routing::models::Tour  *tour, unsigned position)
 void CVRP::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals)
 {
     std::vector<std::vector<IloBool> > values(problem->arcs.size());
+    std::vector<std::vector<IloBool> > affectation(problem->affectation.size());
     std::vector<IloInt> consumption(static_cast<Problem*>(problem)->consumption.size(), 0);
-    for (unsigned j = 0; j < problem->arcs.size(); ++j)
+    for (unsigned j = 0; j < problem->arcs.size(); ++j){
         values[j] = std::vector<IloBool>(problem->arcs.size(), IloFalse);
+        affectation[j] = std::vector<IloBool>(problem->affectation[j].size(), IloFalse);
+    }
     for (unsigned k = 0; k < this->getNbTour(); ++k) {
         unsigned last = 0;
         for (unsigned i = 0; i < static_cast<Tour*>(this->getTour(k))->getNbClient(); ++i) {
@@ -28,6 +31,8 @@ void CVRP::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals)
             consumption[static_cast<Tour*>(this->getTour(k))->getClient(i)->getID()] = consumption[last]
                                                                                      + static_cast<Client*>(this->getTour(k)->getClient(i))->getDemand();
             last = static_cast<Tour*>(this->getTour(k))->getClient(i)->getID();
+            affectation[last][k] = IloTrue;
+
         }
         values[last][0] = IloTrue;
     }
@@ -41,14 +46,17 @@ void CVRP::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals)
             vars.add(problem->arcs[i][j]);
             vals.add(values[i][j]);
         }
+        for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
+            vars.add(static_cast<Problem*>(problem)->affectation[i][k]);
+            vals.add(affectation[i][k]);
+        }
     }
-
-
 }
 
 void CVRP::Solution::print(std::ostream & out)
 {
     out << "solution cost " << getCost() << std::endl;
+
     for (unsigned t = 0;t < getNbTour();t++) {
         out << "tour " << t << " : ";
         for (unsigned i = 0; i < static_cast<Tour*>(this->getTour(t))->getNbClient(); ++i) {

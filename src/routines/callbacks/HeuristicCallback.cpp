@@ -2,6 +2,7 @@
 #include "../../Utility.hpp"
 #include "../../mtrand.hpp"
 #include "../neighborhoods/IDCH.hpp"
+
 void routing::callback::HeuristicCallback::main()
 {
     if (!hasIncumbent() ) {
@@ -27,11 +28,13 @@ void routing::callback::HeuristicCallback::main()
         solution->getVarsVals(vars, vals);
 
         for (unsigned i = 0; i < vars.getSize(); ++i) setBounds(vars[i], vals[i], vals[i]);
+
         solve();
+
         if(hasIncumbent())
             getEnv().out() << "CVRPHeuristicCallback from " << getIncumbentObjValue() << " to " << solution->getCost()
                        << " -  " << getObjValue() << "  " << getCplexStatus() << std::endl;
-        if(getCplexStatus() == CPX_STAT_OPTIMAL) InitialFound = true;
+        InitialFound = (getCplexStatus() == CPX_STAT_OPTIMAL);
         for (unsigned i = 0; i < vars.getSize(); ++i)   vals[i] = getValue(vars[i]);
         setSolution(vars, vals, getObjValue());
         vals.end(); vars.end();
