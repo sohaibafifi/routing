@@ -2,12 +2,20 @@
 
 #include "../../../Utility.hpp"
 #include "../../../mtrand.hpp"
-
+#include "operators/Constructor.hpp"
+#include "operators/Destructor.hpp"
+#include "operators/Constructor.hpp"
+#include "../../../routines/neighborhoods/IDCH.hpp"
+#include "../../../routines/neighborhoods/Move.hpp"
+#include "../../../routines/neighborhoods/Generator.hpp"
 routing::callback::HeuristicCallback *CVRP::Problem::setHeuristicCallback(IloEnv &env)
 {
+    std::vector<routing::Neighborhood*> neighborhoods;
+    neighborhoods.push_back(new routing::IDCH(new Constructor, new Destructor));
+    //neighborhoods.push_back(new routing::Move(new Constructor));
     return new HeuristicCallback(env, this,
-                                 new Constructor(),
-                                 new Destructor());
+                                 new routing::Generator(new Constructor, new Destructor),
+                                 neighborhoods);
 }
 
 

@@ -104,9 +104,9 @@ namespace VRPTWSyn
     {
         public :
             HeuristicCallback(IloEnv env, Problem *_problem,
-                              routing::Constructor * p_constructor,
-                              routing::Destructor * p_destructor)
-                :  CVRPTW::HeuristicCallback(env, _problem, p_constructor, p_destructor)
+                              routing::Generator * p_generator,
+                              std::vector<routing::Neighborhood*> p_neighbors)
+                : CVRPTW::HeuristicCallback (env, _problem, p_generator, p_neighbors)
             {
             }
 

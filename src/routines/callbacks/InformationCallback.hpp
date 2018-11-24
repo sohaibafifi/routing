@@ -25,8 +25,7 @@ namespace routing
 			Problem *problem;
 			void main();
 			IloCplex::CallbackI *duplicateCallback() const;
-            virtual models::Solution *getIncumbentSolution()
-            {}
+            virtual models::Solution *getIncumbentSolution(){ return nullptr;}
 		};
 	}
 }

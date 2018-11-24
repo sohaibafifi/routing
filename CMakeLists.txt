@@ -17,6 +17,7 @@ file(GLOB_RECURSE hybrid_SRC
         "src/**.cpp"
         )
 add_executable(hybrid ${hybrid_SRC})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -pedantic")
 
 target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)
 target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/cplex/include)

@@ -12,11 +12,13 @@ namespace routing {
                 Problem * problem;
             public :
                 virtual void pushClient(Client* client) = 0;
-                virtual void addClient(Client* client, unsigned position) = 0;
-                virtual void removeClient(unsigned position) = 0;
+                virtual void addClient(Client* client, unsigned long position) = 0;
+                virtual void removeClient(unsigned long position) = 0;
                 virtual Client * getClient(unsigned long) = 0;
                 virtual unsigned long getNbClient() = 0;
 
+                virtual routing::Duration evaluateInsertion(Client *client, unsigned long position, bool &possible) = 0;
+                virtual routing::Duration evaluateRemove(unsigned long position) = 0;
         };
     }
 }

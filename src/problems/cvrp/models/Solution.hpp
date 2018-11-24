@@ -20,7 +20,7 @@ namespace CVRP
                 traveltime(0){}
             virtual double getCost() override {return traveltime;}
             virtual void pushTour(routing::models::Tour *tour) override;
-            virtual void addTour(routing::models::Tour *tour, unsigned position) override;
+            virtual void addTour(routing::models::Tour *tour, unsigned long position) override;
             routing::Duration traveltime;
             virtual void getVarsVals(IloNumVarArray & vars, IloNumArray & vals) override;
             virtual unsigned long getNbTour() const  override { return tours.size();}

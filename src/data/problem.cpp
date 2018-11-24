@@ -2,7 +2,6 @@
 #include "../Utility.hpp"
 #include "../routines/callbacks.hpp"
 #include "../routines/neighborhoods/Generator.hpp"
-#include "../routines/callbacks.hpp"
 
 void routing::Problem::addVariables() {
 	for (unsigned i = 0; i <= clients.size(); ++i) {
@@ -105,7 +104,8 @@ routing::Duration routing::Problem::getDistance(const routing::models::Client &c
 }
 
 routing::callback::HeuristicCallback *routing::Problem::setHeuristicCallback(IloEnv &env) {
-    return new routing::callback::HeuristicCallback(env, this , new dummyConstructor(), new dummyDestructor());
+    std::vector<routing::Neighborhood*> dummyNeighborhoods;
+    return new routing::callback::HeuristicCallback(env, this , new routing::Generator(new dummyConstructor(), new dummyDestructor()), dummyNeighborhoods);
 }
 
 routing::callback::IncumbentCallback *routing::Problem::setIncumbentCallback(IloEnv &env) {

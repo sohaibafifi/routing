@@ -1,13 +1,15 @@
 #include "HeuristicCallback.hpp"
 #include "../../Utility.hpp"
 #include "../../mtrand.hpp"
+#include "../neighborhoods/Move.hpp"
 #include "../neighborhoods/IDCH.hpp"
+#include "../../mtrand.hpp"
 
 void routing::callback::HeuristicCallback::main()
 {
     if (!hasIncumbent() ) {
         getEnv().out() << "Construct solution from scratch " << std::flush;
-        if(! Generator(constructor, destructor).generate(solution)){
+        if(! generator->generate(solution)){
             //no solution generator is defined
             std::cout <<  std::endl;
             return ;
@@ -15,9 +17,23 @@ void routing::callback::HeuristicCallback::main()
         std::cout << solution->getCost()<< std::endl;
     }
     else {
+        if(neighbors.empty()) return;
         extractSolution();
-        IDCH idch(constructor, destructor);
-        if(!idch.look(solution)) return;
+        Utilities::MTRand_int32 irand(std::time(nullptr));
+        bool improved = false;
+        std::vector<bool> run(neighbors.size(), false);
+        while(std::find(run.begin(), run.end(), false) != run.end()){
+          unsigned i = 0;
+          do{i = irand() % run.size();} while(run[i]);
+
+             if(neighbors[i]->look(solution)){
+                 improved = true;
+                 run = std::vector<bool>(neighbors.size(), false);
+             }else {
+                 run[i] = true;
+             }
+        }
+        if(!improved) return;
     }
 
 
@@ -43,16 +59,16 @@ void routing::callback::HeuristicCallback::main()
 
 IloCplex::CallbackI *routing::callback::HeuristicCallback::duplicateCallback() const
 {
-
+    throw new std::logic_error("Not implemented");
 }
 
 void routing::callback::HeuristicCallback::extractSolution()
 {
-
+    throw new std::logic_error("Not implemented");
 }
 
 void routing::callback::HeuristicCallback::initSolution()
 {
-
+    throw new std::logic_error("Not implemented");
 }
 

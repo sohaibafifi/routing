@@ -8,7 +8,7 @@ void CVRP::Solution::pushTour(routing::models::Tour *tour)
     addTour(tour, getNbTour());
 }
 
-void CVRP::Solution::addTour(routing::models::Tour  *tour, unsigned position)
+void CVRP::Solution::addTour(routing::models::Tour  *tour, unsigned long position)
 {
 
     tours.insert(tours.begin() + position, static_cast<Tour*>(tour));
