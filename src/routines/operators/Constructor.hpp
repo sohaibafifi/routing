@@ -13,5 +13,4 @@ namespace routing {
         public:
             virtual bool bestInsertion(models::Solution * solution){return false;}
     };
-
 }

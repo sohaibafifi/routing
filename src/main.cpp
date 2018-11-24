@@ -5,8 +5,11 @@
 #include "problems/vrptwsyn/vrptwsyn.hpp"
 #include "Solver.hpp"
 #pragma GCC diagnostic push
+#pragma clang diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
+#pragma clang diagnostic ignored "-Wdeprecated"
 #include "getopt_pp.hpp"
+#pragma clang diagnostic pop
 #pragma GCC diagnostic pop
 using namespace GetOpt;
 using namespace std;

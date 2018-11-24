@@ -16,23 +16,24 @@ namespace routing
 		{
 		  public:
             HeuristicCallback(IloEnv env, Problem *_problem,
-                              Constructor * p_constructor,
-                              Destructor * p_destructor)
+                              routing::Generator *p_generator,
+                              std::vector<routing::Neighborhood*> p_neighbors)
 				:
                 IloCplex::HeuristicCallbackI(env),
-                problem((_problem)),
-                constructor(p_constructor),
-                destructor(p_destructor)
-			{
+                problem(_problem),
+                generator(p_generator),
+                neighbors(p_neighbors)
+            {
                 InitialFound = false;
             }
 			~HeuristicCallback() {}
 		  protected:
             Problem *problem;
+            routing::Generator *generator;
+            std::vector<routing::Neighborhood*> neighbors;
+
             virtual void main();
             IloCplex::CallbackI *duplicateCallback() const;
-            Constructor * constructor;
-            Destructor * destructor;
             models::Solution * solution;
             virtual void extractSolution();
             bool InitialFound;

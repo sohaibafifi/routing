@@ -3,8 +3,7 @@
 #include "../models/Solution.hpp"
 #include "../../../routines/callbacks/HeuristicCallback.hpp"
 
-#include "operators/Constructor.hpp"
-#include "operators/Destructor.hpp"
+
 namespace CVRP
 {
 
@@ -13,9 +12,9 @@ namespace CVRP
     {
         public :
             HeuristicCallback(IloEnv env, Problem *_problem,
-                              routing::Constructor * p_constructor,
-                              routing::Destructor * p_destructor)
-                : routing::callback::HeuristicCallback(env, _problem, p_constructor, p_destructor),
+                              routing::Generator * p_generator,
+                              std::vector<routing::Neighborhood*> p_neighbors)
+                : routing::callback::HeuristicCallback(env, _problem, p_generator, p_neighbors),
                   problem(_problem)
             {
 

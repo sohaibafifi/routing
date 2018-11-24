@@ -9,7 +9,7 @@ namespace routing {
         Solution::Solution(Problem *p_problem):
             problem(p_problem),
             notserved(std::vector<Client *>()){
-            for (int i  = 0; i < problem->clients.size(); ++i) {
+            for (unsigned i  = 0; i < problem->clients.size(); ++i) {
                 notserved.push_back(problem->clients[i]);
             }
         }

@@ -123,7 +123,10 @@ void CVRPTW::Problem::addSequenceConstraints()
 
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
-    return new HeuristicCallback(env, this, new CVRP::Constructor(), new CVRP::Destructor());
+    std::vector<routing::Neighborhood*> neighborhoods;
+    return new HeuristicCallback(env, this,
+                                 new routing::Generator(new CVRP::Constructor, new CVRP::Destructor),
+                                 neighborhoods);
 }
 
 
@@ -164,7 +167,7 @@ void CVRPTW::Solution::update()
 
 }
 
-void CVRPTW::Solution::addTour(routing::models::Tour *tour, unsigned position)
+void CVRPTW::Solution::addTour(routing::models::Tour *tour, unsigned long position)
 {
     tours.insert(tours.begin() + position, static_cast<Tour*>(tour));
     traveltime += static_cast<Tour*>( tour )->traveltime;
@@ -180,7 +183,7 @@ routing::models::Tour *CVRPTW::Solution::getTour(unsigned t)
     return tours.at(t);
 }
 
-void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned position)
+void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned long position)
 {
     CVRP::Tour::addClient(client, position);
     // update the visit and the tour

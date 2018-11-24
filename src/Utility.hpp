@@ -12,6 +12,7 @@
 #include <set>
 #include <stack>
 #include <algorithm>
+
 namespace Utilities{
 
     std::string filename(std::string path);

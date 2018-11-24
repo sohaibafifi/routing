@@ -13,10 +13,10 @@ namespace CVRP
                 traveltime(0), consumption(0),
                 clients(std::vector<Client*>()){}
             virtual void pushClient(routing::models::Client *client) override;
-            virtual void addClient(routing::models::Client *client, unsigned position) override;
-            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned position, bool &possible);
-            virtual routing::Duration evaluateRemove(unsigned position);
-            virtual void removeClient(unsigned position) override;
+            virtual void addClient(routing::models::Client *client, unsigned long position) override;
+            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned long position, bool &possible) override;
+            virtual routing::Duration evaluateRemove(unsigned long position) override;
+            virtual void removeClient(unsigned long position) override;
             virtual routing::models::Client *getClient(unsigned long c) override;
             virtual unsigned long getNbClient();
             routing::Duration traveltime;

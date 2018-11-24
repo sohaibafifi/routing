@@ -266,8 +266,10 @@ void VRPTWSyn::Problem::addSequenceConstraints()
 
 routing::callback::HeuristicCallback *VRPTWSyn::Problem::setHeuristicCallback(IloEnv &env)
 {
-    return new HeuristicCallback(env, this, new routing::dummyConstructor(), new routing::dummyDestructor());
+    std::vector<routing::Neighborhood*> dummyNeighborhoods;
+    return new HeuristicCallback(env, this , new routing::Generator(new routing::dummyConstructor(), new routing::dummyDestructor()), dummyNeighborhoods);
 }
+
 routing::callback::IncumbentCallback *VRPTWSyn::Problem::setIncumbentCallback(IloEnv &env)
 {
 	return new IncumbentCallback(env, this);

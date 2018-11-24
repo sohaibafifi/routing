@@ -91,10 +91,10 @@ namespace CVRPTW
         public:
             Tour(Problem * p_problem, unsigned vehicleID):
                 CVRP::Tour(p_problem, vehicleID){}
-            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned position, bool &possible) override;
-            virtual routing::Duration evaluateRemove(unsigned position) override;
-            virtual void removeClient(unsigned position) override;
-            virtual void addClient(routing::models::Client *client, unsigned position) override;
+            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned long position, bool &possible) override;
+            virtual routing::Duration evaluateRemove(unsigned long position) override;
+            virtual void removeClient(unsigned long position) override;
+            virtual void addClient(routing::models::Client *client, unsigned long position) override;
 
     };
     struct Solution : public CVRP::Solution{
@@ -105,7 +105,7 @@ namespace CVRPTW
             virtual void print(std::ostream &out) override;
             std::vector<Visit *> visits;
             virtual void update() override;
-             virtual void addTour(routing::models::Tour *tour, unsigned position) override;
+             virtual void addTour(routing::models::Tour *tour, unsigned long position) override;
              virtual unsigned long getNbTour() const  override { return tours.size();}
 
              virtual routing::models::Solution *clone() const override;
@@ -126,9 +126,9 @@ namespace CVRPTW
     {
         public :
             HeuristicCallback(IloEnv env, Problem *_problem,
-                              routing::Constructor * p_constructor,
-                              routing::Destructor * p_destructor)
-                :  CVRP::HeuristicCallback(env, _problem, p_constructor, p_destructor),
+                              routing::Generator * p_generator,
+                              std::vector<routing::Neighborhood*> p_neighbors)
+                : CVRP::HeuristicCallback(env, _problem, p_generator, p_neighbors),
                   problem(_problem)
             {
 
