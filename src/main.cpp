@@ -3,7 +3,8 @@
 #include "problems/cvrptw/cvrptw.hpp"
 #include "problems/toptw/toptw.hpp"
 #include "problems/vrptwsyn/vrptwsyn.hpp"
-#include "Solver.hpp"
+#include "solvers/MIPSolver.hpp"
+#include "solvers/LSSolver.hpp"
 #pragma GCC diagnostic push
 #pragma clang diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
@@ -30,13 +31,13 @@ int main(int argc, char **argv)
         ops >> Option( 't' , "timeout", timeout, timeout);
 
         if (inputFile.find("/CVRP/") != std::string::npos)
-            Solver::create<CVRP::Reader>(inputFile, timeout)->solve();
+            CVRP::LSSolver<CVRP::Reader>(inputFile).solve(timeout);
         if (inputFile.find("/CVRPTW/") != std::string::npos)
-            Solver::create<CVRPTW::Reader>(inputFile, timeout)->solve();
+            routing::MIPSolver<CVRPTW::Reader>(inputFile).solve(timeout);
         if (inputFile.find("/TOPTW/") != std::string::npos)
-            Solver::create<TOPTW::Reader>(inputFile, timeout)->solve();
+            routing::MIPSolver<TOPTW::Reader>(inputFile).solve(timeout);
         if (inputFile.find("/VRPTWSyn/") != std::string::npos)
-            Solver::create<VRPTWSyn::Reader>(inputFile, timeout)->solve();
+            routing::MIPSolver<VRPTWSyn::Reader>(inputFile).solve(timeout);
 
         return EXIT_SUCCESS;
 

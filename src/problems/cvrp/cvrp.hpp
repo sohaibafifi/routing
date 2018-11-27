@@ -8,3 +8,4 @@
 #include "models/Solution.hpp"
 #include "models/Tour.hpp"
 #include "models/Vehicle.hpp"
+#include "solvers/LSSolver.hpp"
