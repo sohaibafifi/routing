@@ -77,4 +77,4 @@ Thumbs.db
 
 build/ 
 doc/
-
+cmake-build-debug/
