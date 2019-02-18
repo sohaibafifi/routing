@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 project(hybrid)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CPLEX_STUDIO_DIR /home/afifi/libs/cplex)
-
+#set(CPLEX_STUDIO_DIR /home/afifi/libs/cplex)
+set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio128)
 set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -ffast-math")
 
