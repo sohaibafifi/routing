@@ -26,7 +26,7 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile):Solver<Re
 {
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
-    this->cplex.use(this->problem->setHeuristicCallback(this->env));
+    //this->cplex.use(this->problem->setHeuristicCallback(this->env));
     this->cplex.use(this->problem->setUserCutCallback(this->env));
     this->cplex.use(this->problem->setIncumbentCallback(this->env));
     this->cplex.use(this->problem->setInformationCallback(this->env));
