@@ -21,7 +21,7 @@ namespace CVRP
             virtual unsigned long getNbClient();
             routing::Duration traveltime;
             routing::Demand consumption;
-        private :
+        protected:
             std::vector<Client*> clients;
 
     };

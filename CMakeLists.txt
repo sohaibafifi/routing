@@ -16,7 +16,7 @@ file(GLOB_RECURSE hybrid_SRC
         "src/**.hpp"
         "src/**.cpp"
         )
-add_executable(hybrid ${hybrid_SRC})
+add_executable(hybrid ${hybrid_SRC} src/problems/cvrptw/routines/operators/Constructor.cpp src/problems/cvrptw/routines/operators/Constructor.h src/problems/cvrptw/models/Client.cpp src/problems/cvrptw/models/Client.h src/problems/cvrptw/models/Visit.cpp src/problems/cvrptw/models/Visit.h src/problems/cvrptw/models/Depot.cpp src/problems/cvrptw/models/Depot.h src/problems/cvrptw/models/Vehicle.cpp src/problems/cvrptw/models/Vehicle.h src/problems/cvrptw/models/Problem.cpp src/problems/cvrptw/models/Problem.h src/problems/cvrptw/models/Tour.cpp src/problems/cvrptw/models/Tour.h src/problems/cvrptw/models/Solution.cpp src/problems/cvrptw/models/Solution.h src/problems/cvrptw/routines/Callbacks/HeuristicCallback.cpp src/problems/cvrptw/routines/Callbacks/HeuristicCallback.h src/problems/cvrptw/Reader.cpp src/problems/cvrptw/Reader.h src/problems/cvrptw/routines/operators/Destructor.cpp src/problems/cvrptw/routines/operators/Destructor.h src/ConfigureCallbacksCall.h)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -pedantic")
 
 target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)

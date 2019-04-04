@@ -1,141 +1,16 @@
-#pragma once
-#include "../../routines/callbacks.hpp"
-#include "../../data/problem.hpp"
-#include "../../data/attributes.hpp"
-#include "../../data/reader.hpp"
+#ifndef HYBRID_CVRPTW_H
+#define HYBRID_CVRPTW_H
+
+#include "models/Client.h"
+#include "models/Depot.h"
+#include "models/Vehicle.h"
+#include "models/Solution.h"
+#include "models/Tour.h"
+#include "models/Visit.h"
+#include "models/Solution.h"
+#include "Reader.h"
+#include "routines/operators/Destructor.h"
+#include "routines/operators/Constructor.h"
+#include "routines/Callbacks/HeuristicCallback.h"
 #include "../cvrp/cvrp.hpp"
-#include <sstream>
-#include "../../data/attributes/Rendezvous.hpp"
-#include "../../data/attributes/ServiceQuery.hpp"
-#include "../../data/attributes/Service.hpp"
-#include "../../data/attributes/Appointment.hpp"
-
-// TODO :  implement the operators for vrptw
-#include "../cvrp/routines/operators/Constructor.hpp"
-#include "../cvrp/routines/operators/Destructor.hpp"
-namespace CVRPTW
-{
-    struct Client
-            :
-            public CVRP::Client,
-            public routing::attributes::Rendezvous,
-            public routing::attributes::ServiceQuery
-    {
-            Client(unsigned id,
-                   const routing::Demand &demand,
-                   const routing::Duration &service,
-                   const routing::TW &timewindow,
-                   const routing::Duration &x,
-                   const routing::Duration &y)
-                :
-                  CVRP::Client(id, demand, x, y),
-                  routing::attributes::Rendezvous(timewindow),
-                  routing::attributes::ServiceQuery(service)
-            {
-             }
-
-    };
-    struct Visit:
-            public routing::attributes::Service,
-            public routing::attributes::Appointment
-    {
-            Visit(Client * p_client,
-                  const routing::Duration & p_start,
-                  const routing::Duration& p_maxshift,
-                  const routing::Duration& p_wait):
-                routing::attributes::Service(p_start),
-                routing::attributes::Appointment(p_maxshift, p_wait),
-                client(p_client)
-            {}
-            Client * client;
-    };
-    struct Depot
-            :
-            public CVRP::Depot,
-            public routing::attributes::Rendezvous
-    {
-            Depot(unsigned id,
-                  const routing::Duration &x,
-                  const routing::Duration &y,
-                  const routing::TW &timewindow)
-                :
-                  CVRP::Depot(id, x, y),
-                  routing::attributes::Rendezvous(timewindow)
-            {
-            }
-    };
-    struct Vehicle
-            :
-            public CVRP::Vehicle
-    {
-            Vehicle(unsigned id, routing::Capacity capacity)
-                :  CVRP::Vehicle(id, capacity)
-            {
-            }
-    };
-    class Reader;
-    class Problem
-            : public CVRP::Problem
-    {
-        public :
-            friend class Reader;
-            virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
-        protected :
-            virtual void addVariables() override ;
-            virtual void addSequenceConstraints() override ;
-            std::vector<IloNumVar> start;
-    };
-
-    struct Tour : public CVRP::Tour{
-
-        public:
-            Tour(Problem * p_problem, unsigned vehicleID):
-                CVRP::Tour(p_problem, vehicleID){}
-            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned long position, bool &possible) override;
-            virtual routing::Duration evaluateRemove(unsigned long position) override;
-            virtual void removeClient(unsigned long position) override;
-            virtual void addClient(routing::models::Client *client, unsigned long position) override;
-
-    };
-    struct Solution : public CVRP::Solution{
-        public:
-            Solution(Problem * problem);
-
-            virtual void updateMaxShifts();
-            virtual void print(std::ostream &out) override;
-            std::vector<Visit *> visits;
-            virtual void update() override;
-             virtual void addTour(routing::models::Tour *tour, unsigned long position) override;
-             virtual unsigned long getNbTour() const  override { return tours.size();}
-
-             virtual routing::models::Solution *clone() const override;
-            virtual routing::models::Tour *getTour(unsigned t) override;
-        protected:
-            std::vector<Tour*> tours;
-    };
-
-    class Reader
-            : public routing::Reader
-    {
-        public:
-            virtual CVRPTW::Problem *readFile(std::string filepath);
-    };
-
-    class HeuristicCallback
-            : public CVRP::HeuristicCallback
-    {
-        public :
-            HeuristicCallback(IloEnv env, Problem *_problem,
-                              routing::Generator * p_generator,
-                              std::vector<routing::Neighborhood*> p_neighbors)
-                : CVRP::HeuristicCallback(env, _problem, p_generator, p_neighbors),
-                  problem(_problem)
-            {
-
-            }
-            Problem * problem; // avoid static_cast<Problem*>(problem)
-            virtual void initSolution() override {
-                solution = new Solution(problem);
-            }
-     };
-}
+#endif //HYBRID_CVRPTW_H

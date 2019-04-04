@@ -14,6 +14,8 @@
 #pragma GCC diagnostic pop
 using namespace GetOpt;
 using namespace std;
+
+#include "ConfigureCallbacksCall.h"
 /*!
  * Main function with a test run
  * @param argc
@@ -27,17 +29,20 @@ int main(int argc, char **argv)
     try{
         std::string inputFile;
         double timeout = 200;
+
+        Config* config = new Config();
+
         ops >> Option( 'i' , "input", inputFile);
         ops >> Option( 't' , "timeout", timeout, timeout);
 
         if (inputFile.find("/CVRP/") != std::string::npos)
             CVRP::LSSolver<CVRP::Reader>(inputFile).solve(timeout);
         if (inputFile.find("/CVRPTW/") != std::string::npos)
-            routing::MIPSolver<CVRPTW::Reader>(inputFile).solve(timeout);
+            routing::MIPSolver<CVRPTW::Reader>(inputFile,*config).solve(timeout);
         if (inputFile.find("/TOPTW/") != std::string::npos)
-            routing::MIPSolver<TOPTW::Reader>(inputFile).solve(timeout);
+            routing::MIPSolver<TOPTW::Reader>(inputFile, *config).solve(timeout);
         if (inputFile.find("/VRPTWSyn/") != std::string::npos)
-            routing::MIPSolver<VRPTWSyn::Reader>(inputFile).solve(timeout);
+            routing::MIPSolver<VRPTWSyn::Reader>(inputFile, *config).solve(timeout);
 
         return EXIT_SUCCESS;
 
