@@ -8,6 +8,7 @@
 #include <ilcplex/ilocplexi.h>
 #include "../data/problem.hpp"
 #include "Solver.hpp"
+#include "../ConfigureCallbacksCall.h"
 namespace routing{
 template <class Reader>
 class MIPSolver : public Solver<Reader>
@@ -16,21 +17,30 @@ class MIPSolver : public Solver<Reader>
     IloCplex cplex;
     IloCplex model;
   public:
-    MIPSolver(const std::string & p_inputFile);
+    MIPSolver(const std::string & p_inputFile, Config& config);
     virtual bool solve(double timeout = 3600) override;
     virtual ~MIPSolver() ;
 };
 }
 template<class Reader>
-routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile):Solver<Reader> (p_inputFile)
+routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile, Config& config):Solver<Reader> (p_inputFile)
 {
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
-    //this->cplex.use(this->problem->setHeuristicCallback(this->env));
-    this->cplex.use(this->problem->setUserCutCallback(this->env));
-    this->cplex.use(this->problem->setIncumbentCallback(this->env));
-    this->cplex.use(this->problem->setInformationCallback(this->env));
-    this->cplex.use(this->problem->setLazyConstraintCallback(this->env));
+    if(config.getActiveHeuristicCallback())
+        this->cplex.use(this->problem->setHeuristicCallback(this->env));
+
+    if(config.getActiveUserCutCallback())
+        this->cplex.use(this->problem->setUserCutCallback(this->env));
+
+    if(config.getActiveIncumbentCallback())
+        this->cplex.use(this->problem->setIncumbentCallback(this->env));
+
+    if(config.getActiveInformationCallback())
+        this->cplex.use(this->problem->setInformationCallback(this->env));
+
+    if(config.getActiveLazyConstraintCallback())
+        this->cplex.use(this->problem->setLazyConstraintCallback(this->env));
 }
 
 template<class Reader>
