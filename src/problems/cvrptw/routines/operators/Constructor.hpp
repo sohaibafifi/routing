@@ -5,9 +5,9 @@
 #ifndef HYBRID_CONSTRUCTOR_H
 #define HYBRID_CONSTRUCTOR_H
 
-#include "../../models/Tour.h"
+#include "../../models/Tour.hpp"
 #include "../../../cvrp/routines/operators/Constructor.hpp"
-#include "../../models/Solution.h"
+#include "../../models/Solution.hpp"
 namespace CVRPTW{
     class Constructor : public CVRP::Constructor{
         public:

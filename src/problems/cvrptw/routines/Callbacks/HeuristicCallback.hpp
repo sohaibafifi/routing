@@ -6,8 +6,8 @@
 #define HYBRID_HEURISTICCALLBACK_H
 
 #include "../../../cvrp/routines/HeuristicCallback.hpp"
-#include "../../models/Problem.h"
-#include "../../models/Solution.h"
+#include "../../models/Problem.hpp"
+#include "../../models/Solution.hpp"
 
 namespace CVRPTW {
     class HeuristicCallback

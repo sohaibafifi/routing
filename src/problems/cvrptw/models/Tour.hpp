@@ -6,7 +6,7 @@
 #define HYBRID_TOUR_H
 
 #include "../../cvrp/models/Tour.hpp"
-#include "Problem.h"
+#include "Problem.hpp"
 #include "Visit.h"
 
 namespace CVRPTW{

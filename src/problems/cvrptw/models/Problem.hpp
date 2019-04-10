@@ -6,8 +6,8 @@
 #define HYBRID_PROBLEM_H
 
 #include "../../cvrp/Problem.hpp"
-#include "Depot.h"
-#include "Client.h"
+#include "Depot.hpp"
+#include "Client.hpp"
 
 namespace CVRPTW{
     class Problem
