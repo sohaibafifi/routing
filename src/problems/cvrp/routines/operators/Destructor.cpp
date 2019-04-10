@@ -3,11 +3,12 @@
 
 void CVRP::Destructor::destruct(routing::models::Solution *solution, unsigned long n)
 {
+    if(solution->notserved.size() == solution->getProblem()->clients.size()) return;
     Utilities::MTRand_int32 irand(std::time(nullptr));
     unsigned drem = 1 + irand() % n;
     do {
         unsigned t = irand() % solution->getNbTour();
-        while ( static_cast<Tour*>(solution->getTour(t))->getNbClient() <= 1) {
+        while ( static_cast<Tour*>(solution->getTour(t))->getNbClient() < 1) {
             t = irand() % solution->getNbTour();
         }
         unsigned long position = (irand() % static_cast<Tour*>(solution->getTour(t))->getNbClient());

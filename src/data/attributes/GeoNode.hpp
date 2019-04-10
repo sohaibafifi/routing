@@ -1,5 +1,5 @@
 #pragma once
-#include "GeoNode.hpp"
+//#include "GeoNode.hpp"
 #include "../attributes.hpp"
 namespace routing {
     typedef double Duration;

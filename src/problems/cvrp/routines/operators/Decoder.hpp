@@ -1,7 +1,7 @@
 #pragma once
 #include "../../models/Solution.hpp"
 #include "../../../../routines/operators/Decoder.hpp"
-
+#include "../../models/InsertionCost.hpp"
 namespace CVRP {
 
     class Decoder : public routing::Decoder

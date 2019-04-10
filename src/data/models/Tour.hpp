@@ -2,6 +2,7 @@
 #include "../Model.hpp"
 #include "Client.hpp"
 #include "../problem.hpp"
+#include "../attributes/InsertionCost.hpp"
 namespace routing {
 
     namespace models {
@@ -17,7 +18,7 @@ namespace routing {
                 virtual Client * getClient(unsigned long) = 0;
                 virtual unsigned long getNbClient() = 0;
 
-                virtual routing::Duration evaluateInsertion(Client *client, unsigned long position, bool &possible) = 0;
+                virtual routing::InsertionCost* evaluateInsertion(Client *client, unsigned long position) = 0;
                 virtual routing::Duration evaluateRemove(unsigned long position) = 0;
         };
     }

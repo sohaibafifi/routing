@@ -3,6 +3,8 @@
 #include "../../../data/models/Tour.hpp"
 #include "../Problem.hpp"
 #include "Client.hpp"
+#include "InsertionCost.hpp"
+
 namespace CVRP
 {
     struct Tour : public routing::models::Tour{
@@ -14,7 +16,7 @@ namespace CVRP
                 clients(std::vector<Client*>()){}
             virtual void pushClient(routing::models::Client *client) override;
             virtual void addClient(routing::models::Client *client, unsigned long position) override;
-            virtual routing::Duration evaluateInsertion(routing::models::Client *client, unsigned long position, bool &possible) override;
+            virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
             virtual routing::Duration evaluateRemove(unsigned long position) override;
             virtual void removeClient(unsigned long position) override;
             virtual routing::models::Client *getClient(unsigned long c) override;

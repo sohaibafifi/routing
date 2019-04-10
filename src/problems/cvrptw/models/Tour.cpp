@@ -2,10 +2,11 @@
 // Created by ali on 3/28/19.
 //
 
-#include "Tour.h"
+#include "Tour.hpp"
+#include "Solution.hpp"
 
 
-std::pair<routing::Duration, double> CVRPTW::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position, bool & possible, std::vector<Visit*> visits)
+routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position, std::vector<Visit*> visits)
 {
     double tij, tic, tcj;;
     double arrival_c, openWindow_c, closeWindow_c;
@@ -16,24 +17,29 @@ std::pair<routing::Duration, double> CVRPTW::Tour::evaluateInsertion(routing::mo
 
     // check if insertion is possible in term of capacity of vehicle and get the insertion cost
 
-    routing::Duration delta = CVRP::Tour::evaluateInsertion(client, position,possible);
-
-    openWindow_c = static_cast<CVRPTW::Client*>(clients[position])->getEST();
-    closeWindow_c = static_cast<CVRPTW::Client*>(clients[position])->getLST();
+    CVRP::InsertionCost* cost = static_cast<CVRP::InsertionCost*> (CVRP::Tour::evaluateInsertion(client, position));
 
 
-    if(possible){
+    openWindow_c = static_cast<CVRPTW::Client*>(client)->getEST();
+    closeWindow_c = static_cast<CVRPTW::Client*>(client)->getLST();
+
+
+    if(cost->isPossible()){
+            InsertionCost* cost_tw = new InsertionCost(cost->getDelta(),cost->isPossible(),0);
             if(position == 0){
                tic = problem->getDistance(*client, *static_cast<CVRPTW::Problem*>(problem)->getDepot());
                arrival_c = tic;
+
             } else {
                 tic = problem->getDistance(*clients[position-1],*client);
                 arrival_c = visits[clients[position-1]->getID()]->getStart() + visits[clients[position-1]->getID()]->client->getService() + tic;
             }
 
             if(arrival_c > closeWindow_c){
-                possible = false;
-                return std::pair<routing::Duration , double>(std::numeric_limits<routing::Duration>::max(),std::numeric_limits<double>::max());
+                cost_tw->setPossible(false);
+                cost_tw->setDelta(std::numeric_limits<routing::Duration>::max());
+                cost_tw->setShift(std::numeric_limits<routing::Duration>::max());
+                return cost_tw;
             }
 
             if(position == clients.size()){ //check if insertion is at the end
@@ -60,21 +66,31 @@ std::pair<routing::Duration, double> CVRPTW::Tour::evaluateInsertion(routing::mo
                 }
             }
 
-            shift_c = tic + tcj - tij + std::max(0.0,openWindow_c - arrival_c) + static_cast<CVRPTW::Client*>(clients[position])->getService();
+            shift_c = tic + tcj - tij + std::max(0.0,openWindow_c - arrival_c) + static_cast<CVRPTW::Client*>(client)->getService();
             //shift_d = tic + tcj - tij;
 
-
-            wait_j = visits[clients[position]->getID()]->getWait();
-            maxshift_j = visits[clients[position]->getID()]->getMaxshift();
+            if(position == clients.size()){
+                wait_j = 0 ;
+                //maxshift_j = std::max(static_cast<CVRPTW::Client*>(client)->getLST() - visits[client->getID()]->getStart() , 0.0);
+                maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
+                        static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+            }else{
+                wait_j = visits[clients[position]->getID()]->getWait();
+                maxshift_j = visits[clients[position]->getID()]->getMaxshift();
+            }
 
             if(shift_c <= wait_j + maxshift_j){
-                possible = true;
-                return std::pair<routing::Duration , double>(delta,shift_c);
+                cost_tw->setPossible(true);
+                cost_tw->setDelta(cost->getDelta());
+                cost_tw->setShift(shift_c);
+                return cost_tw;
             }
             else
             {
-                possible = false;
-                return std::pair<routing::Duration , double>(std::numeric_limits<routing::Duration>::max(),std::numeric_limits<double>::max());
+                cost_tw->setPossible(false);
+                cost_tw->setDelta(std::numeric_limits<routing::Duration>::max());
+                cost_tw->setShift(std::numeric_limits<routing::Duration>::max());
+                return cost_tw;
             }
 
 
@@ -82,4 +98,19 @@ std::pair<routing::Duration, double> CVRPTW::Tour::evaluateInsertion(routing::mo
 
 }
 
+routing::Duration CVRPTW::Tour::evaluateRemove(unsigned long position){
+    return CVRP::Tour::evaluateRemove(position);
+}
 
+
+void CVRPTW::Tour::removeClient(unsigned long position) {
+    CVRP::Tour::removeClient(position);
+}
+
+
+void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned long position)
+{
+    CVRP::Tour::addClient(client, position);
+    // update the visit and the tour
+
+}

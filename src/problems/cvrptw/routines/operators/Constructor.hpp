@@ -8,6 +8,7 @@
 #include "../../models/Tour.hpp"
 #include "../../../cvrp/routines/operators/Constructor.hpp"
 #include "../../models/Solution.hpp"
+
 namespace CVRPTW{
     class Constructor : public CVRP::Constructor{
         public:

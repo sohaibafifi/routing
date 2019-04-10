@@ -2,15 +2,17 @@
 // Created by ali on 3/28/19.
 //
 
-#include "Constructor.h"
+#include "Constructor.hpp"
 
 
 
 bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
     //build empty tours for each unused vechicle
+
     while (solution->getNbTour() < solution->getProblem()->vehicles.size()) {
         solution->pushTour(new Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour()));
     }
+
 
     //tells whether a new best_insertion position has been found
     //true at beginning to begin loop
@@ -21,7 +23,8 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
 
         unsigned best_t = 0, best_p = 0, best_client_i = 0;
         insertion_found = false;
-        routing::Duration bestCost = IloInfinity;
+        InsertionCost* bestCost = new InsertionCost( std::numeric_limits<routing::Duration >::max(),true,std::numeric_limits<routing::Duration >::max());
+        //InsertionCost* cost = new InsertionCost(std::numeric_limits<routing::Duration >::max(),true,std::numeric_limits<routing::Duration >::max());
         double shift_i = 0.0;
         //foreach client
         for (unsigned cc = 0; cc < solution->notserved.size(); ++cc) {
@@ -33,27 +36,32 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
                      i <= int(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(r))->getNbClient()); ++i) {
 
                     bool possible = true;
-                    std::pair<routing::Duration,double> cost = static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(
-                            r))->evaluateInsertion(client, i, possible, static_cast<CVRPTW::Solution*>(solution)->visits);
-                    routing::Duration delta = cost.first;
-                    shift_i = cost.second;
-                    if (!possible) continue;
-                    if (bestCost > delta) {
+
+
+                    InsertionCost* cost = static_cast<CVRPTW::InsertionCost*>(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(
+                            r))->evaluateInsertion(client, i, static_cast<CVRPTW::Solution*>(solution)->visits));
+
+                    if (!cost->isPossible()) continue;
+                    bool res = bestCost > cost;
+                    if (res) {
                         insertion_found = true;
                         best_t = r;
                         best_p = i;
                         best_client_i = cc;
-                        bestCost = delta;
+                        *bestCost = *cost;
                     }
                 }
             }
         }
         if (insertion_found) { //update solution
+
             static_cast<Solution*>(solution)->getTour(best_t)->addClient(static_cast<Solution*>(solution)->notserved[best_client_i], best_p );
-            static_cast<Solution*>(solution)->traveltime += bestCost;
+            static_cast<Solution*>(solution)->traveltime += bestCost->getDelta();
             static_cast<Solution*>(solution)->notserved.erase(static_cast<Solution*>(solution)->notserved.begin() + best_client_i);
             static_cast<Solution*>(solution)->update();
+            static_cast<Solution*>(solution)->updateTimeVariables(static_cast<Solution*>(solution)->getTour(best_t),best_p,bestCost->getShift());
         }
+
     }
     return insertion_found;
 

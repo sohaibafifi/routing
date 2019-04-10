@@ -6,10 +6,10 @@
 #define HYBRID_READER_H
 
 #include "../cvrp/Reader.hpp"
-#include "models/Problem.h"
-#include "models/Vehicle.h"
-#include "models/Client.h"
-#include "models/Depot.h"
+#include "models/Problem.hpp"
+#include "models/Vehicle.hpp"
+#include "models/Client.hpp"
+#include "models/Depot.hpp"
 #include "../../data/attributes/Rendezvous.hpp"
 namespace CVRPTW{
     class Reader
