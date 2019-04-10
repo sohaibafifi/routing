@@ -6,8 +6,8 @@
 #define HYBRID_SOLUTION_H
 
 #include "Problem.hpp"
-#include "Visit.h"
-#include "Tour.h"
+#include "Visit.hpp"
+#include "Tour.hpp"
 #include "../../cvrp/models/Solution.hpp"
 
 namespace CVRPTW{

@@ -1,12 +1,15 @@
 #include "Tour.hpp"
 
-routing::Duration CVRP::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position, bool & possible)
+routing::InsertionCost* CVRP::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position)
 {
+    InsertionCost* cost = new InsertionCost(0,true);
+
     if (this->consumption + static_cast<CVRP::Client*>(client)->getDemand() >
             static_cast<CVRP::Vehicle *>(problem->vehicles[this->getID()])->getCapacity())
     {
-        possible = false;
-        return std::numeric_limits<routing::Duration>::max();
+        cost->setPossible(false);
+        cost->setDelta(std::numeric_limits<routing::Duration>::max());
+        return cost;
     }
     routing::Duration delta = 0;
     if(clients.empty())
@@ -31,8 +34,9 @@ routing::Duration CVRP::Tour::evaluateInsertion(routing::models::Client *client,
             }
         }
     }
-    possible = true;
-    return delta;
+    cost->setPossible(true);
+    cost->setDelta(delta);
+    return cost;
 }
 
 routing::Duration CVRP::Tour::evaluateRemove(unsigned long position)
@@ -92,7 +96,7 @@ void CVRP::Tour::addClient(routing::models::Client *client, unsigned long positi
 {
     bool possible = true; // we assume that this is already verified
     //TODO : optimize to not recalculate the insertion cost
-    traveltime += this->evaluateInsertion(client, position, possible);
+    traveltime += static_cast<InsertionCost*>(this->evaluateInsertion(client, position))->getDelta();
     consumption += static_cast<Client*>(client)->getDemand();
     clients.insert(clients.begin() + position, static_cast<Client*>(client));
 }

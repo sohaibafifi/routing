@@ -2,7 +2,7 @@
 // Created by ali on 3/28/19.
 //
 
-#include "Solution.h"
+#include "Solution.hpp"
 
 
 
@@ -26,26 +26,15 @@ void CVRPTW::Solution::updateMaxShifts()
     std::cout << "updating maxshift " << std::endl;
 }
 
-void CVRPTW::Solution::updateMaxShiftAtPosition(routing::models::Tour *tour, unsigned int position, double shift_j) {
-    Visit* visit = visits[static_cast<Tour*>(tour)->getClient(position)->getID()];
-    routing::Duration wait = std::max(0.0, visit->getWait()-shift_j);
-}
-
-
-void CVRPTW::Solution::updateWaitAtPosition(routing::models::Tour *tour, unsigned int position, double shift_j) {
-    Visit* visit = visits[static_cast<Tour*>(tour)->getClient(position)->getID()];
-    routing::Duration wait = std::max(0.0, visit->getWait()-shift_j);
-    visit->setWait(wait);
-}
-
-
 
 void CVRPTW::Solution::updateTimeVariables(routing::models::Tour *tour, unsigned int position, double shift_j)
 {
     double shift_k = shift_j;
     unsigned int j = position;
-    while(j <= static_cast<Tour*>(tour)->getNbClient() && shift_k != 0  ){
-        Visit* visit = visits[static_cast<Tour*>(tour)->getClient(j)->getID()];
+
+    for(j=position+1; j< static_cast<Tour*>(tour)->getNbClient(); j++){
+        if(shift_k == 0) break;
+        Visit* visit = visits[static_cast<CVRPTW::Tour*>(tour)->getClient(j)->getID()];
         routing::Duration wait_k = visit->getWait();
         //routing::Duration maxshift_k = visit->getMaxshift();
 
@@ -54,8 +43,29 @@ void CVRPTW::Solution::updateTimeVariables(routing::models::Tour *tour, unsigned
         visit->setStart(visit->getStart()+shift_k);
         visit->setMaxshift(visit->getMaxshift()-shift_k);
 
+    }
 
+    //update clients before position
+    j = position;
+    //retrieve client at j = position
+    Client* client = static_cast<CVRPTW::Client*>(static_cast<CVRPTW::Tour*>(tour)->getClient(j));
+    Visit* visit = visits[client->getID()];
 
+    while(j>0){
+
+        Client* client_to_update = static_cast<CVRPTW::Client*>(static_cast<CVRPTW::Tour*>(tour)->getClient(j-1));
+        Visit* visit_to_update = visits[client_to_update->getID()];
+
+        //take wait and maxshift of client at position = j
+        routing::Duration maxshift_for_update = visit->getMaxshift();
+        routing::Duration wait_for_update = visit->getWait();
+
+        //update maxshift of client j-1
+        visit_to_update->setMaxshift(std::min(client_to_update->getLST()-visit_to_update->getStart(),wait_for_update+maxshift_for_update));
+
+        //go to next iteration
+        visit = visit_to_update;
+        j--;
     }
 
 }
@@ -81,15 +91,6 @@ void CVRPTW::Solution::update()
 routing::models::Tour *CVRPTW::Solution::getTour(unsigned t)
 {
     return tours.at(t);
-}
-
-
-
-void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned long position)
-{
-    CVRP::Tour::addClient(client, position);
-    // update the visit and the tour
-
 }
 
 
