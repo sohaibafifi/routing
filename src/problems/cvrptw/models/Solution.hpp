@@ -5,7 +5,7 @@
 #ifndef HYBRID_SOLUTION_H
 #define HYBRID_SOLUTION_H
 
-#include "Problem.h"
+#include "Problem.hpp"
 #include "Visit.h"
 #include "Tour.h"
 #include "../../cvrp/models/Solution.hpp"

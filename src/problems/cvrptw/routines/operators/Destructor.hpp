@@ -6,7 +6,7 @@
 #define HYBRID_DESTRUCTOR_H
 
 
-#include "../../models/Solution.h"
+#include "../../models/Solution.hpp"
 #include "../../../cvrp/routines/operators/Destructor.hpp"
 
 namespace CVRPTW{
