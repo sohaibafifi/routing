@@ -23,7 +23,7 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
 
         unsigned best_t = 0, best_p = 0, best_client_i = 0;
         insertion_found = false;
-        InsertionCost* bestCost = new InsertionCost( std::numeric_limits<routing::Duration >::max(),true,std::numeric_limits<routing::Duration >::max());
+        InsertionCost* bestCost = new InsertionCost( IloInfinity,true,IloInfinity);
         //InsertionCost* cost = new InsertionCost(std::numeric_limits<routing::Duration >::max(),true,std::numeric_limits<routing::Duration >::max());
         double shift_i = 0.0;
         //foreach client
@@ -42,7 +42,7 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
                             r))->evaluateInsertion(client, i, static_cast<CVRPTW::Solution*>(solution)->visits));
 
                     if (!cost->isPossible()) continue;
-                    bool res = bestCost > cost;
+                    bool res = bestCost->getDelta() > cost->getDelta();
                     if (res) {
                         insertion_found = true;
                         best_t = r;
