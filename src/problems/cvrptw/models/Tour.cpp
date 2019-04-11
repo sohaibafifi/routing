@@ -6,7 +6,7 @@
 #include "Solution.hpp"
 
 
-routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position, std::vector<Visit*> visits)
+routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client *client, unsigned long position)
 {
     double tij, tic, tcj;;
     double arrival_c, openWindow_c, closeWindow_c;

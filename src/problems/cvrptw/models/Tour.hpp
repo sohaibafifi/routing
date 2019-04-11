@@ -13,13 +13,14 @@ namespace CVRPTW{
     struct Tour : public CVRP::Tour{
 
     public:
-        Tour(Problem * p_problem, unsigned vehicleID):
-                CVRP::Tour(p_problem, vehicleID){}
-        virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position, std::vector<Visit*> visits);
+        Tour(Problem * p_problem, unsigned vehicleID, std::vector<CVRPTW::Visit*> visits):
+                CVRP::Tour(p_problem, vehicleID), visits(visits){}
+        virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
         virtual routing::Duration evaluateRemove(unsigned long position) override;
         virtual void removeClient(unsigned long position) override;
         virtual void addClient(routing::models::Client *client, unsigned long position) override;
 
+        std::vector<CVRPTW::Visit*> visits;
     };
 }
 

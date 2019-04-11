@@ -10,7 +10,7 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
     //build empty tours for each unused vechicle
 
     while (solution->getNbTour() < solution->getProblem()->vehicles.size()) {
-        solution->pushTour(new Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour()));
+        solution->pushTour(new Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour(), static_cast<CVRPTW::Solution*>(solution)->visits));
     }
 
 
@@ -39,7 +39,7 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
 
 
                     InsertionCost* cost = static_cast<CVRPTW::InsertionCost*>(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(
-                            r))->evaluateInsertion(client, i, static_cast<CVRPTW::Solution*>(solution)->visits));
+                            r))->evaluateInsertion(client, i));
 
                     if (!cost->isPossible()) continue;
                     //TODO: Implement operator > for InsertionCost Class
