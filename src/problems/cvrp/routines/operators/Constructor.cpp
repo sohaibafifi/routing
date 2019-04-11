@@ -18,7 +18,7 @@ bool CVRP::Constructor::bestInsertion(routing::models::Solution *solution)
                     //bool possible = true;
                     InsertionCost* cost = static_cast<CVRP::InsertionCost*>(static_cast<Tour*>(static_cast<Solution*>(solution)->getTour(r))->evaluateInsertion(client, i));
                     if(!cost->isPossible()) continue;
-                    if (bestCost > cost) {
+                    if (bestCost->getDelta() > cost->getDelta()) {
                         insertion_found = true;
                         best_t = r;
                         best_p = i;
