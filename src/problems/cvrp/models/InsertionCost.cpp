@@ -23,8 +23,7 @@ void CVRP::InsertionCost::setPossible(bool possible) {
 }
 
 bool CVRP::InsertionCost::operator>(const CVRP::InsertionCost &rhs) const {
-    return delta > rhs.delta &&
-           possible == rhs.possible;
+    return delta > rhs.delta;
 }
 
 CVRP::InsertionCost::InsertionCost(const CVRP::InsertionCost &cost): delta(cost.getDelta()), possible(cost.isPossible()){}

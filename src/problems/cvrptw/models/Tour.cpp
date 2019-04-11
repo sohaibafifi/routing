@@ -72,8 +72,9 @@ routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client 
             if(position == clients.size()){
                 wait_j = 0 ;
                 //maxshift_j = std::max(static_cast<CVRPTW::Client*>(client)->getLST() - visits[client->getID()]->getStart() , 0.0);
-                maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
-                        static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+                 maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
+                       static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+
             }else{
                 wait_j = visits[clients[position]->getID()]->getWait();
                 maxshift_j = visits[clients[position]->getID()]->getMaxshift();
