@@ -42,6 +42,7 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
                             r))->evaluateInsertion(client, i, static_cast<CVRPTW::Solution*>(solution)->visits));
 
                     if (!cost->isPossible()) continue;
+                    //TODO: Implement operator > for InsertionCost Class
                     bool res = bestCost->getDelta() > cost->getDelta();
                     if (res) {
                         insertion_found = true;
