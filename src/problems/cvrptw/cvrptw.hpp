@@ -13,4 +13,5 @@
 #include "routines/operators/Constructor.hpp"
 #include "routines/Callbacks/HeuristicCallback.hpp"
 #include "../cvrp/cvrp.hpp"
+#include "solvers/LSSolver.hpp"
 #endif //HYBRID_CVRPTW_H

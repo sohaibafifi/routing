@@ -23,13 +23,13 @@ namespace CVRP {
                 this->solution = new Solution(static_cast<CVRP::Problem*>(this->problem));
             }
 
-            static std::vector<routing::Neighborhood*> getNeighbors(){
+            virtual std::vector<routing::Neighborhood*> getNeighbors() {
                 std::vector<routing::Neighborhood*> neighbors{
                     new routing::IDCH(new Constructor, new Destructor)
                 };
                 return neighbors;
             }
-            static  routing::Generator * getGenerator(){
+            virtual routing::Generator * getGenerator() {
                 return new routing::Generator(new Constructor, new Destructor);
             }
 

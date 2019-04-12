@@ -335,6 +335,9 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/LSSolver.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/toptw/toptw.cpp">
 			<Option target="hybrid"/>
 		</Unit>
