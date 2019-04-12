@@ -61,6 +61,16 @@ bool routing::LSSolver<Reader>::solve(double timeout)
     std::cout << this->problem->getName()
               << "\t" << this->solution->getCost()
               << std::endl;
+
+    for (auto i = 0; i <  this->solution->getNbTour() ; i++)
+    {
+        std::cout << "Tour " << i << ":\t" ;
+        routing::models::Tour* t = this->solution->getTour(i);
+        for( auto j = 0; j < t->getNbClient() ; j++){
+            std::cout << t->getClient(j)->getID() << "  " ;
+        }
+        std::cout << "\n" ;
+    }
 }
 template<class Reader>
 routing::LSSolver<Reader>::~LSSolver()

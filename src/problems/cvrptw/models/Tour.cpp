@@ -71,9 +71,8 @@ routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client 
 
             if(position == clients.size()){
                 wait_j = 0 ;
-                //maxshift_j = std::max(static_cast<CVRPTW::Client*>(client)->getLST() - visits[client->getID()]->getStart() , 0.0);
-                 maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
-                       static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+                //maxshift_j = std::min(static_cast<CVRPTW::Client*>(client)->getLST() - visits[client->getID()]->getStart() , static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() - static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST());
+                maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() - static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
 
             }else{
                 wait_j = visits[clients[position]->getID()]->getWait();
@@ -117,6 +116,7 @@ void CVRPTW::Tour::updateTimeVariablesAfterRemove(unsigned long position){
     routing::Duration wait = 0.0, wait_j;
     routing::Duration maxshift = 0.0 , maxshift_j = 0.0 ;
     routing::Duration start = 0.0;
+    if(clients.empty()) return;
     for(unsigned i = position ; i < clients.size(); i++) {
         //compute arrival
         if (i == 0) {
@@ -137,8 +137,8 @@ void CVRPTW::Tour::updateTimeVariablesAfterRemove(unsigned long position){
         start = std::max(openWindow, arrival);
         visits[clients[i]->getID()]->setStart(start);
     }
-
-    for(unsigned i = clients.size() - 1 ;  i >= 0 ; i--){
+    int length = clients.size();
+    for(auto i = length - 1 ;  i >= 0 ; i--){
         //get maxshift for last position as depot's maxshift
         if(i == clients.size() - 1 ){
             maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
