@@ -17,7 +17,7 @@ namespace CVRPTW{
     template <class Reader>
     class LSSolver: public routing::LSSolver<Reader> {
         public:
-            LSSolver(const std::string & p_inputFile) : routing::LSSolver<Reader>(p_inputFile,this->getGenerator(),this->getNeighbors())
+            LSSolver(const std::string & p_inputFile, std::ostream& os  = std::cout) : routing::LSSolver<Reader>(p_inputFile,this->getGenerator(),this->getNeighbors(), os)
             {
 
             }
