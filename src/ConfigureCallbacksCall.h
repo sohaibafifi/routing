@@ -15,7 +15,13 @@ class Config {
         bool activeIncumbentCallback = true;
         bool activeInformationCallback = true;
         bool activeLazyConstraintCallback = true;
-    public:
+
+
+        // for output stream
+        bool outputStreamFile = true;
+
+
+public:
         Config(bool _activeHeuristicCallback, bool _activeUserCutCallback,
                 bool _activeIncumbentCallback, bool _activeInformationCallback,
                 bool _activeLazyConstraintCallback):
@@ -63,7 +69,13 @@ class Config {
             this->activeLazyConstraintCallback = _activeLazyConstraintCallback;
         }
 
+        bool isOutputStreamFile() const {
+            return outputStreamFile;
+        }
 
+        void setOutputStreamFile(bool outputStreamFile) {
+            Config::outputStreamFile = outputStreamFile;
+        }
 
 };
 

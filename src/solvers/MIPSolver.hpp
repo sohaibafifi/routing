@@ -17,13 +17,13 @@ class MIPSolver : public Solver<Reader>
     IloCplex cplex;
     IloCplex model;
   public:
-    MIPSolver(const std::string & p_inputFile, Config& config);
+    MIPSolver(const std::string & p_inputFile, Config& config, std::ostream& os  = std::cout);
     virtual bool solve(double timeout = 3600) override;
     virtual ~MIPSolver() ;
 };
 }
 template<class Reader>
-routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile, Config& config):Solver<Reader> (p_inputFile)
+routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile, Config& config, std::ostream& os):Solver<Reader> (p_inputFile,os)
 {
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
@@ -54,7 +54,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout)
     this->cplex.setParam(this->cplex.TiLim, timeout);
     // this->model.exportModel(std::string(problem->getName() + ".lp").c_str());
     this->cplex.solve();
-    std::cout << this->problem->getName()
+    this->os << this->problem->getName()
               << "\t" << this->cplex.getStatus( )
               << "\t" << this->cplex.getObjValue()
               << "\t" << this->cplex.getBestObjValue()
@@ -66,13 +66,13 @@ bool routing::MIPSolver<Reader>::solve(double timeout)
 template<class Reader>
 routing::MIPSolver<Reader>::~MIPSolver()
 {
-    std::cout << "deleting the problem from memory" << std::endl;
+    this->os << "deleting the problem from memory" << std::endl;
     delete this->problem;
-    std::cout << "deleting cplex" << std::endl;
+    this->os << "deleting cplex" << std::endl;
     this->cplex.end();
-    std::cout << "deleting env" << std::endl;
+    this->os << "deleting env" << std::endl;
     this->env.end();
-    std::cout << "solver done" << std::endl;
+    this->os  << "solver done" << std::endl;
 }
 
 #endif //HYBRID_MIPSOLVER_HPP

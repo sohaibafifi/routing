@@ -11,10 +11,11 @@ namespace CVRP {
     template <class Reader>
     class LSSolver : public routing::LSSolver<Reader>{
           public :
-            LSSolver(const std::string & p_inputFile):
+            LSSolver(const std::string & p_inputFile, std::ostream& os = std::cout):
             routing::LSSolver<Reader>(p_inputFile,
                                       this->getGenerator(),
-                                      this->getNeighbors())
+                                      this->getNeighbors(),
+                                      os)
             {
             }
 

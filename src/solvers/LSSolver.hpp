@@ -20,7 +20,8 @@ class LSSolver : public Solver<Reader>
   public:
     LSSolver(const std::string & p_inputFile,
              routing::Generator * p_generator,
-             const std::vector<Neighborhood *> &p_neighbors);
+             const std::vector<Neighborhood *> &p_neighbors,
+             std::ostream& os  = std::cout);
     virtual bool solve(double timeout = 3600) override;
     virtual ~LSSolver() ;
     virtual void initSolution() = 0;
@@ -30,8 +31,9 @@ class LSSolver : public Solver<Reader>
 template<class Reader>
 routing::LSSolver<Reader>::LSSolver(const std::string & p_inputFile,
                            routing::Generator * p_generator,
-                           const std::vector<routing::Neighborhood*> & p_neighbors)
-    :Solver<Reader> (p_inputFile),
+                           const std::vector<routing::Neighborhood*> & p_neighbors,
+                           std::ostream& os)
+    :Solver<Reader> (p_inputFile, os),
       generator(p_generator),
       neighbors(p_neighbors)
 {
@@ -58,18 +60,18 @@ bool routing::LSSolver<Reader>::solve(double timeout)
              run[i] = true;
          }
     }
-    std::cout << this->problem->getName()
+    this->os << this->problem->getName()
               << "\t" << this->solution->getCost()
               << std::endl;
 
     for (auto i = 0; i <  this->solution->getNbTour() ; i++)
     {
-        std::cout << "Tour " << i << ":\t" ;
+        this->os << "Tour " << i << ":\t" ;
         routing::models::Tour* t = this->solution->getTour(i);
         for( auto j = 0; j < t->getNbClient() ; j++){
-            std::cout << t->getClient(j)->getID() << "  " ;
+            this->os << t->getClient(j)->getID() << "  " ;
         }
-        std::cout << "\n" ;
+        this->os << "\n" ;
     }
 }
 template<class Reader>
