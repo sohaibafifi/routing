@@ -41,18 +41,17 @@ int main(int argc, char **argv)
         ops >> Option( 't' , "timeout", timeout, timeout);
 
         //set output options
-        //true: print in output file passed as argument
-        //false: print in standard output
-        config->setOutputStreamFile(true);
-        if(config->isOutputStreamFile()){
+        //if no output specified, print in std::cout
+        try {
             ops >> Option( 'o' , "output", output);
             out.open (output,std::ios::out);
-
-        }else{
+        }
+        catch (OptionNotFoundEx){
             out.copyfmt(std::cout);
             out.clear(std::cout.rdstate());
             out.basic_ios<char>::rdbuf(std::cout.rdbuf());
         }
+
 
         //all solvers have default argument for output as std::cout
         //so if no output is passed, default stream would be std::cout
@@ -61,7 +60,7 @@ int main(int argc, char **argv)
             CVRP::LSSolver<CVRP::Reader>(inputFile,out).solve(timeout);
         if (inputFile.find("/CVRPTW/") != std::string::npos)
             //routing::MIPSolver<CVRPTW::Reader>(inputFile,*config).solve(timeout);
-            CVRPTW::LSSolver<CVRPTW::Reader>(inputFile).solve(timeout);
+            CVRPTW::LSSolver<CVRPTW::Reader>(inputFile,out).solve(timeout);
         if (inputFile.find("/TOPTW/") != std::string::npos)
             routing::MIPSolver<TOPTW::Reader>(inputFile, *config,out).solve(timeout);
         if (inputFile.find("/VRPTWSyn/") != std::string::npos)
