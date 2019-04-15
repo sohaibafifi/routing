@@ -94,6 +94,9 @@ routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client 
             }
 
 
+    } else{
+        InsertionCost* cost_tw = new InsertionCost(cost->getDelta(),cost->isPossible(),0);
+        return cost_tw;
     }
 
 }
@@ -119,14 +122,7 @@ void CVRPTW::Tour::updateTimeVariablesAfterRemove(unsigned long position){
     if(clients.empty()) return;
     for(unsigned i = position ; i < clients.size(); i++) {
         //compute arrival
-        if (i == 0) {
-            arrival = problem->getDistance(*clients[i], *static_cast<CVRPTW::Problem *>(problem)->getDepot());
-
-        } else {
-            tic = problem->getDistance(*clients[i - 1], *clients[i]);
-            arrival = visits[clients[i - 1]->getID()]->getStart() +
-                      visits[clients[i - 1]->getID()]->client->getService() + tic;
-        }
+        arrival = getArrival(i);
         //get opening time window
         openWindow = static_cast<CVRPTW::Client *>(clients[i])->getEST();
         //compute wait and set it
@@ -139,16 +135,9 @@ void CVRPTW::Tour::updateTimeVariablesAfterRemove(unsigned long position){
     }
     int length = clients.size();
     for(auto i = length - 1 ;  i >= 0 ; i--){
-        //get maxshift for last position as depot's maxshift
-        if(i == clients.size() - 1 ){
-            maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
-                         static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
-            wait_j = 0.0;
 
-        }else{ // get maxshift of next client
-            maxshift_j = visits[clients[i+1]->getID()]->getMaxshift();
-            wait_j = visits[clients[i+1]->getID()]->getWait();
-        }
+        maxshift_j = getNextMaxshift(i);
+        wait_j = getNextWait(i);
 
         closeWindow = static_cast<CVRPTW::Client*>(clients[i])->getLST();
         start = visits[clients[i]->getID()]->getStart();
@@ -159,6 +148,50 @@ void CVRPTW::Tour::updateTimeVariablesAfterRemove(unsigned long position){
 
     }
 }
+
+
+routing::Duration CVRPTW::Tour::getNextMaxshift(unsigned long position)
+{
+    routing::Duration maxshift_j;
+    //get next maxshift for last position as depot's maxshift
+    if(position == clients.size() - 1 ){
+        maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
+                     static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+
+    }else{ // get maxshift of next client
+        maxshift_j = visits[clients[position+1]->getID()]->getMaxshift();
+
+    }
+    return maxshift_j;
+}
+
+routing::Duration CVRPTW::Tour::getNextWait(unsigned long position)
+{
+    routing::Duration wait_j;
+    if(position == clients.size() - 1 ){
+        wait_j = 0.0;
+
+    }else{ // get wait of next client
+        wait_j = visits[clients[position+1]->getID()]->getWait();
+    }
+    return wait_j;
+}
+
+routing::Duration CVRPTW::Tour::getArrival(unsigned long position)
+{
+    routing::Duration arrival;
+    if (position == 0) {
+        arrival = problem->getDistance(*clients[position], *static_cast<CVRPTW::Problem *>(problem)->getDepot());
+
+    } else {
+        arrival = visits[clients[position - 1]->getID()]->getStart() +
+                  visits[clients[position - 1]->getID()]->client->getService() +
+                  problem->getDistance(*clients[position - 1], *clients[position]);;
+    }
+
+    return arrival;
+}
+
 
 void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned long position)
 {

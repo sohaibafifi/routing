@@ -20,7 +20,9 @@ namespace CVRPTW{
         virtual void updateTimeVariablesAfterRemove(unsigned long position);
         virtual void removeClient(unsigned long position) override;
         virtual void addClient(routing::models::Client *client, unsigned long position) override;
-
+        virtual routing::Duration getNextMaxshift(unsigned long position); //returns maxshift of position + 1
+        virtual routing::Duration getNextWait(unsigned long position); // returns wait of position + 1
+        virtual routing::Duration getArrival(unsigned long position); //get arrival at position
         std::vector<CVRPTW::Visit*> visits;
     };
 }
