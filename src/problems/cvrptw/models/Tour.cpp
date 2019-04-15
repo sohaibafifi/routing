@@ -71,8 +71,14 @@ routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client 
 
             if(position == clients.size()){
                 wait_j = 0 ;
-                //maxshift_j = std::min(static_cast<CVRPTW::Client*>(client)->getLST() - visits[client->getID()]->getStart() , static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() - static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST());
-                maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() - static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
+
+
+                maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
+                        (
+                                visits[client->getID()]->getStart() +
+                                static_cast<CVRPTW::Client*>(client)->getService() +
+                                problem->getDistance(*client, *static_cast<CVRPTW::Problem*>(problem)->getDepot())
+                        );
 
             }else{
                 wait_j = visits[clients[position]->getID()]->getWait();
@@ -155,9 +161,14 @@ routing::Duration CVRPTW::Tour::getNextMaxshift(unsigned long position)
     routing::Duration maxshift_j;
     //get next maxshift for last position as depot's maxshift
     if(position == clients.size() - 1 ){
-        maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
-                     static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getEST();
 
+
+        maxshift_j = static_cast<CVRPTW::Depot*>(static_cast<CVRPTW::Problem*>(problem)->getDepot())->getLST() -
+                            (
+                             visits[clients[position]->getID()]->getStart() +
+                             static_cast<CVRPTW::Client*>(clients[position])->getService() +
+                             problem->getDistance(*clients[position], *static_cast<CVRPTW::Problem*>(problem)->getDepot())
+                            );
     }else{ // get maxshift of next client
         maxshift_j = visits[clients[position+1]->getID()]->getMaxshift();
 
