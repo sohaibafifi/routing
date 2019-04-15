@@ -38,8 +38,9 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
                     bool possible = true;
 
 
-                    InsertionCost* cost = static_cast<CVRPTW::InsertionCost*>(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(
+                    CVRPTW::InsertionCost* cost = static_cast<CVRPTW::InsertionCost*>(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(
                             r))->evaluateInsertion(client, i));
+
 
                     if (!cost->isPossible()) continue;
                     //TODO: Implement operator > for InsertionCost Class

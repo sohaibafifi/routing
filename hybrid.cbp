@@ -167,9 +167,6 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/mtrand.hpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/print.hpp">
-			<Option target="hybrid"/>
-		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/ccvrp/ccvrp.cpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -414,6 +411,9 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/Destructor.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/solvers/Checker.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/solvers/LSSolver.hpp">

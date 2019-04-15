@@ -53,6 +53,8 @@ int main(int argc, char **argv)
         }
 
 
+        config->setActiveHeuristicCallback(true);
+
         //all solvers have default argument for output as std::cout
         //so if no output is passed, default stream would be std::cout
 
