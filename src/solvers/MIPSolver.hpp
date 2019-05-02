@@ -9,6 +9,7 @@
 #include "../data/problem.hpp"
 #include "Solver.hpp"
 #include "../ConfigureCallbacksCall.h"
+#include "../problems/cvrptw/solvers/Checker.hpp"
 namespace routing{
 template <class Reader>
 class MIPSolver : public Solver<Reader>
@@ -19,11 +20,12 @@ class MIPSolver : public Solver<Reader>
   public:
     MIPSolver(const std::string & p_inputFile, Config& config, std::ostream& os  = std::cout);
     virtual bool solve(double timeout = 3600) override;
+
     virtual ~MIPSolver() ;
 };
 }
 template<class Reader>
-routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile, Config& config, std::ostream& os):Solver<Reader> (p_inputFile,os)
+routing::MIPSolver<Reader>::MIPSolver(const std::string & p_inputFile, Config& config,std::ostream& os):Solver<Reader> (p_inputFile ,os)
 {
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
@@ -74,5 +76,7 @@ routing::MIPSolver<Reader>::~MIPSolver()
     this->env.end();
     this->os  << "solver done" << std::endl;
 }
+
+
 
 #endif //HYBRID_MIPSOLVER_HPP
