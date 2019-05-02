@@ -14,6 +14,15 @@ namespace CVRPTW{
     {
     public:
         virtual void destruct(routing::models::Solution *solution, unsigned long n) override;
+
+        virtual void SequentialDestruction(routing::models::Solution* solution, unsigned long position, unsigned long length);
+    };
+
+
+    enum DestructionPolicy{
+        RANDOM,
+        SEQUENTIAL,
+        WORST
     };
 }
 
