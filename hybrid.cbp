@@ -80,6 +80,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/Configurations.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/ConfigureCallbacksCall.h">
 			<Option target="hybrid"/>
 		</Unit>
@@ -254,6 +257,12 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/Destructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/solvers/Checker.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/solvers/Checker.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/solvers/LSSolver.hpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -333,6 +342,12 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/Checker.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/Checker.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/LSSolver.hpp">
