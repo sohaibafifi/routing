@@ -13,17 +13,15 @@ namespace CVRPTW{
     class Destructor : public CVRP::Destructor
     {
     public:
-        virtual void destruct(routing::models::Solution *solution, unsigned long n) override;
+        virtual void destruct(routing::models::Solution *solution, unsigned long n, DestructionPolicy policy) override;
 
-        virtual void SequentialDestruction(routing::models::Solution* solution, unsigned long position, unsigned long length);
+        virtual void sequentialDestruction(routing::models::Solution* solution, unsigned long position, unsigned long length);
+        virtual void randomDestructoion(routing::models::Solution* solution, unsigned long n) override;
+        virtual void worstCostDestruction(routing::models::Solution* solution);
     };
 
 
-    enum DestructionPolicy{
-        RANDOM,
-        SEQUENTIAL,
-        WORST
-    };
+
 }
 
 #endif //HYBRID_DESTRUCTOR_H
