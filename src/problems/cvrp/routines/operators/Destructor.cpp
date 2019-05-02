@@ -1,8 +1,15 @@
 #include "Destructor.hpp"
 #include "../../../../mtrand.hpp"
 
-void CVRP::Destructor::destruct(routing::models::Solution *solution, unsigned long n)
+void CVRP::Destructor::destruct(routing::models::Solution *solution, unsigned long n, DestructionPolicy policy)
 {
+    switch (policy){
+        case RANDOM: randomDestructoion(solution , n);
+    }
+}
+
+
+void CVRP::Destructor::randomDestructoion(routing::models::Solution *solution, unsigned long n) {
     if(solution->notserved.size() == solution->getProblem()->clients.size()) return;
     Utilities::MTRand_int32 irand(std::time(nullptr));
     unsigned drem = 1 + irand() % n;
@@ -17,8 +24,8 @@ void CVRP::Destructor::destruct(routing::models::Solution *solution, unsigned lo
         routing::Duration traveltime = static_cast<Tour*>(solution->getTour(t))->traveltime;
         solution->getTour(t)->removeClient(position);
         static_cast<Solution*>(solution)->traveltime = static_cast<Solution*>(solution)->traveltime
-                                                     - traveltime
-                                                     + static_cast<Tour*>(solution->getTour(t))->traveltime;
+                                                       - traveltime
+                                                       + static_cast<Tour*>(solution->getTour(t))->traveltime;
         solution->update();
     }
     while (static_cast<Solution*>(solution)->notserved.size() < drem);
