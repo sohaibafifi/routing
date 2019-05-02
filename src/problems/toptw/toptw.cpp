@@ -1,7 +1,7 @@
 #include "toptw.hpp"
 
 
-TOPTW::Problem *TOPTW::Reader::readFile(std::__cxx11::string filepath)
+TOPTW::Problem *TOPTW::Reader::readFile(std::string filepath)
 {
     CVRPTW::Problem * cvrptw_problem = CVRPTW::Reader().readFile(filepath);
     TOPTW::Problem * problem = new TOPTW::Problem (*cvrptw_problem);
