@@ -7,6 +7,8 @@
 #include "../routines/operators/Constructor.hpp"
 #include "../routines/operators/Destructor.hpp"
 #include "../../../routines/operators/Constructor.hpp"
+#include "Checker.hpp"
+
 namespace CVRP {
     template <class Reader>
     class LSSolver : public routing::LSSolver<Reader>{
@@ -34,6 +36,9 @@ namespace CVRP {
                 return new routing::Generator(new Constructor, new Destructor);
             }
 
+            virtual CVRP::Checker * getChecker(){
+              return new CVRP::Checker(static_cast<CVRP::Solution*>(this->solution),this->os);
+          }
 
     };
 }
