@@ -3,6 +3,9 @@
 #include "Neighborhood.hpp"
 #include "../operators/Destructor.hpp"
 #include "../operators/Constructor.hpp"
+#include "../../Configurations.hpp"
+#include "../operators/RandomDestructionParameters.hpp"
+#include "../operators/SequentialDestructionParameters.hpp"
 namespace routing {
     class IDCH : public Neighborhood{
         public :

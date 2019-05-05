@@ -5,11 +5,19 @@
 #ifndef HYBRID_CONFIGURATIONS_HPP
 #define HYBRID_CONFIGURATIONS_HPP
 
+
 namespace Configuration{
-    const double precision = 10.0;
+    enum DestructionPolicy{
+            RANDOM,
+            SEQUENTIAL,
+            WORST
+    };
 
-    const int destruction_steps = 3;
+        const double precision = 10.0;
 
+        const int destruction_steps = 3;
+
+        const DestructionPolicy destructionPolicy = SEQUENTIAL;
 }
 
 
