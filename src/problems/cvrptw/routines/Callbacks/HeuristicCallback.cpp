@@ -4,17 +4,30 @@
 
 #include "HeuristicCallback.hpp"
 #include "../operators/Constructor.hpp"
-#include "../operators/Destructor.hpp"
+#include "../operators/RandomDestructor.hpp"
+#include "../operators/SequentialDestructor.hpp"
 #include "../../../../routines/neighborhoods/IDCH.hpp"
-
+#include "../../../../Configurations.hpp"
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
     std::vector<routing::Neighborhood*> neighborhoods;
-     neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::Destructor));
+    switch(Configuration::destructionPolicy){
+        case Configuration::DestructionPolicy::RANDOM:{
+            neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::RandomDestructor));
+            return new HeuristicCallback(env, this,
+                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
+                                         neighborhoods);
 
-    return new HeuristicCallback(env, this,
-                                 new routing::Generator(new CVRPTW::Constructor, new CVRPTW::Destructor),
-                                 neighborhoods);
+        }
+        case Configuration::DestructionPolicy::SEQUENTIAL:{
+            neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
+            return new HeuristicCallback(env, this,
+                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor),
+                                         neighborhoods);
+
+        }
+    }
+
 }
 
 

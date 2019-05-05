@@ -21,7 +21,7 @@ namespace CVRPTW{
         virtual void update() override;
         virtual void addTour(routing::models::Tour *tour, unsigned long position) override;
         virtual unsigned long getNbTour() const  override { return tours.size();}
-
+        virtual void removeTour(unsigned long position);
         virtual routing::models::Solution *clone() const override;
         virtual routing::models::Tour *getTour(unsigned t) override;
 

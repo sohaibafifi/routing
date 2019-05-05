@@ -5,7 +5,7 @@
 #include "../../../routines/neighborhoods/IDCH.hpp"
 #include "../models/Solution.hpp"
 #include "../routines/operators/Constructor.hpp"
-#include "../routines/operators/Destructor.hpp"
+#include "../routines/operators/RandomDestructor.hpp"
 #include "../../../routines/operators/Constructor.hpp"
 #include "Checker.hpp"
 
@@ -28,12 +28,12 @@ namespace CVRP {
 
             virtual std::vector<routing::Neighborhood*> getNeighbors() {
                 std::vector<routing::Neighborhood*> neighbors{
-                    new routing::IDCH(new Constructor, new Destructor)
+                    new routing::IDCH(new Constructor, new RandomDestructor)
                 };
                 return neighbors;
             }
             virtual routing::Generator * getGenerator() {
-                return new routing::Generator(new Constructor, new Destructor);
+                return new routing::Generator(new Constructor, new RandomDestructor);
             }
 
             virtual CVRP::Checker * getChecker(){

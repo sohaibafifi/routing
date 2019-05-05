@@ -14,7 +14,13 @@ bool routing::Generator::generate(routing::models::Solution * solution)
         if(constructor->bestInsertion(solution)){
             return true;
         }else {
-            destructor->destruct(solution, solution->notserved.size() + 1);
+            switch (Configuration::destructionPolicy){
+                case Configuration::DestructionPolicy::RANDOM :{
+                    routing::RandomDestructionParameters* parameters = new routing::RandomDestructionParameters(solution->notserved.size() + 1);
+                    destructor->destruct(solution, parameters);
+                }
+            }
+
         }
     }
     return false;

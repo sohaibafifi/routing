@@ -3,6 +3,8 @@
 #include "Neighborhood.hpp"
 #include "../operators/Destructor.hpp"
 #include "../operators/Constructor.hpp"
+#include "../operators/RandomDestructionParameters.hpp"
+#include "../../Configurations.hpp"
 namespace routing {
     class Generator{
         public :

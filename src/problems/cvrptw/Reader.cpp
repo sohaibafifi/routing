@@ -3,7 +3,7 @@
 //
 
 #include "Reader.hpp"
-#include "../../Configurations.hpp"
+
 CVRPTW::Problem *CVRPTW::Reader::readFile(std::string filepath)
 {
     CVRPTW::Problem *problem = new CVRPTW::Problem();

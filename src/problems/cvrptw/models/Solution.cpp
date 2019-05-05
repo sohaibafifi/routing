@@ -129,8 +129,13 @@ void CVRPTW::Solution::addTour(routing::models::Tour *tour, unsigned long positi
     traveltime += static_cast<Tour*>( tour )->traveltime;
 }
 
+void CVRPTW::Solution::removeTour(unsigned long position)
+{
+    tours.erase(tours.begin() + position);
+}
 routing::models::Solution *CVRPTW::Solution::clone() const {
     return new Solution(*this);
 }
+
 
 

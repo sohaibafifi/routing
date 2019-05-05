@@ -251,10 +251,10 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/Decoder.hpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/Destructor.cpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/RandomDestructor.cpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/Destructor.hpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/routines/operators/RandomDestructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrp/solvers/Checker.cpp">
@@ -338,10 +338,16 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Constructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor.cpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/RandomDestructor.cpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor.hpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/RandomDestructor.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/SequentialDestructor.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/SequentialDestructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/Checker.cpp">
@@ -425,7 +431,16 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/Decoder.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/DestructionParameters.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/Destructor.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/RandomDestructionParameters.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/SequentialDestructionParameters.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/solvers/Checker.hpp">
