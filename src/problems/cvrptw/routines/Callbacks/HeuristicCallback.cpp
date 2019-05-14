@@ -22,7 +22,7 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
         case Configuration::DestructionPolicy::SEQUENTIAL:{
             neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
             return new HeuristicCallback(env, this,
-                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor),
+                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
                                          neighborhoods);
 
         }
