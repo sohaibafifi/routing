@@ -332,6 +332,12 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/Callbacks/HeuristicCallback.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/divers/Diver.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/divers/Diver.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Constructor.cpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -348,6 +354,12 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/SequentialDestructor.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/WorstDestructor.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/WorstDestructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/solvers/Checker.cpp">
@@ -404,6 +416,9 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/callbacks/UserCutCallback.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/divers/Diver.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/Generator.cpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -441,6 +456,9 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/SequentialDestructionParameters.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/WorstDestructionParameters.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/solvers/Checker.hpp">

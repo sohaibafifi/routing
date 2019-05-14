@@ -21,6 +21,6 @@ namespace routing {
             }
 
         private :
-            unsigned id;
+            unsigned int id;
     };
 }
