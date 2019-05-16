@@ -2,6 +2,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <ilcplex/ilocplexi.h>
+#include <map>
+
 #pragma GCC diagnostic pop
 #include "../../data/problem.hpp"
 #include "../neighborhoods/Generator.hpp"
@@ -9,6 +11,10 @@
 #include "../operators/Destructor.hpp"
 namespace routing
 {
+	//associate for each ClientID (i) the next ClientIDs (j) that can't follow it either
+	//because x_(ij) = 0 or there exists a ClientID (k) such that x_(ik) = 1
+	typedef std::map<unsigned int, std::vector<unsigned int>> forbiddenPositions;
+
 	namespace callback
     {
 		class HeuristicCallback
@@ -36,7 +42,10 @@ namespace routing
             IloCplex::CallbackI *duplicateCallback() const;
             models::Solution * solution;
             virtual void extractSolution();
-            bool InitialFound;
+			virtual routing::models::Solution* extractPartialSolution(routing::Problem* problem);
+			virtual routing::forbiddenPositions extractForbiddenPositions(routing::Problem* problem);
+
+			bool InitialFound;
             virtual void initSolution();
 
         };
