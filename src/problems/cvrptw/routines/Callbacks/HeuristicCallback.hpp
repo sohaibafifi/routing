@@ -25,6 +25,9 @@ namespace CVRPTW {
         Problem * problem; // avoid static_cast<Problem*>(problem)
         virtual void main() override;
         virtual void extractSolution() override;
+        virtual routing::models::Solution* extractPartialSolution(routing::Problem* problem) override;
+        virtual routing::forbiddenPositions extractForbiddenPositions(routing::Problem* problem) override;
+
         virtual void initSolution() override {
             solution = new Solution(problem);
         }

@@ -8,9 +8,7 @@
 namespace CVRPTW {
     class Diver: public routing::Diver {
     public:
-        virtual bool dive(routing::Problem* problem) override;
-        virtual routing::models::Solution* extractPartialSolution(routing::Problem* problem) override;
-        virtual routing::forbiddenPositions* extractForbiddenPositions(routing::Problem* problem) override;
+        virtual bool dive(routing::models::Solution* solution, routing::forbiddenPositions* fp ) override;
 
     };
 
