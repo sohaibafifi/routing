@@ -8,13 +8,21 @@
 #include "../data/models/Solution.hpp"
 
 namespace routing{
+
     class Checker {
         public:
-            virtual bool check(routing::models::Solution* solution) = 0;
+            Checker(routing::models::Solution* solution, std::ostream& out = std::cout) : solution(solution), out(out){}
+            virtual bool check() = 0 ;
+
+            routing::models::Solution* getSolution() const { return this->solution;}
+        protected:
+            routing::models::Solution* solution;
+            std::ostream& out = std::cout;
+
+
 
     };
 
 }
-
 
 #endif //HYBRID_CHECKER_HPP

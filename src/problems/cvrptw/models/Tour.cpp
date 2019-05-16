@@ -210,3 +210,55 @@ void CVRPTW::Tour::addClient(routing::models::Client *client, unsigned long posi
     // update the visit and the tour
 
 }
+
+
+routing::InsertionCost* CVRPTW::Tour::evaluateCompletion(routing::models::Client *client, unsigned long position,
+                                                         routing::forbiddenPositions* forbiddenPosition)
+{
+
+        //if the insertion position is not at the beginning,
+        //check if the client is not in the forbidden list of the previous client at (position - 1)
+        if(position != 0){
+            if(std::find((*forbiddenPosition)[clients[position-1]->getID()].begin(), (*forbiddenPosition)[clients[position-1]->getID()].end(),
+                         client->getID()) != (*forbiddenPosition)[clients[position-1]->getID()].end())
+            {
+                return new CVRPTW::InsertionCost(IloInfinity,false,IloInfinity);
+            }
+        }
+
+        //if the insertion position is not at the end,
+        //check if the client at position is not in the forbidden list of the client to insert
+        if(position != clients.size()){
+            if (std::find((*forbiddenPosition)[client->getID()].begin(), (*forbiddenPosition)[client->getID()].end(),
+                          clients[position]->getID()) != (*forbiddenPosition)[client->getID()].end())
+            {
+                return new CVRPTW::InsertionCost(IloInfinity,false,IloInfinity);
+            }
+        }
+
+
+    CVRPTW::InsertionCost* insertionCost = static_cast<CVRPTW::InsertionCost*>(evaluateInsertion(client,position));
+    return insertionCost;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

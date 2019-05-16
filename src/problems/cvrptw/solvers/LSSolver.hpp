@@ -9,15 +9,21 @@
 
 #include "../models/Solution.hpp"
 #include "../routines/operators/Constructor.hpp"
-#include "../routines/operators/Destructor.hpp"
+#include "../routines/operators/RandomDestructor.hpp"
+#include "../routines/operators/SequentialDestructor.hpp"
 #include "../../../solvers/LSSolver.hpp"
 #include "../../../routines/neighborhoods/IDCH.hpp"
-
+#include "Checker.hpp"
+#include "../../../Configurations.hpp"
 namespace CVRPTW{
     template <class Reader>
     class LSSolver: public routing::LSSolver<Reader> {
         public:
-            LSSolver(const std::string & p_inputFile, std::ostream& os  = std::cout) : routing::LSSolver<Reader>(p_inputFile,this->getGenerator(),this->getNeighbors(), os)
+            LSSolver(const std::string & p_inputFile, std::ostream& os  = std::cout) :
+                    routing::LSSolver<Reader>(p_inputFile,
+                              this->getGenerator(),
+                              this->getNeighbors(),
+                              os)
             {
 
             }
@@ -28,14 +34,41 @@ namespace CVRPTW{
             }
 
             virtual std::vector<routing::Neighborhood*> getNeighbors() {
-                std::vector<routing::Neighborhood*> neighbors{
-                        new routing::IDCH(new Constructor, new Destructor)
+                std::vector<routing::Neighborhood*> neighbors;
+                switch (Configuration::destructionPolicy)
+                {
+                    case Configuration::DestructionPolicy::RANDOM:{
+                        neighbors.push_back(new routing::IDCH(new Constructor, new RandomDestructor));
+                        break;
+                    }
+                    case Configuration::DestructionPolicy::SEQUENTIAL:{
+                        neighbors.push_back(new routing::IDCH(new Constructor, new SequentialDestructor));
+                        break;
+                    }
+
                 };
                 return neighbors;
             }
 
             virtual routing::Generator * getGenerator() {
-                return new routing::Generator(new Constructor, new Destructor);
+                switch (Configuration::destructionPolicy)
+                {
+                    case Configuration::DestructionPolicy::RANDOM:{
+                        return new routing::Generator(new Constructor, new RandomDestructor);
+                    }
+                    case Configuration::DestructionPolicy::SEQUENTIAL:{
+                        return new routing::Generator(new Constructor, new SequentialDestructor);
+                    }
+
+                };
+
+
+            }
+
+
+            virtual CVRPTW::Checker* getChecker() const {
+
+                return new CVRPTW::Checker(static_cast<CVRPTW::Solution*>(this->solution),this->os);
             }
     };
 }

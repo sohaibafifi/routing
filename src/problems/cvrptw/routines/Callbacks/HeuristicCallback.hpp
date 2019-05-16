@@ -8,7 +8,7 @@
 #include "../../../cvrp/routines/HeuristicCallback.hpp"
 #include "../../models/Problem.hpp"
 #include "../../models/Solution.hpp"
-
+#include "../../../../Utility.hpp"
 namespace CVRPTW {
     class HeuristicCallback
             : public CVRP::HeuristicCallback
@@ -23,6 +23,11 @@ namespace CVRPTW {
 
         }
         Problem * problem; // avoid static_cast<Problem*>(problem)
+        virtual void main() override;
+        virtual void extractSolution() override;
+        virtual routing::models::Solution* extractPartialSolution(routing::Problem* problem) override;
+        virtual routing::forbiddenPositions extractForbiddenPositions(routing::Problem* problem) override;
+
         virtual void initSolution() override {
             solution = new Solution(problem);
         }

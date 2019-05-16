@@ -5,10 +5,13 @@
 #ifndef HYBRID_TOUR_H
 #define HYBRID_TOUR_H
 
+#include <algorithm>
 #include "../../cvrp/models/Tour.hpp"
 #include "Problem.hpp"
 #include "Visit.hpp"
 #include "InsertionCost.hpp"
+#include "../../../routines/divers/Diver.hpp"
+
 namespace CVRPTW{
     struct Tour : public CVRP::Tour{
 
@@ -16,6 +19,7 @@ namespace CVRPTW{
         Tour(Problem * p_problem, unsigned vehicleID, std::vector<CVRPTW::Visit*> visits):
                 CVRP::Tour(p_problem, vehicleID), visits(visits){}
         virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
+        virtual routing::InsertionCost* evaluateCompletion(routing::models::Client *client, unsigned long position, routing::forbiddenPositions* forbiddenPosition);
         virtual routing::Duration evaluateRemove(unsigned long position) override;
         virtual void updateTimeVariablesAfterRemove(unsigned long position);
         virtual void removeClient(unsigned long position) override;

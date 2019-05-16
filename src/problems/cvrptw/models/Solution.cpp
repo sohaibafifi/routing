@@ -60,10 +60,9 @@ void CVRPTW::Solution::updateTimeVariables(routing::models::Tour *tour, unsigned
         //routing::Duration maxshift_k = visit->getMaxshift();
 
         visit->setWait(std::max(0.0, wait_k - shift_k));
-        shift_k = std::max(0.0,shift_j - wait_k);
+        shift_k = std::max(0.0,shift_k - wait_k);
         visit->setStart(visit->getStart()+shift_k);
         visit->setMaxshift(visit->getMaxshift()-shift_k);
-
     }
 
     //update maxshift for inserted client
@@ -130,8 +129,13 @@ void CVRPTW::Solution::addTour(routing::models::Tour *tour, unsigned long positi
     traveltime += static_cast<Tour*>( tour )->traveltime;
 }
 
+void CVRPTW::Solution::removeTour(unsigned long position)
+{
+    tours.erase(tours.begin() + position);
+}
 routing::models::Solution *CVRPTW::Solution::clone() const {
     return new Solution(*this);
 }
+
 
 

@@ -61,8 +61,8 @@ int main(int argc, char **argv)
         if (inputFile.find("/CVRP/") != std::string::npos)
             CVRP::LSSolver<CVRP::Reader>(inputFile,out).solve(timeout);
         if (inputFile.find("/CVRPTW/") != std::string::npos)
-            //routing::MIPSolver<CVRPTW::Reader>(inputFile,*config).solve(timeout);
-            CVRPTW::LSSolver<CVRPTW::Reader>(inputFile,out).solve(timeout);
+            routing::MIPSolver<CVRPTW::Reader>(inputFile,*config,out).solve(timeout);
+            //CVRPTW::LSSolver<CVRPTW::Reader>(inputFile,out).solve(timeout);
         if (inputFile.find("/TOPTW/") != std::string::npos)
             routing::MIPSolver<TOPTW::Reader>(inputFile, *config,out).solve(timeout);
         if (inputFile.find("/VRPTWSyn/") != std::string::npos)
