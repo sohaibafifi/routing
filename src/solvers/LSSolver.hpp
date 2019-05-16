@@ -67,8 +67,7 @@ bool routing::LSSolver<Reader>::solve(double timeout)
               << "\t" << this->solution->getCost()
               << std::endl;
 
-    CVRPTW::Checker* checker = new CVRPTW::Checker(this->solution,this->os);
-    checker->check();
+
 
     for (auto i = 0; i <  this->solution->getNbTour() ; i++)
     {
@@ -79,7 +78,8 @@ bool routing::LSSolver<Reader>::solve(double timeout)
         }
         this->os << "\n" ;
     }
-
+    CVRPTW::Checker* checker = new CVRPTW::Checker(this->solution,this->os);
+    return checker->check();
 }
 template<class Reader>
 routing::LSSolver<Reader>::~LSSolver()

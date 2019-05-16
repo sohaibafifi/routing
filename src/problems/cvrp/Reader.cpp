@@ -64,7 +64,9 @@ CVRP::Problem *CVRP::Reader::readFile(std::string filepath)
             if (line.find("COMMENT") != std::string::npos) {
                 std::cout << line << std::endl;
             }
-            if (line.find("TYPE") != std::string::npos);
+            if (line.find("TYPE") != std::string::npos){
+
+            }
             if (line.find("DIMENSION") != std::string::npos) {
                 std::stringstream(line) >> dummy >> dummy >> nbClients;
                 nbClients--;
@@ -114,7 +116,9 @@ CVRP::Problem *CVRP::Reader::readFile(std::string filepath)
                 if (line.find("THREED_COORDS") != std::string::npos) node_coord_type = THREED_COORDS;
                 if (line.find("NO_COORDS") != std::string::npos) node_coord_type = NO_COORDS;
             }
-            if (line.find("DISPLAY_DATA_TYPE") != std::string::npos);
+            if (line.find("DISPLAY_DATA_TYPE") != std::string::npos){
+
+            }
             if (line.find("EOF") != std::string::npos) break;
             if (line.find("NODE_COORD_SECTION") != std::string::npos) {
                 if (node_coord_type == TWOD_COORDS) {
@@ -140,9 +144,15 @@ CVRP::Problem *CVRP::Reader::readFile(std::string filepath)
             if (line.find("EDGE_DATA_SECTION") != std::string::npos) {
 
             }
-            if (line.find("DISPLAY_DATA_SECTION") != std::string::npos);
-            if (line.find("FIXED_EDGES_SECTION") != std::string::npos);
-            if (line.find("TOUR_SECTION") != std::string::npos);
+            if (line.find("DISPLAY_DATA_SECTION") != std::string::npos){
+
+            }
+            if (line.find("FIXED_EDGES_SECTION") != std::string::npos){
+
+            }
+            if (line.find("TOUR_SECTION") != std::string::npos){
+
+            }
             if (line.find("EDGE_WEIGHT_SECTION") != std::string::npos) {
                 problem->setDepot(new Depot(1, 0, 0));
 
@@ -182,10 +192,8 @@ CVRP::Problem *CVRP::Reader::readFile(std::string filepath)
                                         problem->distances[j - 1][i - 1] = distances.front();
                                 distances.pop();
                             }
-                        };
-
+                        }
                     }
-
                 }
             }
 
