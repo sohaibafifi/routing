@@ -11,6 +11,9 @@
 #include "Solver.hpp"
 #include "../mtrand.hpp"
 #include "../Utility.hpp"
+
+#include "Checker.hpp"
+
 namespace routing{
 template <class Reader>
 class LSSolver : public Solver<Reader>
@@ -64,6 +67,9 @@ bool routing::LSSolver<Reader>::solve(double timeout)
               << "\t" << this->solution->getCost()
               << std::endl;
 
+    CVRPTW::Checker* checker = new CVRPTW::Checker(this->solution,this->os);
+    checker->check();
+
     for (auto i = 0; i <  this->solution->getNbTour() ; i++)
     {
         this->os << "Tour " << i << ":\t" ;
@@ -73,6 +79,7 @@ bool routing::LSSolver<Reader>::solve(double timeout)
         }
         this->os << "\n" ;
     }
+
 }
 template<class Reader>
 routing::LSSolver<Reader>::~LSSolver()

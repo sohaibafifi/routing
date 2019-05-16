@@ -54,9 +54,9 @@ CVRPTW::Problem *CVRPTW::Reader::readFile(std::string filepath)
         problem->distances_to_depots[0] = std::vector<routing::Duration>(nbClients);
         for (unsigned i = 0; i < nbClients; ++i) {
             problem->distances[i] = std::vector<routing::Duration>(nbClients);
-            problem->distances_to_depots[0][i] = floor(std::hypot(x[i] - problem->getDepot()->getX(), y[i] - problem->getDepot()->getY())*100)/100.0;
+            problem->distances_to_depots[0][i] = floor(std::hypot(x[i] - problem->getDepot()->getX(), y[i] - problem->getDepot()->getY())*Configuration::precision)/Configuration::precision;
             for (unsigned j = 0; j < nbClients; ++j)
-                problem->distances[i][j] = floor(std::hypot(x[i] - x[j], y[i] - y[j])*100)/100.0;
+                problem->distances[i][j] = floor(std::hypot(x[i] - x[j], y[i] - y[j])* Configuration::precision)/Configuration::precision;
         }
         return problem;
 

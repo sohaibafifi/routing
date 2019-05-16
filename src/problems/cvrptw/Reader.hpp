@@ -11,6 +11,7 @@
 #include "models/Client.hpp"
 #include "models/Depot.hpp"
 #include "../../data/attributes/Rendezvous.hpp"
+#include "../../Configurations.hpp"
 namespace CVRPTW{
     class Reader
             : public routing::Reader

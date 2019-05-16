@@ -4,6 +4,7 @@
 #include "../neighborhoods/Move.hpp"
 #include "../neighborhoods/IDCH.hpp"
 #include "../../mtrand.hpp"
+#include "../../problems/cvrptw/routines/divers/Diver.hpp"
 
 void routing::callback::HeuristicCallback::main()
 {
@@ -39,6 +40,14 @@ void routing::callback::HeuristicCallback::main()
 
 
     if (!hasIncumbent() || solution->getCost() < getIncumbentObjValue() - 1e-9) {
+        /*
+         * Trying to dive
+         */
+        solution = extractPartialSolution(problem);
+        routing::forbiddenPositions fp  = extractForbiddenPositions(problem);
+        CVRPTW::Diver* diver = new CVRPTW::Diver();
+        diver->dive(solution, &fp);
+
         IloNumVarArray vars(getEnv());
         IloNumArray vals(getEnv());
         solution->getVarsVals(vars, vals);
@@ -72,3 +81,12 @@ void routing::callback::HeuristicCallback::initSolution()
     throw new std::logic_error("Not implemented");
 }
 
+routing::models::Solution* routing::callback::HeuristicCallback::extractPartialSolution(routing::Problem* problem)
+{
+    throw new std::logic_error("Not implemented");
+}
+
+routing::forbiddenPositions routing::callback::HeuristicCallback::extractForbiddenPositions(routing::Problem *problem)
+{
+    throw new std::logic_error("Not implemented");
+}
