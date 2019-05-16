@@ -20,7 +20,6 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
 
     //loop at each unrouted client
     while (!solution->notserved.empty() && insertion_found) {
-
         unsigned best_t = 0, best_p = 0, best_client_i = 0;
         insertion_found = false;
         InsertionCost* bestCost = new InsertionCost( IloInfinity,true,IloInfinity);
@@ -34,8 +33,6 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
                 //foreach position
                 for (unsigned i = 0;
                      i <= int(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(r))->getNbClient()); ++i) {
-
-                    bool possible = true;
 
 
                     CVRPTW::InsertionCost* cost = static_cast<CVRPTW::InsertionCost*>(static_cast<Tour *>(static_cast<Solution *>(solution)->getTour(

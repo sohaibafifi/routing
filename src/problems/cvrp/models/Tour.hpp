@@ -20,7 +20,7 @@ namespace CVRP
             virtual routing::Duration evaluateRemove(unsigned long position) override;
             virtual void removeClient(unsigned long position) override;
             virtual routing::models::Client *getClient(unsigned long c) override;
-            virtual unsigned long getNbClient();
+            virtual unsigned long getNbClient() override;
             routing::Duration traveltime;
             routing::Demand consumption;
         protected:

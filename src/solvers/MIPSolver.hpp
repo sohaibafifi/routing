@@ -55,7 +55,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout)
     this->cplex.setParam(this->cplex.MIPDisplay, 1);
     this->cplex.setParam(this->cplex.TiLim, timeout);
     // this->model.exportModel(std::string(problem->getName() + ".lp").c_str());
-    this->cplex.solve();
+    bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
               << "\t" << this->cplex.getStatus( )
               << "\t" << this->cplex.getObjValue()
@@ -63,6 +63,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout)
               << "\t" << this->cplex.getMIPRelativeGap()
               << "\t" << this->cplex.getTime()
               << std::endl;
+    return solved;
 }
 
 template<class Reader>
