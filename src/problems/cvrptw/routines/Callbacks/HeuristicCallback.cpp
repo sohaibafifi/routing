@@ -2,6 +2,7 @@
 // Created by ali on 3/28/19.
 //
 
+
 #include "HeuristicCallback.hpp"
 #include "../operators/Constructor.hpp"
 #include "../operators/RandomDestructor.hpp"
@@ -41,8 +42,11 @@ void CVRPTW::HeuristicCallback::main()
 void CVRPTW::HeuristicCallback::extractSolution() {
     unsigned t = 0, last = 0;
     Tour * tour = new Tour(problem, t, static_cast<CVRPTW::Solution*>(solution)->visits);
+
     do {
         unsigned foundtime = 0;
+
+
         for (unsigned j = 0; j < problem->arcs.size(); ++j) {
             if (getIncumbentValue(problem->arcs[last][j]) >= 1 - 1e-6) {
                 if (last == 0 && foundtime < t) {
@@ -53,8 +57,10 @@ void CVRPTW::HeuristicCallback::extractSolution() {
                     solution->notserved.erase(std::remove(solution->notserved.begin(), solution->notserved.end(), static_cast<CVRPTW::Client *>(problem->clients[j - 1])),
                                               solution->notserved.end());
                     tour->pushClient(static_cast<CVRPTW::Client *>(problem->clients[j - 1]));
+
                 }
                 last = j;
+
                 break;
             }
         }
@@ -79,12 +85,31 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
 {
     CVRPTW::Solution* solution = new CVRPTW::Solution(static_cast<CVRPTW::Problem*>(problem));
 
-
+    solution->toRoute.clear();
     unsigned t = 0, last = 0;
+
+    /*std::ofstream outfile;
+    outfile.open("file.dat", std::ios::out);
+    */
+    /*for(auto i = 0 ; i < problem->arcs.size(); i++){
+        for(auto j = 0 ;  j < problem->arcs.size(); j++ ){
+           std::cout << std::setw(8) <<  getValue(problem->arcs[i][j]);
+        }
+        std::cout << std::endl;
+    }*/
+    std::vector<int> arcSet;
+    for(auto k = 0; k < problem->arcs.size(); ++k){
+        arcSet.push_back(k);
+    }
+
     Tour * tour = new Tour(static_cast<CVRPTW::Problem*>(problem), t, solution->visits);
+    unsigned int s_ = 1;
     do {
         unsigned foundtime = 0;
-        for (unsigned j = 0; j < problem->arcs.size(); ++j) {
+        s_ = 1;
+        unsigned k = 0;
+        while (k < arcSet.size()) {
+            unsigned j = arcSet[k];
             if (std::abs(getValue(problem->arcs[last][j])  - 1 ) <= Configuration::epsilon ) {
                 if (last == 0 && foundtime < t) {
                     foundtime++;
@@ -94,10 +119,32 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
                     solution->notserved.erase(std::remove(solution->notserved.begin(), solution->notserved.end(), static_cast<CVRPTW::Client *>(problem->clients[j - 1])),
                                               solution->notserved.end());
                     tour->pushClient(static_cast<CVRPTW::Client *>(problem->clients[j - 1]));
+                    arcSet.erase(std::remove(arcSet.begin(),arcSet.end(),j));
+                } else{
+                    k++;
                 }
+
                 last = j;
+                s_ = 1;
                 break;
+            }else{
+                if(std::abs(getValue(problem->arcs[last][j])) > Configuration::epsilon ){
+                    if (j != 0 ){
+                        arcSet.erase(std::remove(arcSet.begin(),arcSet.end(),j));
+                        solution->toRoute.push_back(static_cast<CVRPTW::Client *>(problem->clients[j - 1]));
+                    }
+                    last = 0;
+                    s_ = 1;
+                    k = 0;
+                    break;
+                }else {
+                    s_ ++;
+                    k++;
+                }
+
             }
+
+
         }
         if (last == 0) {
             t++;
@@ -106,7 +153,7 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
         }
 
     }
-    while (t < problem->vehicles.size() && solution->notserved.size() > 0);
+    while (t < problem->vehicles.size() && solution->notserved.size() > 0 && s_ < arcSet.size());
 
     solution->pushTour(tour);
     if(t == problem->vehicles.size()) delete tour;
@@ -115,6 +162,17 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
     while(solution->getNbTour() < problem->vehicles.size()) {
         solution->pushTour(new Tour(static_cast<CVRPTW::Problem*>(problem), solution->getNbTour(),solution->visits));
     }
+
+    /*std::cout << "Solution cost: " <<  solution->getCost() << std::endl;
+    for(auto i = 0; i < solution->getNbTour(); i++){
+        std::cout << "Tour " << i << ": ";
+        for(auto j = 0; j < solution->getTour(i)->getNbClient() ; j++ ){
+                std::cout << solution->getTour(i)->getClient(j)->getID() << "  ";
+
+        }
+        std::cout << std::endl;
+    }
+    */
     return solution;
 }
 
