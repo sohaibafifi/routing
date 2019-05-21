@@ -15,7 +15,7 @@ namespace routing {
                 Problem * getProblem();
 
                 std::vector<Client *> notserved;
-
+                std::vector<Client *> toRoute;
                 virtual double getCost() = 0;
                 virtual void update() = 0;
                 virtual void pushTour(Tour* tour) = 0;
