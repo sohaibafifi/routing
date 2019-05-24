@@ -11,8 +11,8 @@
 #include "../operators/Destructor.hpp"
 namespace routing
 {
-	//associate for each ClientID (i) the next ClientIDs (j) that can't follow it either
-	//because x_(ij) = 0 or there exists a ClientID (k) such that x_(ik) = 1
+	//associate for each ClientID (i) the next ClientIDs (j) that can't follow it
+	//because x_(ij) = 0
 	typedef std::map<unsigned int, std::vector<unsigned int>> forbiddenPositions;
 
 	namespace callback

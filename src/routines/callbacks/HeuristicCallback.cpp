@@ -22,7 +22,7 @@ void routing::callback::HeuristicCallback::main()
     if(quota == 0){ // if 0% of vars are set to one then construct a solution from scratch
         generator->generate(solution);
     }
-    else if ( quota <= 0.8 ){
+    else if ( quota <= 0.7 ){
         /*
          * Trying to dive
          */
