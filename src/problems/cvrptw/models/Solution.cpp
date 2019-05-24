@@ -53,17 +53,20 @@ void CVRPTW::Solution::updateTimeVariables(routing::models::Tour *tour, unsigned
     visit_of_inserted_client->setStart(start_inserted_client);
 
     // update start, maxshift and wait for clients after position
-    for(j=position+1; j< static_cast<Tour*>(tour)->getNbClient(); j++){
-        if(shift_k == 0) break;
-        Visit* visit = visits[static_cast<CVRPTW::Tour*>(tour)->getClient(j)->getID()];
-        routing::Duration wait_k = visit->getWait();
-        //routing::Duration maxshift_k = visit->getMaxshift();
+    if(position != tour->getNbClient() - 1){
+        for(j=position+1; j< static_cast<Tour*>(tour)->getNbClient(); j++){
+            if(shift_k == 0) break;
+            Visit* visit = visits[static_cast<CVRPTW::Tour*>(tour)->getClient(j)->getID()];
+            routing::Duration wait_k = visit->getWait();
+            //routing::Duration maxshift_k = visit->getMaxshift();
 
-        visit->setWait(std::max(0.0, wait_k - shift_k));
-        shift_k = std::max(0.0,shift_k - wait_k);
-        visit->setStart(visit->getStart()+shift_k);
-        visit->setMaxshift(visit->getMaxshift()-shift_k);
+            visit->setWait(std::max(0.0, wait_k - shift_k));
+            shift_k = std::max(0.0,shift_k - wait_k);
+            visit->setStart(visit->getStart()+shift_k);
+            visit->setMaxshift(visit->getMaxshift()-shift_k);
+        }
     }
+
 
     //update maxshift for inserted client
     routing::Duration maxshift_j = 0 , wait_j = 0;

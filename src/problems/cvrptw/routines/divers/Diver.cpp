@@ -19,7 +19,7 @@ bool CVRPTW::Diver::dive(routing::models::Solution* sol, routing::forbiddenPosit
     bool insertion_found = true;
 
     //loop at each unrouted client
-    while (!solution->toRoute.empty() && insertion_found) {
+    while (!solution->notserved.empty() && insertion_found) {
 
         unsigned best_t = 0, best_p = 0, best_client_i = 0;
         insertion_found = false;
@@ -27,8 +27,8 @@ bool CVRPTW::Diver::dive(routing::models::Solution* sol, routing::forbiddenPosit
         //InsertionCost* cost = new InsertionCost(std::numeric_limits<routing::Duration >::max(),true,std::numeric_limits<routing::Duration >::max());
         double shift_i = 0.0;
         //foreach client
-        for (unsigned cc = 0; cc < solution->toRoute.size(); ++cc) {
-            Client *client = static_cast<Client *>(solution->toRoute[cc]);
+        for (unsigned cc = 0; cc < solution->notserved.size(); ++cc) {
+            Client *client = static_cast<Client *>(solution->notserved[cc]);
             //foreach tour
             for (unsigned r = 0; r < static_cast<Solution *>(solution)->getNbTour(); ++r) {
                 //foreach position
@@ -59,7 +59,7 @@ bool CVRPTW::Diver::dive(routing::models::Solution* sol, routing::forbiddenPosit
 
             solution->getTour(best_t)->addClient(static_cast<Solution*>(solution)->notserved[best_client_i], best_p );
             solution->traveltime += bestCost->getDelta();
-            solution->toRoute.erase(static_cast<Solution*>(solution)->toRoute.begin() + best_client_i);
+            solution->notserved.erase(static_cast<Solution*>(solution)->notserved.begin() + best_client_i);
             solution->updateTimeVariables(static_cast<Solution*>(solution)->getTour(best_t),best_p,bestCost->getShift());
         }
 
