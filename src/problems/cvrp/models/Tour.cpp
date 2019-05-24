@@ -89,7 +89,9 @@ unsigned long CVRP::Tour::getNbClient()
 
 void CVRP::Tour::pushClient(routing::models::Client *client)
 {
-    this->addClient(client, getNbClient());
+    traveltime += static_cast<CVRP::InsertionCost*>(CVRP::Tour::evaluateInsertion(client, getNbClient()))->getDelta();
+    consumption += static_cast<Client*>(client)->getDemand();
+    clients.insert(clients.begin() + getNbClient(), static_cast<Client*>(client));
 }
 
 void CVRP::Tour::addClient(routing::models::Client *client, unsigned long position)

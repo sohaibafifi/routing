@@ -17,10 +17,11 @@ namespace Configuration{
 
         const int destruction_steps = 3;
 
-        const DestructionPolicy destructionPolicy = RANDOM;
+        const DestructionPolicy destructionPolicy = SEQUENTIAL;
         const DestructionPolicy destructionPolicyGenerator = RANDOM;
 
         const double epsilon = 1e-6;
+
 }
 
 

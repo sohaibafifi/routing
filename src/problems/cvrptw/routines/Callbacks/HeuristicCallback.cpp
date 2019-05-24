@@ -88,15 +88,7 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
     solution->toRoute.clear();
     unsigned t = 0, last = 0;
 
-    /*std::ofstream outfile;
-    outfile.open("file.dat", std::ios::out);
-    */
-    /*for(auto i = 0 ; i < problem->arcs.size(); i++){
-        for(auto j = 0 ;  j < problem->arcs.size(); j++ ){
-           std::cout << std::setw(8) <<  getValue(problem->arcs[i][j]);
-        }
-        std::cout << std::endl;
-    }*/
+
     std::vector<int> arcSet;
     for(auto k = 0; k < problem->arcs.size(); ++k){
         arcSet.push_back(k);
@@ -145,7 +137,7 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
             }
 
 
-        }
+        }//end while
         if (last == 0) {
             t++;
             solution->pushTour(tour);
@@ -163,19 +155,18 @@ routing::models::Solution* CVRPTW::HeuristicCallback::extractPartialSolution(rou
         solution->pushTour(new Tour(static_cast<CVRPTW::Problem*>(problem), solution->getNbTour(),solution->visits));
     }
 
-    /*std::cout << "Solution cost: " <<  solution->getCost() << std::endl;
-    for(auto i = 0; i < solution->getNbTour(); i++){
-        std::cout << "Tour " << i << ": ";
-        for(auto j = 0; j < solution->getTour(i)->getNbClient() ; j++ ){
-                std::cout << solution->getTour(i)->getClient(j)->getID() << "  ";
-
-        }
-        std::cout << std::endl;
-    }
-    */
     return solution;
 }
 
+
+/***
+ *
+ * @param problem
+ * @return forbiddenPositions
+ *
+ * this function tries to find for each position i, the position j that is set to one
+ * thus no insertion would be made possible between i and j
+ */
 routing::forbiddenPositions CVRPTW::HeuristicCallback::extractForbiddenPositions(routing::Problem* problem) {
     routing::forbiddenPositions fp;
 
@@ -185,16 +176,18 @@ routing::forbiddenPositions CVRPTW::HeuristicCallback::extractForbiddenPositions
 
 
     for(unsigned i = 1 ; i < problem->arcs.size(); ++i){
-        for (unsigned j = 1; j < problem->arcs.size(); ++j) {
-            if (i == j ) continue;
+        //if i is not the last client to route
+        if(std::abs(getValue(problem->arcs[i][0]) - 1) > Configuration::epsilon)
+        {
+            for (unsigned j = 1; j < problem->arcs.size(); ++j) {
+                if (i == j ) continue;
+                //if there can't be an arc between i and j then j is in the forbidden positions of i
+                if (std::abs(getValue(problem->arcs[i][j])) <= Configuration::epsilon)
+                {
+                    fp[problem->clients[i-1]->getID()].push_back(problem->clients[j-1]->getID());
+                }
 
-            if (  std::abs(getValue(problem->arcs[i][j]) - 1) <= Configuration::epsilon
-                  || std::abs(getValue(problem->arcs[i][j])) <= Configuration::epsilon
-               )
-            {
-                fp[problem->clients[i-1]->getID()].push_back(problem->clients[j-1]->getID());
             }
-
         }
     }
     return fp;

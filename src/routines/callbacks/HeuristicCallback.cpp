@@ -5,6 +5,7 @@
 #include "../neighborhoods/IDCH.hpp"
 #include "../../mtrand.hpp"
 #include "../../problems/cvrptw/routines/divers/Diver.hpp"
+#include "../../problems/cvrptw/routines/Callbacks/HeuristicCallback.hpp"
 
 #include <unistd.h>
 
@@ -13,40 +14,26 @@ void routing::callback::HeuristicCallback::main()
 
 
     double randomValue = static_cast<double>(rand())/RAND_MAX;
-    //static int numberofDivings = 1;
 
-    /*
-
-        int nbVarToOne = 0;
-        for(int i = 0; i < problem->arcs.size(); i++ ){
-            for(int j = 0; j < problem->arcs.size(); j++ ){
-                if(std::abs(getValue(problem->arcs[i][j])-1) < Configuration::epsilon){
-                    nbVarToOne++;
-                }
-            }
-        }
-
-        float q = (nbVarToOne *100.0 / (problem->clients.size() + solution->getNbTour()))/100;
-        std::cout << "q is equal to " << q << std::endl;
-    */
+    double quota = getVariableQuotaToOne();
 
 
-    if( randomValue <= 0.5 ){
+
+    if(quota == 0){ // if 0% of vars are set to one then construct a solution from scratch
+        generator->generate(solution);
+    }
+    else if ( quota <= 0.8 ){
         /*
          * Trying to dive
          */
-       solution = extractPartialSolution(problem);
 
-         if(solution->toRoute.empty()){
-             generator->generate(solution);
+        solution = extractPartialSolution(problem);
 
-         }else{
+        routing::forbiddenPositions fp  = extractForbiddenPositions(problem);
 
-             routing::forbiddenPositions fp  = extractForbiddenPositions(problem);
-             CVRPTW::Diver* diver = new CVRPTW::Diver();
-             diver->dive(solution, &fp);
+        CVRPTW::Diver* diver = new CVRPTW::Diver();
+        diver->dive(solution, &fp);
 
-         }
     }
     else{
         if (!hasIncumbent() ) {
@@ -102,6 +89,24 @@ void routing::callback::HeuristicCallback::main()
     }
 }
 
+
+double routing::callback::HeuristicCallback::getVariableQuotaToOne() {
+    int nbVarToOne = 0;
+    int numberOfTours = 0;
+    for(int i = 0; i < problem->arcs.size(); i++ ){
+        for(int j = 0; j < problem->arcs.size(); j++ ){
+            if(std::abs(getValue(problem->arcs[i][j])-1) < Configuration::epsilon){
+                if(i == 0 ) numberOfTours++;
+                nbVarToOne++;
+            }
+        }
+    }
+
+    double quota = (nbVarToOne *100.0 / (problem->clients.size() + numberOfTours))/100;
+    return quota;
+
+}
+
 IloCplex::CallbackI *routing::callback::HeuristicCallback::duplicateCallback() const
 {
     throw new std::logic_error("Not implemented");
@@ -126,3 +131,6 @@ routing::forbiddenPositions routing::callback::HeuristicCallback::extractForbidd
 {
     throw new std::logic_error("Not implemented");
 }
+
+
+

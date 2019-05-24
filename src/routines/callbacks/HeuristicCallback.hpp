@@ -44,7 +44,7 @@ namespace routing
             virtual void extractSolution();
 			virtual routing::models::Solution* extractPartialSolution(routing::Problem* problem);
 			virtual routing::forbiddenPositions extractForbiddenPositions(routing::Problem* problem);
-
+            double getVariableQuotaToOne();
 			bool InitialFound;
             virtual void initSolution();
 
