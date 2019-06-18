@@ -120,7 +120,7 @@ void CVRPTW::Solution::update()
 }
 
 
-routing::models::Tour *CVRPTW::Solution::getTour(unsigned t)
+routing::models::Tour *CVRPTW::Solution::getTour(unsigned t) const
 {
     return tours.at(t);
 }
@@ -137,8 +137,23 @@ void CVRPTW::Solution::removeTour(unsigned long position)
     tours.erase(tours.begin() + position);
 }
 routing::models::Solution *CVRPTW::Solution::clone() const {
-    return new Solution(*this);
-}
+    //return new Solution(*this);
+    Solution* solution = new Solution(static_cast<Problem*>(this->problem));
 
+    solution->tours.clear();
+    for (int i = 0; i < this->getNbTour(); ++i) {
+        solution->addTour(new Tour(*(static_cast<Tour*>(this->getTour(i)))),i);
+    }
+
+    solution->notserved.clear();
+    for (int j = 0; j < this->notserved.size(); ++j) {
+        Client* client = static_cast<Client*>(this->notserved[j]);
+        solution->notserved.push_back(new Client(*client));
+    }
+
+    solution->traveltime = this->traveltime;
+
+    return solution;
+}
 
 
