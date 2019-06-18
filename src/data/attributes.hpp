@@ -16,6 +16,7 @@ namespace routing {
     {
         public :
             EntityData(const V & p_val):val(p_val){}
+            EntityData(){}
             template<typename T> bool is() {return std::is_same<V, T>::value();}
             V getValue() const{ return val;}
         private :
@@ -26,6 +27,7 @@ namespace routing {
     {
         public :
             SolutionValue(const V & p_val):val(p_val){}
+            SolutionValue(){}
             template<typename T> bool is() {return std::is_same<V, T>::value();}
             V getValue() const{ return val;}
             void setValue(V v) { this->val = v;}
