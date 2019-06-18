@@ -16,6 +16,7 @@ namespace Configuration{
 
         const double precision = 10.0;
 
+        const double maxQuotaDiving  = 0.7;
         const int destruction_steps = 3;
 
         const DestructionPolicy destructionPolicy = NODST;
