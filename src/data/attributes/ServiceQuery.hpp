@@ -9,6 +9,7 @@ namespace routing {
         struct ServiceQuery
         {
                 ServiceQuery(const Duration & p_service):service(p_service){}
+                ServiceQuery(){}
                 EntityData<Duration> service;
                 Duration getService() const { return this->service.getValue();}
         };
