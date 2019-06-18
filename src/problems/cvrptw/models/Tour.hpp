@@ -18,6 +18,18 @@ namespace CVRPTW{
     public:
         Tour(Problem * p_problem, unsigned vehicleID, std::vector<CVRPTW::Visit*> visits):
                 CVRP::Tour(p_problem, vehicleID), visits(visits){}
+
+        Tour(const Tour& tour){
+            this->setID(tour.getID());
+            this->traveltime = tour.traveltime;
+            this->consumption = tour.consumption;
+            this->problem = tour.problem;
+            this->visits = tour.visits;
+            this->clients.clear();
+            for (int i = 0; i < tour.clients.size(); ++i) {
+                this->clients.push_back(new Client(*(static_cast<Client*>(tour.getClient(i)))));
+            }
+        }
         virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
         virtual routing::InsertionCost* evaluateCompletion(routing::models::Client *client, unsigned long position, routing::forbiddenPositions* forbiddenPosition);
         virtual routing::Duration evaluateRemove(unsigned long position) override;
