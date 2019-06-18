@@ -76,7 +76,7 @@ void CVRP::Tour::removeClient(unsigned long position)
     clients.erase(clients.begin() + position);
 }
 
-routing::models::Client *CVRP::Tour::getClient(unsigned long c)
+routing::models::Client *CVRP::Tour::getClient(unsigned long c) const
 {
     return clients[c];
 }

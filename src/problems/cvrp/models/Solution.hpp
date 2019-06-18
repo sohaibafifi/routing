@@ -31,7 +31,7 @@ namespace CVRP
             virtual routing::models::Solution * clone() const override;
             virtual void update() override;
 
-            virtual routing::models::Tour *getTour(unsigned t) override{return tours.at(t);}
+            virtual routing::models::Tour *getTour(unsigned t) const override{return tours.at(t);}
         protected :
             std::vector<Tour*> tours;
 
