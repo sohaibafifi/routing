@@ -356,6 +356,12 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/SequentialDestructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Shift.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Shift.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/WorstDestructor.cpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -438,6 +444,12 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/Neighborhood.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/Shift.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/Shift.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/Constructor.hpp">
