@@ -23,11 +23,13 @@ namespace CVRPTW{
         virtual unsigned long getNbTour() const  override { return tours.size();}
         virtual void removeTour(unsigned long position);
         virtual routing::models::Solution *clone() const override;
-        virtual routing::models::Tour *getTour(unsigned t) override;
+        virtual routing::models::Tour *getTour(unsigned t) const override;
 
         virtual void updateTimeVariables(routing::models::Tour *tour, unsigned int position, double shift_j);
+
     protected:
         std::vector<Tour*> tours;
+
     };
 
 }
