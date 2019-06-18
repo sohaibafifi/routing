@@ -10,14 +10,15 @@ namespace Configuration{
     enum DestructionPolicy{
             RANDOM,
             SEQUENTIAL,
-            WORST
+            WORST,
+            NODST //no destructor is used
     };
 
         const double precision = 10.0;
 
         const int destruction_steps = 3;
 
-        const DestructionPolicy destructionPolicy = SEQUENTIAL;
+        const DestructionPolicy destructionPolicy = NODST;
         const DestructionPolicy destructionPolicyGenerator = RANDOM;
 
         const double epsilon = 1e-6;
