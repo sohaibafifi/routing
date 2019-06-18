@@ -24,7 +24,7 @@ namespace routing {
                 virtual void getVarsVals(IloNumVarArray & vars, IloNumArray & vals) = 0;
                 virtual void print(std::ostream & out) = 0;
                 virtual models::Solution * clone() const = 0;
-                virtual routing::models::Tour * getTour(unsigned t) = 0;
+                virtual routing::models::Tour * getTour(unsigned t) const = 0;
         };
 
 
