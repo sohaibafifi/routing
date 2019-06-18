@@ -23,7 +23,7 @@ file(GLOB_RECURSE hybrid_SRC
         "src/**.hpp"
         "src/**.cpp"
         )
-add_executable(hybrid ${hybrid_SRC} )
+add_executable(hybrid ${hybrid_SRC} src/routines/neighborhoods/Shift.cpp src/routines/neighborhoods/Shift.hpp src/problems/cvrptw/routines/operators/Shift.cpp src/problems/cvrptw/routines/operators/Shift.hpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -pedantic")
 
