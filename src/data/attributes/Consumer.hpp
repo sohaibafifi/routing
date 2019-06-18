@@ -11,6 +11,7 @@ namespace routing {
         struct Consumer
         {
                 Consumer(const Demand & p_demand):demand(p_demand), consumption(0){}
+                Consumer(){}
                 EntityData<Demand> demand;
                 SolutionValue<Demand> consumption;
                 Demand getConsumption() const { return this->consumption.getValue();}

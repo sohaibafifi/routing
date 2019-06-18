@@ -9,13 +9,14 @@ namespace routing {
 
         struct Tour : public Model{
                 Tour(Problem * p_problem, unsigned vehicleID):problem(p_problem){setID(vehicleID);}
+                Tour(){}
             protected:
                 Problem * problem;
             public :
                 virtual void pushClient(Client* client) = 0;
                 virtual void addClient(Client* client, unsigned long position) = 0;
                 virtual void removeClient(unsigned long position) = 0;
-                virtual Client * getClient(unsigned long) = 0;
+                virtual Client * getClient(unsigned long) const = 0;
                 virtual unsigned long getNbClient() = 0;
 
                 virtual routing::InsertionCost* evaluateInsertion(Client *client, unsigned long position) = 0;
