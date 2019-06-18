@@ -9,6 +9,9 @@
 #include "../operators/SequentialDestructor.hpp"
 #include "../../../../routines/neighborhoods/IDCH.hpp"
 #include "../../../../Configurations.hpp"
+//#include "../../../../routines/neighborhoods/Shift.hpp"
+#include "../operators/Shift.hpp"
+
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
     std::vector<routing::Neighborhood*> neighborhoods;
@@ -28,6 +31,11 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
 
         }
     }
+
+    neighborhoods.push_back(new CVRPTW::Shift());
+    return new HeuristicCallback(env, this,
+                                 new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
+                                 neighborhoods);
 
 }
 

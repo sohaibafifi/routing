@@ -15,7 +15,7 @@ void routing::callback::HeuristicCallback::main()
 
     double randomValue = static_cast<double>(rand())/RAND_MAX;
 
-    double quota = getVariableQuotaToOne();
+    double quota = 1;// getVariableQuotaToOne();
 
 
 
