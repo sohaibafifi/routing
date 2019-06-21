@@ -11,6 +11,7 @@
 #include "../../../../Configurations.hpp"
 //#include "../../../../routines/neighborhoods/Shift.hpp"
 #include "../operators/Shift.hpp"
+#include "../operators/Swap.hpp"
 
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
@@ -32,7 +33,8 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
         }
     }
 
-    neighborhoods.push_back(new CVRPTW::Shift());
+    //neighborhoods.push_back(new CVRPTW::Shift());
+    neighborhoods.push_back(new CVRPTW::Swap());
     return new HeuristicCallback(env, this,
                                  new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
                                  neighborhoods);

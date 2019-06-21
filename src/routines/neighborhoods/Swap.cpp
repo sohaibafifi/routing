@@ -1,12 +1,12 @@
 //
-// Created by ali on 5/27/19.
+// Created by ali on 6/18/19.
 //
 
-#include "Shift.hpp"
+#include "Swap.hpp"
 #include <algorithm>
 
 
-/*
+
 void print(routing::models::Solution *solution){
     std::cout << "------------------------------"<<std::endl;
     for (int i = 0; i < solution->getNbTour(); ++i) {
@@ -18,13 +18,15 @@ void print(routing::models::Solution *solution){
         std::cout << std::endl;
     }
 }
-*/
 
-bool routing::Shift::look(routing::models::Solution *solution)
+
+bool routing::Swap::look(routing::models::Solution *solution)
 {
+
     //create a structure that contains the tour number and all its client positions
     std::vector<std::pair<int,int>> mappingTourPosition;
     routing::models::Solution *best = solution->clone();
+    //print(solution);
     bool improved = false;
 
     //init the structure
@@ -42,12 +44,16 @@ bool routing::Shift::look(routing::models::Solution *solution)
 
     int pairIndex = 0;
 
-    while ( pairIndex < mappingTourPosition.size()){
-
-        if(doShift(solution,mappingTourPosition[pairIndex])){
+    while (pairIndex < mappingTourPosition.size()){
+        if(doSwap(solution,mappingTourPosition[pairIndex])){
             //Check for solution improvement
+
             if(solution->getCost() < best->getCost() -  1e-9 ){
                 improved = true;
+                /*print(best);
+                print(solution);
+                std::cout << "Solution cost : " << solution->getCost() << std::endl;
+                */
                 return improved;
             }else
             {
@@ -62,14 +68,12 @@ bool routing::Shift::look(routing::models::Solution *solution)
         }
     }
 
-    return false;
 }
 
-bool routing::Shift::doShift(routing::models::Solution *solution, std::pair<int, int> tourPosition)
+
+
+bool routing::Swap::doSwap(routing::models::Solution *solution, std::pair<int, int> tourPosition)
 {
     throw new std::logic_error("Not implemented");
 }
-
-
-
 
