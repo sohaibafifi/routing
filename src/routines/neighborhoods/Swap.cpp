@@ -7,6 +7,8 @@
 
 
 
+/*
+
 void print(routing::models::Solution *solution){
     std::cout << "------------------------------"<<std::endl;
     for (int i = 0; i < solution->getNbTour(); ++i) {
@@ -18,6 +20,7 @@ void print(routing::models::Solution *solution){
         std::cout << std::endl;
     }
 }
+*/
 
 
 bool routing::Swap::look(routing::models::Solution *solution)
@@ -26,6 +29,8 @@ bool routing::Swap::look(routing::models::Solution *solution)
     //create a structure that contains the tour number and all its client positions
     std::vector<std::pair<int,int>> mappingTourPosition;
     routing::models::Solution *best = solution->clone();
+    routing::models::Solution *copy = solution->clone();
+
     //print(solution);
     bool improved = false;
 
@@ -45,28 +50,27 @@ bool routing::Swap::look(routing::models::Solution *solution)
     int pairIndex = 0;
 
     while (pairIndex < mappingTourPosition.size()){
-        if(doSwap(solution,mappingTourPosition[pairIndex])){
+        if(doSwap(copy,mappingTourPosition[pairIndex])){
             //Check for solution improvement
-
-            if(solution->getCost() < best->getCost() -  1e-9 ){
+            if(copy->getCost() < best->getCost() -  1e-9 ){
+                std::cout << "Copy cost is " << copy->getCost() << "Its address is " << copy  << std::endl;
+                solution->update(copy);
                 improved = true;
-                /*print(best);
-                print(solution);
-                std::cout << "Solution cost : " << solution->getCost() << std::endl;
-                */
                 return improved;
             }else
             {
                 //backup solution to its original form
-                solution = best->clone();
+                copy = best->clone();
                 pairIndex++;
             }
         }
         else{
-            solution = best->clone();
+            copy = best->clone();
             pairIndex++;
         }
     }
+
+    return false;
 
 }
 
