@@ -37,7 +37,7 @@ bool CVRP::Decoder::decode(const std::vector<routing::models::Client *> & p_sequ
                 static_cast<Solution*>(solution)->getTour(best_t)->addClient(sequence[best_client_i], best_p );
                 static_cast<Solution*>(solution)->traveltime += bestCost->getDelta();
                 static_cast<Solution*>(solution)->notserved.erase(sequence.begin() + best_client_i);
-                static_cast<Solution*>(solution)->update();
+
             }
         }
     }

@@ -22,7 +22,7 @@ void CVRP::RandomDestructor::destruct(routing::models::Solution *solution, routi
         static_cast<Solution*>(solution)->traveltime = static_cast<Solution*>(solution)->traveltime
                                                        - traveltime
                                                        + static_cast<Tour*>(solution->getTour(t))->traveltime;
-        solution->update();
+
     }
     while (static_cast<Solution*>(solution)->notserved.size() < drem);
 
