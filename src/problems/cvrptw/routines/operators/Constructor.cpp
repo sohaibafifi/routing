@@ -57,7 +57,6 @@ bool CVRPTW::Constructor::bestInsertion(routing::models::Solution *solution) {
             static_cast<Solution*>(solution)->getTour(best_t)->addClient(static_cast<Solution*>(solution)->notserved[best_client_i], best_p );
             static_cast<Solution*>(solution)->traveltime += bestCost->getDelta();
             static_cast<Solution*>(solution)->notserved.erase(static_cast<Solution*>(solution)->notserved.begin() + best_client_i);
-            static_cast<Solution*>(solution)->update();
             static_cast<Solution*>(solution)->updateTimeVariables(static_cast<Solution*>(solution)->getTour(best_t),best_p,bestCost->getShift());
         }
 

@@ -12,10 +12,12 @@ bool CVRPTW::Swap::look(routing::models::Solution *solution) {
 
 bool CVRPTW::Swap::doSwap(routing::models::Solution *solution, std::pair<int, int> tourPosition)
 {
+
     CVRPTW::Solution* sol = static_cast<CVRPTW::Solution*>(solution);
 
     //backup before removal, if no changes can be operated to solution use this backup before leaving
-    CVRPTW::Solution* backupSolution_ = static_cast<CVRPTW::Solution*>(sol->clone());
+    //CVRPTW::Solution* backupSolution_ = static_cast<CVRPTW::Solution*>(sol->clone());
+
     CVRPTW::Tour* bTour = new Tour(*static_cast<CVRPTW::Tour*>(sol->getTour(tourPosition.first)));
     CVRPTW::Client* client = static_cast<CVRPTW::Client*>(static_cast<CVRPTW::Tour*>(sol->getTour(tourPosition.first))->getClient(tourPosition.second));
 
@@ -25,7 +27,7 @@ bool CVRPTW::Swap::doSwap(routing::models::Solution *solution, std::pair<int, in
     sol->traveltime = sol->traveltime - traveltime + static_cast<CVRPTW::Tour*>(sol->getTour(tourPosition.first))->traveltime;
 
     //keep backup after client removal
-    CVRPTW::Solution* backupSolution = static_cast<CVRPTW::Solution*>(sol->clone());
+    //CVRPTW::Solution* backupSolution = static_cast<CVRPTW::Solution*>(sol->clone());
 
     //for each tour
     for (int i = 0; i < sol->getNbTour(); ++i) {
@@ -58,7 +60,6 @@ bool CVRPTW::Swap::doSwap(routing::models::Solution *solution, std::pair<int, in
                     sol->getTour(tourPosition.first)->addClient(clientToSwap,tourPosition.second);
                     sol->traveltime += costSwap->getDelta();
                     sol->updateTimeVariables(sol->getTour(tourPosition.first),tourPosition.second,costSwap->getShift());
-
                     return true;
                 }
                 else
@@ -84,6 +85,7 @@ bool CVRPTW::Swap::doSwap(routing::models::Solution *solution, std::pair<int, in
     sol->removeTour(tourPosition.first);
     sol->addTour(new Tour(*bTour),tourPosition.second);
     //sol = new Solution(*backupSolution_);
+
     return false;
 
 
