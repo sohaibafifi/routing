@@ -70,8 +70,16 @@ routing::models::Solution *CVRP::Solution::clone() const{
     return new Solution(*this);
 }
 
-void CVRP::Solution::update()
+void CVRP::Solution::update(routing::models::Solution* copy )
 {
+    for(int i = 0 ; i < this->notserved.size(); i++){
+        this->notserved[i] = copy->notserved[i];
+    }
+    this->traveltime = static_cast<CVRP::Solution*>(copy)->traveltime;
+
+    for (int j = 0; j < this->tours.size(); ++j) {
+        this->tours[j] = static_cast<CVRP::Tour*>(copy->getTour(j));
+    }
 
 }
 

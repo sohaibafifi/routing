@@ -29,7 +29,7 @@ namespace CVRP
             virtual void print(std::ostream &out) override;
 
             virtual routing::models::Solution * clone() const override;
-            virtual void update() override;
+            virtual void update(routing::models::Solution* copy ) override;
 
             virtual routing::models::Tour *getTour(unsigned t) const override{return tours.at(t);}
         protected :
