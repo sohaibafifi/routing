@@ -17,7 +17,7 @@ namespace routing {
                 std::vector<Client *> notserved;
                 std::vector<Client *> toRoute;
                 virtual double getCost() = 0;
-                virtual void update() = 0;
+                virtual void update(routing::models::Solution* copy) = 0;
                 virtual void pushTour(Tour* tour) = 0;
                 virtual void addTour(Tour* tour, unsigned long position) = 0;
                 virtual unsigned long getNbTour() const = 0;
