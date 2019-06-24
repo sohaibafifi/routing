@@ -18,7 +18,7 @@ namespace CVRPTW{
         virtual void updateMaxShifts();
         virtual void print(std::ostream &out) override;
         std::vector<Visit *> visits;
-        virtual void update() override;
+        virtual void update(routing::models::Solution* copy ) override;
         virtual void addTour(routing::models::Tour *tour, unsigned long position) override;
         virtual unsigned long getNbTour() const  override { return tours.size();}
         virtual void removeTour(unsigned long position);

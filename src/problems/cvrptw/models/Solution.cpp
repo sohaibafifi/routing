@@ -114,8 +114,12 @@ void CVRPTW::Solution::print(std::ostream &out)
     }
 }
 
-void CVRPTW::Solution::update()
+void CVRPTW::Solution::update(routing::models::Solution* copy)
 {
+    CVRP::Solution::update(copy);
+    for (int j = 0; j < this->tours.size(); ++j) {
+        this->tours[j] = static_cast<CVRPTW::Tour*>(copy->getTour(j));
+    }
 
 }
 
