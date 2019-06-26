@@ -25,6 +25,7 @@ bool routing::Shift::look(routing::models::Solution *solution)
     //create a structure that contains the tour number and all its client positions
     std::vector<std::pair<int,int>> mappingTourPosition;
     routing::models::Solution *best = solution->clone();
+    routing::models::Solution *copy = solution->clone();
     bool improved = false;
 
     //init the structure
@@ -44,20 +45,21 @@ bool routing::Shift::look(routing::models::Solution *solution)
 
     while ( pairIndex < mappingTourPosition.size()){
 
-        if(doShift(solution,mappingTourPosition[pairIndex])){
+        if(doShift(copy,mappingTourPosition[pairIndex])){
             //Check for solution improvement
-            if(solution->getCost() < best->getCost() -  1e-9 ){
+            if(copy->getCost() < best->getCost() -  1e-9 ){
+                solution->update(copy);
                 improved = true;
                 return improved;
             }else
             {
                 //backup solution to its original form
-                solution = best->clone();
+                copy = best->clone();
                 pairIndex++;
             }
         }
         else{
-            solution = best->clone();
+            copy = best->clone();
             pairIndex++;
         }
     }
