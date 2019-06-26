@@ -2,6 +2,8 @@
 
 bool routing::IDCH::look(routing::models::Solution *solution)
 {
+/*
+
     //itermax is equal to the square of number of clients
     int itermax = solution->getProblem()->clients.size() * solution->getProblem()->clients.size();
     int iter = 0;
@@ -68,4 +70,5 @@ bool routing::IDCH::look(routing::models::Solution *solution)
 
     solution = best->clone();
     return improved;
+*/
 }

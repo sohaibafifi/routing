@@ -87,6 +87,9 @@ void routing::callback::HeuristicCallback::main()
         setSolution(vars, vals, getObjValue());
         vals.end(); vars.end();
     }
+    // reset heuristic callback to pick up another IDCH randomly
+    IloEnv env = getEnv();
+    problem->setHeuristicCallback(env);
 }
 
 

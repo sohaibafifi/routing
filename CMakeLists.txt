@@ -23,7 +23,7 @@ file(GLOB_RECURSE hybrid_SRC
         "src/**.hpp"
         "src/**.cpp"
         )
-add_executable(hybrid ${hybrid_SRC} src/routines/neighborhoods/Shift.cpp src/routines/neighborhoods/Shift.hpp src/problems/cvrptw/routines/operators/Shift.cpp src/problems/cvrptw/routines/operators/Shift.hpp src/routines/neighborhoods/Swap.cpp src/routines/neighborhoods/Swap.hpp src/problems/cvrptw/routines/operators/Swap.cpp src/problems/cvrptw/routines/operators/Swap.hpp)
+add_executable(hybrid ${hybrid_SRC} src/routines/neighborhoods/Shift.cpp src/routines/neighborhoods/Shift.hpp src/problems/cvrptw/routines/operators/Shift.cpp src/problems/cvrptw/routines/operators/Shift.hpp src/routines/neighborhoods/Swap.cpp src/routines/neighborhoods/Swap.hpp src/problems/cvrptw/routines/operators/Swap.cpp src/problems/cvrptw/routines/operators/Swap.hpp src/routines/neighborhoods/IDCH_TSPTWH.cpp src/routines/neighborhoods/IDCH_TSPTWH.hpp src/routines/neighborhoods/IDCH_Random.cpp src/routines/neighborhoods/IDCH_Random.hpp src/routines/neighborhoods/IDCH_Sequential.cpp src/routines/neighborhoods/IDCH_Sequential.hpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -pedantic")
 
