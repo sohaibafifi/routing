@@ -443,6 +443,24 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Random.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Random.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Seqential.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Seqential.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_TSPTWH.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_TSPTWH.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/Move.cpp">
 			<Option target="hybrid"/>
 		</Unit>

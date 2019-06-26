@@ -12,32 +12,32 @@
 //#include "../../../../routines/neighborhoods/Shift.hpp"
 #include "../operators/Shift.hpp"
 #include "../operators/Swap.hpp"
-
+#include "../../../../routines/neighborhoods/IDCH_Random.hpp"
+#include "../../../../routines/neighborhoods/IDCH_Sequential.hpp"
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
     std::vector<routing::Neighborhood*> neighborhoods;
-    switch(Configuration::destructionPolicy){
-        case Configuration::DestructionPolicy::RANDOM:{
-            neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::RandomDestructor));
-            return new HeuristicCallback(env, this,
-                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
-                                         neighborhoods);
+    double idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
+    idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
 
-        }
-        case Configuration::DestructionPolicy::SEQUENTIAL:{
-            neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
-            return new HeuristicCallback(env, this,
-                                         new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
-                                         neighborhoods);
-
-        }
+    if(idchChoiceProbability <= Configuration::idch_proba ){
+        neighborhoods.push_back(new routing::IDCH_Random(new CVRPTW::Constructor, new CVRPTW::RandomDestructor));
+    } else if(idchChoiceProbability <= 2 * Configuration::idch_proba){
+        neighborhoods.push_back(new routing::IDCH_Sequential(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
+    }else if(idchChoiceProbability <= 3 * Configuration::idch_proba) {
+        neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
     }
 
+
+
     //neighborhoods.push_back(new CVRPTW::Shift());
-    neighborhoods.push_back(new CVRPTW::Swap());
+    //neighborhoods.push_back(new CVRPTW::Swap());
+
     return new HeuristicCallback(env, this,
                                  new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),
                                  neighborhoods);
+
+
 
 }
 

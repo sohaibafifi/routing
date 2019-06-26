@@ -14,7 +14,8 @@ namespace routing {
 
             }
             virtual bool look(models::Solution *solution);
-        private:
+
+        protected:
             Constructor * constructor;
             Destructor * destructor;
     };
