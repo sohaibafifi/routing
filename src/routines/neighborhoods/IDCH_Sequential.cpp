@@ -32,9 +32,11 @@ bool routing::IDCH_Sequential::look(routing::models::Solution *solution)
             best = copy->clone();
             improved = true;
         }
-
-        start += length;
+        start += (length == 0)? 1: length;
         length++;
+
+        parameters->setLength(length);
+        parameters->setStartPosition(start);
 
     }
 

@@ -40,7 +40,7 @@ void CVRPTW::SequentialDestructor::destruct(routing::models::Solution *solution,
             unsigned long j = 0;
 
             while( j < length){
-                if(tour->getNbClient() == position){
+                if(tour->getNbClient() <= position){
                     Client * client = static_cast<Client*>(tour->getClient(0));
                     static_cast<Solution*>(solution)->notserved.push_back(client);
                     routing::Duration traveltime = tour->traveltime;
