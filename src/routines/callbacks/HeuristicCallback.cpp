@@ -6,6 +6,7 @@
 #include "../../mtrand.hpp"
 #include "../../problems/cvrptw/routines/divers/Diver.hpp"
 #include "../../problems/cvrptw/routines/Callbacks/HeuristicCallback.hpp"
+#include "../../problems/cvrptw/solvers/Checker.hpp"
 
 #include <unistd.h>
 
@@ -15,9 +16,7 @@ void routing::callback::HeuristicCallback::main()
 
     //double randomValue = static_cast<double>(rand())/RAND_MAX;
 
-    double quota = 1;// getVariableQuotaToOne();
-
-
+    double quota = 1; // getVariableQuotaToOne();
 
     if(quota <= Configuration::epsilon){ // if 0% of vars are set to one then construct a solution from scratch
         generator->generate(solution);
@@ -33,6 +32,9 @@ void routing::callback::HeuristicCallback::main()
 
         CVRPTW::Diver* diver = new CVRPTW::Diver();
         diver->dive(solution, &fp);
+        /*CVRPTW::Checker* checker = new CVRPTW::Checker(solution,std::cout);
+        checker->check();
+        */
 
     }
     else{
@@ -65,6 +67,9 @@ void routing::callback::HeuristicCallback::main()
             if(!improved) return;
         }
 
+        /*CVRPTW::Checker* checker = new CVRPTW::Checker(solution,std::cout);
+        checker->check();
+*/
     }
 
     //numberofDivings++;
@@ -77,6 +82,8 @@ void routing::callback::HeuristicCallback::main()
 
         for (unsigned i = 0; i < vars.getSize(); ++i) setBounds(vars[i], vals[i], vals[i]);
 
+        /*CVRPTW::Checker* checker = new CVRPTW::Checker(solution,std::cout);
+        checker->check();*/
         solve();
 
         if(hasIncumbent())
