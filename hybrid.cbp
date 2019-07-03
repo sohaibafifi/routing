@@ -344,6 +344,18 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Constructor.hpp">
 			<Option target="hybrid"/>
 		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Constructor_TSPTWH.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Constructor_TSPTWH.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor_TSPTWH.cpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/Destructor_TSPTWH.hpp">
+			<Option target="hybrid"/>
+		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/problems/cvrptw/routines/operators/RandomDestructor.cpp">
 			<Option target="hybrid"/>
 		</Unit>
@@ -449,10 +461,10 @@
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Random.hpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Seqential.cpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Sequential.cpp">
 			<Option target="hybrid"/>
 		</Unit>
-		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Seqential.hpp">
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_Sequential.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/neighborhoods/IDCH_TSPTWH.cpp">
@@ -498,6 +510,9 @@
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/SequentialDestructionParameters.hpp">
+			<Option target="hybrid"/>
+		</Unit>
+		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/TSPTWDestructionParameters.hpp">
 			<Option target="hybrid"/>
 		</Unit>
 		<Unit filename="/home/ali/Desktop/mc-routing/src/routines/operators/WorstDestructionParameters.hpp">
