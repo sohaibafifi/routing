@@ -53,7 +53,6 @@ bool routing::Swap::look(routing::models::Solution *solution)
         if(doSwap(copy,mappingTourPosition[pairIndex])){
             //Check for solution improvement
             if(copy->getCost() < best->getCost() -  1e-9 ){
-                std::cout << "Copy cost is " << copy->getCost() << "Its address is " << copy  << std::endl;
                 solution->update(copy);
                 improved = true;
                 return improved;
