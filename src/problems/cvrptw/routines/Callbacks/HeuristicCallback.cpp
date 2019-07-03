@@ -14,21 +14,22 @@
 #include "../operators/Swap.hpp"
 #include "../../../../routines/neighborhoods/IDCH_Random.hpp"
 #include "../../../../routines/neighborhoods/IDCH_Sequential.hpp"
+#include "../../../../routines/neighborhoods/IDCH_TSPTWH.hpp"
+
 routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloEnv &env)
 {
     std::vector<routing::Neighborhood*> neighborhoods;
     double idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
-    idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
+    idchChoiceProbability = 0.9; //static_cast<double>(rand())/RAND_MAX;
 
     if(idchChoiceProbability <= Configuration::idch_proba ){
         neighborhoods.push_back(new routing::IDCH_Random(new CVRPTW::Constructor, new CVRPTW::RandomDestructor));
     } else if(idchChoiceProbability <= 2 * Configuration::idch_proba){
         neighborhoods.push_back(new routing::IDCH_Sequential(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
-    }else if(idchChoiceProbability <= 3 * Configuration::idch_proba) {
-        neighborhoods.push_back(new routing::IDCH(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
     }
-
-
+    else if(idchChoiceProbability <= 3 * Configuration::idch_proba) {
+        neighborhoods.push_back(new routing::IDCH_TSPTWH(new CVRPTW::Constructor_TSPTWH, new CVRPTW::Destructor_TSPTWH));
+    }
 
     //neighborhoods.push_back(new CVRPTW::Shift());
     //neighborhoods.push_back(new CVRPTW::Swap());
