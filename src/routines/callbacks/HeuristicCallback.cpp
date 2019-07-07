@@ -16,7 +16,7 @@ void routing::callback::HeuristicCallback::main()
 
     //double randomValue = static_cast<double>(rand())/RAND_MAX;
 
-    double quota = 1; // getVariableQuotaToOne();
+    double quota = getVariableQuotaToOne();
 
     if(quota <= Configuration::epsilon){ // if 0% of vars are set to one then construct a solution from scratch
         generator->generate(solution);
