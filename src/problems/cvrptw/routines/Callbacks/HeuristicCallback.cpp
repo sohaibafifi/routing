@@ -20,7 +20,8 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
 {
     std::vector<routing::Neighborhood*> neighborhoods;
     double idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
-    idchChoiceProbability = 0.9; //static_cast<double>(rand())/RAND_MAX;
+    //idchChoiceProbability = static_cast<double>(rand())/RAND_MAX;
+
 
     if(idchChoiceProbability <= Configuration::idch_proba ){
         neighborhoods.push_back(new routing::IDCH_Random(new CVRPTW::Constructor, new CVRPTW::RandomDestructor));
@@ -31,8 +32,9 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
         neighborhoods.push_back(new routing::IDCH_TSPTWH(new CVRPTW::Constructor_TSPTWH, new CVRPTW::Destructor_TSPTWH));
     }
 
-    //neighborhoods.push_back(new CVRPTW::Shift());
-    //neighborhoods.push_back(new CVRPTW::Swap());
+
+    neighborhoods.push_back(new CVRPTW::Shift());
+    neighborhoods.push_back(new CVRPTW::Swap());
 
     return new HeuristicCallback(env, this,
                                  new routing::Generator(new CVRPTW::Constructor, new CVRPTW::RandomDestructor),

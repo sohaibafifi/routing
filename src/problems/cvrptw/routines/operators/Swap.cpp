@@ -83,7 +83,7 @@ bool CVRPTW::Swap::doSwap(routing::models::Solution *solution, std::pair<int, in
     }
     sol->traveltime -= static_cast<CVRPTW::Tour*>(sol->getTour(tourPosition.first))->traveltime;
     sol->removeTour(tourPosition.first);
-    sol->addTour(new Tour(*bTour),tourPosition.second);
+    sol->addTour(new Tour(*bTour),tourPosition.first);
     //sol = new Solution(*backupSolution_);
 
     return false;

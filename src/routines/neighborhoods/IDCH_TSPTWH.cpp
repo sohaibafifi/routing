@@ -55,6 +55,10 @@ bool routing::IDCH_TSPTWH::look(routing::models::Solution *solution)
         unsigned long end  = 2;
         toRouteClients.clear();
 
+        if(solution->getTour(i)->getNbClient() == 1){
+            run[i] = true;
+            continue;
+        }
 
         while (!run[i] && iter < itermax) {
             iter++;
