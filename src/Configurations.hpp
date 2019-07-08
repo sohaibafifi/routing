@@ -24,7 +24,7 @@ namespace Configuration{
 
         const double epsilon = 1e-6;
 
-        const double idch_proba = 0.333333333;
+        const double idch_proba = 0.5;
 
 }
 

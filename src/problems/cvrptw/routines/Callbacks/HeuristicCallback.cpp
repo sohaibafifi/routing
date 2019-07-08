@@ -28,10 +28,10 @@ routing::callback::HeuristicCallback *CVRPTW::Problem::setHeuristicCallback(IloE
     } else if(idchChoiceProbability <= 2 * Configuration::idch_proba){
         neighborhoods.push_back(new routing::IDCH_Sequential(new CVRPTW::Constructor, new CVRPTW::SequentialDestructor));
     }
-    else if(idchChoiceProbability <= 3 * Configuration::idch_proba) {
+    /*else if(idchChoiceProbability <= 3 * Configuration::idch_proba) {
         neighborhoods.push_back(new routing::IDCH_TSPTWH(new CVRPTW::Constructor_TSPTWH, new CVRPTW::Destructor_TSPTWH));
     }
-
+*/
 
     neighborhoods.push_back(new CVRPTW::Shift());
     neighborhoods.push_back(new CVRPTW::Swap());
