@@ -39,7 +39,7 @@ routing::InsertionCost* CVRP::Tour::evaluateInsertion(routing::models::Client *c
     return cost;
 }
 
-routing::Duration CVRP::Tour::evaluateRemove(unsigned long position)
+routing::RemoveCost* CVRP::Tour::evaluateRemove(unsigned long position)
 {
     Client * client = clients[position];
     routing::Duration delta = 0;
@@ -66,13 +66,13 @@ routing::Duration CVRP::Tour::evaluateRemove(unsigned long position)
                     + problem->getDistance(*clients[position - 1], *clients[position + 1]);
         }
     }
-    return delta;
+    return new RemoveCost(delta);
 }
 
 void CVRP::Tour::removeClient(unsigned long position)
 {
     consumption -= clients[position]->getDemand();
-    traveltime += this->evaluateRemove(position);
+    traveltime += static_cast<CVRP::RemoveCost*>(this->evaluateRemove(position))->getDelta();
     clients.erase(clients.begin() + position);
 }
 

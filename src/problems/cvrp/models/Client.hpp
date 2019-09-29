@@ -15,6 +15,5 @@ namespace CVRP
             {
                 this->setID(id);
             }
-            Client(){}
     };
 }

@@ -45,6 +45,10 @@ namespace CVRPTW{
                         neighbors.push_back(new routing::IDCH(new Constructor, new SequentialDestructor));
                         break;
                     }
+                    case Configuration::DestructionPolicy::NODST:{
+                        neighbors.push_back(new routing::IDCH(new Constructor, new routing::dummyDestructor()));
+                        break;
+                    }
 
                 };
                 return neighbors;
@@ -58,6 +62,9 @@ namespace CVRPTW{
                     }
                     case Configuration::DestructionPolicy::SEQUENTIAL:{
                         return new routing::Generator(new Constructor, new SequentialDestructor);
+                    }
+                    case Configuration::DestructionPolicy::NODST:{
+                        return new routing::Generator(new Constructor, new routing::dummyDestructor());
                     }
 
                 };
