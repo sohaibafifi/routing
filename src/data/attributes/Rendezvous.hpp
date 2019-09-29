@@ -13,9 +13,9 @@ namespace routing {
         struct Rendezvous
         {
                 Rendezvous(const TW & timewindow):tw(timewindow){}
-                Rendezvous(){}
                 EntityData<TW> tw;
 
+                TW getTw() const { return tw.getValue(); }
                 Duration getTwOpen()  const { return this->tw.getValue().first;}
                 Duration getTwClose() const { return this->tw.getValue().second;}
                 Duration getEST()  const { return this->getTwOpen();}

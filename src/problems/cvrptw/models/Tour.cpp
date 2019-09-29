@@ -107,7 +107,7 @@ routing::InsertionCost* CVRPTW::Tour::evaluateInsertion(routing::models::Client 
 
 }
 
-routing::Duration CVRPTW::Tour::evaluateRemove(unsigned long position){
+routing::RemoveCost* CVRPTW::Tour::evaluateRemove(unsigned long position){
      return CVRP::Tour::evaluateRemove(position);
 
 }

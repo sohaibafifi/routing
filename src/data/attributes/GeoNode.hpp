@@ -13,7 +13,6 @@ namespace routing {
         struct GeoNode
         {
                 GeoNode(const Duration & p_x, const Duration & p_y):x(p_x), y(p_y){}
-                GeoNode(){}
                 EntityData<Duration> x;
                 Duration getX()  const { return this->x.getValue();}
                 EntityData<Duration> y;

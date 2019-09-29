@@ -28,13 +28,12 @@ namespace CVRPTW {
                 routing::attributes::ServiceQuery(service) {
         }
 
-        Client(const Client& client){
-            this->setID(client.getID());
-            this->demand = client.getDemand();
-            this->service = client.getService();
-            this->tw = client.tw;
-            this->x = client.getX();
-            this->y = client.getY();
+        Client(const Client& client):
+            CVRP::Client(client.getID(), client.getDemand(), client.getX(), client.getY()),
+            routing::attributes::Rendezvous(client.getTw()),
+            routing::attributes::ServiceQuery(client.getService()){
+
+
         }
 
     };

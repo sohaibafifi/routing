@@ -4,6 +4,7 @@
 #include "../Problem.hpp"
 #include "Client.hpp"
 #include "InsertionCost.hpp"
+#include "RemoveCost.hpp"
 
 namespace CVRP
 {
@@ -18,7 +19,7 @@ namespace CVRP
             virtual void pushClient(routing::models::Client *client) override;
             virtual void addClient(routing::models::Client *client, unsigned long position) override;
             virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
-            virtual routing::Duration evaluateRemove(unsigned long position) override;
+            virtual routing::RemoveCost* evaluateRemove(unsigned long position) override;
             virtual void removeClient(unsigned long position) override;
             virtual routing::models::Client *getClient(unsigned long c) const override;
             virtual unsigned long getNbClient() override;

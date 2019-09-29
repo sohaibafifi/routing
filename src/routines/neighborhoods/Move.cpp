@@ -8,11 +8,11 @@ bool routing::Move::look(routing::models::Solution *solution)
     // in each tour we look for the best remove and try to insert it into the best position
     for (int t = 0; t < solution->getNbTour(); ++t) {
         if(solution->getTour(t)->getNbClient() == 0 ) continue;
-        routing::Duration bestRemove = solution->getTour(t)->evaluateRemove(0);
+        routing::RemoveCost * bestRemove = solution->getTour(t)->evaluateRemove(0);
         unsigned bestRemove_position = 0;
         for (int p = 1; p < solution->getTour(t)->getNbClient(); ++p) {
-            routing::Duration cost  = solution->getTour(t)->evaluateRemove(p);
-            if(bestRemove < cost){
+            routing::RemoveCost* cost  = solution->getTour(t)->evaluateRemove(p);
+            if(&bestRemove < &cost){
                 bestRemove_position = p;
                 bestRemove = cost;
             }

@@ -32,7 +32,7 @@ namespace CVRPTW{
         }
         virtual routing::InsertionCost* evaluateInsertion(routing::models::Client *client, unsigned long position) override;
         virtual routing::InsertionCost* evaluateCompletion(routing::models::Client *client, unsigned long position, routing::forbiddenPositions* forbiddenPosition);
-        virtual routing::Duration evaluateRemove(unsigned long position) override;
+        virtual routing::RemoveCost* evaluateRemove(unsigned long position) override;
         virtual void updateTimeVariablesAfterRemove(unsigned long position);
         virtual void removeClient(unsigned long position) override;
         virtual void addClient(routing::models::Client *client, unsigned long position) override;
