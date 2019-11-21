@@ -30,10 +30,11 @@ namespace routing {
             virtual void main() {
                 getEnv().out() << "Incumbent found of value " << getObjValue() << std::endl;
                 extractIncumbentSolution();
-                solution->print(getEnv().out());
+                if(solution != nullptr)
+                    solution->print(getEnv().out());
             }
 
-            models::Solution *solution;
+            models::Solution *solution = nullptr;
 
             IloCplex::CallbackI *duplicateCallback() const {
                 throw new std::logic_error("Not implemented");

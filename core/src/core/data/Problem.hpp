@@ -79,13 +79,13 @@ namespace routing {
             this->addObjective();
             return this->model;
         }
+        std::string name;
 
     protected:
         virtual void addVariables() = 0;
 
         virtual void addConstraints() = 0;
 
-        std::string name;
 
         virtual void addObjective() = 0;
     };

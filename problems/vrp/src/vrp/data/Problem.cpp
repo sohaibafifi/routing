@@ -4,14 +4,17 @@
 
 
 #include "Problem.hpp"
+#include "Depot.hpp"
 #include <utilities/Utilities.hpp>
+#include <core/routines/callbacks.hpp>
+
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
     return nullptr;
 }
 
 routing::callback::IncumbentCallback *vrp::Problem::setIncumbentCallback(IloEnv &env) {
-    return nullptr;
+    return new routing::callback::IncumbentCallback(env, this);
 }
 
 routing::callback::UserCutCallback *vrp::Problem::setUserCutCallback(IloEnv &env) {
@@ -149,14 +152,4 @@ void vrp::Problem::addTotalDistanceObjective() {
         }
     }
     model.add(IloMinimize(model.getEnv(), obj));
-}
-
-void vrp::Problem::setDepot(routing::models::Depot *depot) {
-    depots.clear();
-    depots.push_back(depot);
-}
-
-routing::models::Depot *vrp::Problem::getDepot() {
-    return depots[0];
-
 }

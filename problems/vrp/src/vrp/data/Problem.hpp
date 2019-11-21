@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/data/Problem.hpp>
-
+#include "Depot.hpp"
 namespace vrp {
     class Problem : public routing::Problem {
     public:
@@ -30,9 +30,15 @@ namespace vrp {
         std::vector<IloNumVar> order;
         std::vector<std::vector<routing::Duration> > distances, distances_to_depots;
 
-        routing::models::Depot *getDepot();
+        virtual models::Depot *getDepot(){
+            return dynamic_cast<models::Depot *>(depots[0]);
+        }
 
-        void setDepot(routing::models::Depot *);
+
+        virtual void setDepot(models::Depot *depot) {
+            depots.clear();
+            depots.push_back(depot);
+        }
 
     protected:
         virtual void addVariables() override;

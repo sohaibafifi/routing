@@ -28,7 +28,9 @@ add_subdirectory(utilities)
 target_include_directories(routing PUBLIC utilities/src/)
 
 add_subdirectory(problems/vrp)
+add_subdirectory(problems/cvrp)
 target_include_directories(routing PUBLIC problems/vrp/src/)
+target_include_directories(routing PUBLIC problems/cvrp/src/)
 
 target_include_directories(routing PUBLIC core/src/)
 
@@ -39,6 +41,7 @@ target_include_directories(routing PUBLIC ${CPLEX_STUDIO_DIR}/cpoptimizer/includ
 target_compile_definitions(routing PRIVATE IL_STD)
 target_link_libraries(routing PUBLIC utilities)
 target_link_libraries(routing PUBLIC vrp)
+target_link_libraries(routing PUBLIC cvrp)
 target_link_libraries(routing PUBLIC dl)
 target_link_libraries(routing PUBLIC cp)
 target_link_libraries(routing PUBLIC ilocplex)
