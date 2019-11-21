@@ -26,7 +26,9 @@ template<class Reader>
 routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostream &os):Solver<Reader>(
         p_inputFile) {
     this->model = this->problem->generateModel(this->env);
+
     this->cplex = IloCplex(this->model);
+    this->cplex.exportModel("model.lp");
     std::vector<IloCplex::CallbackI *> callbacks = std::vector<IloCplex::CallbackI *>();
     callbacks.push_back(this->problem->setHeuristicCallback(this->env));
     callbacks.push_back(this->problem->setUserCutCallback(this->env));
@@ -46,7 +48,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.HeurFreq, 0);
     this->cplex.setParam(this->cplex.PreInd, 0);
-    this->cplex.setParam(this->cplex.MIPDisplay, 1);
+    this->cplex.setParam(this->cplex.MIPDisplay, 4);
     this->cplex.setParam(this->cplex.TiLim, timeout);
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
