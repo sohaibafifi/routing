@@ -52,7 +52,7 @@ namespace routing {
                         bool improved = false;
                         std::vector<bool> run(neighbors.size(), false);
                         while (std::find(run.begin(), run.end(), false) != run.end()) {
-                            unsigned i = 0;
+                            unsigned long i = 0;
                             do { i = rd() % run.size(); } while (run[i]);
 
                             if (neighbors[i]->look(solution)) {
@@ -69,7 +69,8 @@ namespace routing {
                     }
                 } else {
                     getEnv().out() << "Construct solution from scratch ... " << std::flush;
-                    if (!generator->generate(solution)) {
+                    this->solution = generator->generate();
+                    if (solution == nullptr) {
                         getEnv().out() << std::endl;
                         return;
                     }

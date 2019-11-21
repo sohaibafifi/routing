@@ -7,7 +7,7 @@ namespace routing {
     namespace models {
 
         struct Client : public Model {
-            Client(unsigned id) {
+            explicit Client(unsigned id) {
                 Model::setID(id);
             }
         };

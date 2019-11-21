@@ -15,8 +15,8 @@ namespace routing {
             Solution(Problem *p_problem) :
                     problem(p_problem),
                     notserved(std::vector<Client *>()) {
-                for (unsigned i = 0; i < problem->clients.size(); ++i) {
-                    notserved.push_back(problem->clients[i]);
+                for (unsigned i = 0; i < p_problem->clients.size(); ++i) {
+                    notserved.push_back(p_problem->clients[i]);
                 }
             }
 

@@ -30,7 +30,7 @@ namespace routing {
             virtual void main() {
                 getEnv().out() << "Incumbent found of value " << getObjValue() << std::endl;
                 extractIncumbentSolution();
-                if(solution != nullptr)
+                if (solution != nullptr)
                     solution->print(getEnv().out());
             }
 
