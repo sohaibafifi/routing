@@ -1,41 +1,47 @@
-cmake_minimum_required(VERSION 3.9)
-project(hybrid)
+cmake_minimum_required(VERSION 3.15)
+project(routing)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
+file(GLOB_RECURSE routing_SRC
+        "src/**.h"
+        "src/**.hpp"
+        "src/**.cpp"
+        )
+set(CMAKE_VERBOSE_MAKEFILE on)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CPLEX_STUDIO_DIR /Applications/CPLEX_Studio129/)
     set(CPLEX_STUDIO_ARCH x86-64_osx)
-else()
+else ()
     set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio128)
     set(CPLEX_STUDIO_ARCH x86-64_linux)
-endif()
+endif ()
 
-set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -ffast-math")
-
 
 link_directories(${CPLEX_STUDIO_DIR}/concert/lib/${CPLEX_STUDIO_ARCH}/static_pic)
 link_directories(${CPLEX_STUDIO_DIR}/cplex/lib/${CPLEX_STUDIO_ARCH}/static_pic)
 link_directories(${CPLEX_STUDIO_DIR}/cpoptimizer/lib/${CPLEX_STUDIO_ARCH}/static_pic)
 
-file(GLOB_RECURSE hybrid_SRC
-        "src/**.h"
-        "src/**.hpp"
-        "src/**.cpp"
-        )
-add_executable(hybrid ${hybrid_SRC} src/routines/neighborhoods/Shift.cpp src/routines/neighborhoods/Shift.hpp src/problems/cvrptw/routines/operators/Shift.cpp src/problems/cvrptw/routines/operators/Shift.hpp src/routines/neighborhoods/Swap.cpp src/routines/neighborhoods/Swap.hpp src/problems/cvrptw/routines/operators/Swap.cpp src/problems/cvrptw/routines/operators/Swap.hpp src/routines/neighborhoods/IDCH_TSPTWH.cpp src/routines/neighborhoods/IDCH_TSPTWH.hpp src/routines/neighborhoods/IDCH_Random.cpp src/routines/neighborhoods/IDCH_Random.hpp src/routines/neighborhoods/IDCH_Sequential.cpp src/routines/neighborhoods/IDCH_Sequential.hpp src/problems/cvrptw/routines/operators/Constructor_TSPTWH.cpp src/problems/cvrptw/routines/operators/Constructor_TSPTWH.hpp src/problems/cvrptw/routines/operators/Destructor_TSPTWH.cpp src/problems/cvrptw/routines/operators/Destructor_TSPTWH.hpp src/routines/operators/TSPTWDestructionParameters.hpp)
+add_executable(routing ${routing_SRC})
+add_subdirectory(utilities)
+target_include_directories(routing PUBLIC utilities/src/)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -pedantic")
+add_subdirectory(problems/vrp)
+target_include_directories(routing PUBLIC problems/vrp/src/)
 
-target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)
-target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/cplex/include)
-target_include_directories(hybrid PUBLIC ${CPLEX_STUDIO_DIR}/cpoptimizer/include)
-target_link_libraries(hybrid PUBLIC dl)
-target_link_libraries(hybrid PUBLIC cp)
-target_link_libraries(hybrid PUBLIC ilocplex)
-target_link_libraries(hybrid PUBLIC cplex)
-target_link_libraries(hybrid PUBLIC concert)
-target_link_libraries(hybrid PUBLIC pthread)
-target_compile_definitions(hybrid PRIVATE _DOUBLE)
-target_compile_definitions(hybrid PRIVATE IL_STD)
-target_compile_definitions(hybrid PRIVATE MIPSOLVER)
+target_include_directories(routing PUBLIC core/src/)
+
+
+target_include_directories(routing PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)
+target_include_directories(routing PUBLIC ${CPLEX_STUDIO_DIR}/cplex/include)
+target_include_directories(routing PUBLIC ${CPLEX_STUDIO_DIR}/cpoptimizer/include)
+target_compile_definitions(routing PRIVATE IL_STD)
+target_link_libraries(routing PUBLIC utilities)
+target_link_libraries(routing PUBLIC vrp)
+target_link_libraries(routing PUBLIC dl)
+target_link_libraries(routing PUBLIC cp)
+target_link_libraries(routing PUBLIC ilocplex)
+target_link_libraries(routing PUBLIC cplex)
+target_link_libraries(routing PUBLIC concert)
+target_link_libraries(routing PUBLIC pthread)
