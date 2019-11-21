@@ -12,7 +12,7 @@ namespace routing {
     class MIPSolver : public Solver<Reader> {
         IloEnv env;
         IloCplex cplex;
-        IloCplex model;
+        IloModel model;
     public:
         MIPSolver(const std::string &p_inputFile, std::ostream &os = std::cout);
 

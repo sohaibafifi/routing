@@ -13,8 +13,6 @@ namespace routing {
         struct Tour : public Model {
             Tour(Problem *p_problem, unsigned vehicleID) : problem(p_problem) { setID(vehicleID); }
 
-            Tour() {}
-
         protected:
             Problem *problem;
         public :

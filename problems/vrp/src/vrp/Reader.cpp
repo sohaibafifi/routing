@@ -4,8 +4,8 @@
 
 #include "Reader.hpp"
 
-#include "Client.hpp"
-#include "Depot.hpp"
+#include "models/Client.hpp"
+#include "models/Depot.hpp"
 #include <cmath>
 #include <random>
 
@@ -31,25 +31,28 @@ routing::Problem *vrp::Reader::readFile(std::string filepath) {
         problem->distances[i] = std::vector<routing::Duration>(problem->clients.size());
         problem->distances_to_depots[0][i] =
                 round(std::sqrt(
-                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() - problem->getDepot()->getX()) *
-                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() - problem->getDepot()->getX()) +
-                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() - problem->getDepot()->getY()) *
+                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
+                         problem->getDepot()->getX()) *
+                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
+                         problem->getDepot()->getX()) +
+                        (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() -
+                         problem->getDepot()->getY()) *
                         (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() - problem->getDepot()->getY())
 
                 ));
         for (unsigned j = 0; j < nbClients; ++j)
             problem->distances[i][j] =
                     round(std::sqrt(
-                    (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
-                     dynamic_cast<vrp::models::Client *>(problem->clients[j])->getX()) *
-                    (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
-                     dynamic_cast<vrp::models::Client *>(problem->clients[j])->getX()) +
-                    (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() -
-                     dynamic_cast<vrp::models::Client *>(problem->clients[j])->getY()) *
-                    (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() -
-                     dynamic_cast<vrp::models::Client *>(problem->clients[j])->getY())
+                            (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
+                             dynamic_cast<vrp::models::Client *>(problem->clients[j])->getX()) *
+                            (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getX() -
+                             dynamic_cast<vrp::models::Client *>(problem->clients[j])->getX()) +
+                            (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() -
+                             dynamic_cast<vrp::models::Client *>(problem->clients[j])->getY()) *
+                            (dynamic_cast<vrp::models::Client *>(problem->clients[i])->getY() -
+                             dynamic_cast<vrp::models::Client *>(problem->clients[j])->getY())
 
-            ));
+                    ));
     }
     return problem;
 }

@@ -16,7 +16,7 @@ namespace routing {
 
         std::string name;
 
-        virtual ~Model() {}
+        virtual ~Model() = default;
 
         inline bool operator==(const Model &other) {
             return other.getID() == this->getID();
@@ -29,4 +29,5 @@ namespace routing {
     private :
         unsigned int id;
     };
+
 }

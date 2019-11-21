@@ -79,6 +79,7 @@ namespace routing {
             this->addObjective();
             return this->model;
         }
+
         std::string name;
 
     protected:

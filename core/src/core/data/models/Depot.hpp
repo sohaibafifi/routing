@@ -7,7 +7,7 @@ namespace routing {
     namespace models {
 
         struct Depot : public Model {
-            Depot(unsigned id) {
+            explicit Depot(unsigned id) {
                 Model::setID(id);
             }
         };

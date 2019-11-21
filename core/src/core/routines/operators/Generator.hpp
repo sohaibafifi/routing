@@ -9,34 +9,39 @@
 namespace routing {
     class Generator {
     public :
-        Generator(Constructor *p_constructor, Destructor *p_destructor) :
+        Generator(Problem *p_problem, Constructor *p_constructor, Destructor *p_destructor) :
+                problem(p_problem),
                 constructor(p_constructor), destructor(p_destructor) {
 
         }
 
-        virtual bool generate(models::Solution *solution) {
+        virtual models::Solution *initialSolution() = 0;
+
+        virtual models::Solution *generate() {
+            models::Solution *solution = this->initialSolution();
             solution->notserved.clear();
-            for (unsigned long c = 0; c < solution->getProblem()->clients.size(); ++c) {
-                solution->notserved.push_back(solution->getProblem()->clients[c]);
+            for (unsigned long c = 0; c < problem->clients.size(); ++c) {
+                solution->notserved.push_back(problem->clients[c]);
             }
             std::random_device rd;
             std::default_random_engine g(rd());
             std::shuffle(solution->notserved.begin(), solution->notserved.end(), g);
             unsigned iter = 1;
-            while (iter < solution->getProblem()->clients.size()) {
+            while (iter < problem->clients.size()) {
                 if (constructor->bestInsertion(solution)) {
-                    return true;
+                    return solution;
                 } else {
                     iter++;
                     destructor->destruct(solution);
                 }
             }
-            return false;
+            return nullptr;
         }
 
-    private:
+    protected:
         Constructor *constructor;
         Destructor *destructor;
+        routing::Problem *problem;
     };
 
 }

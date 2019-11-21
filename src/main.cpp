@@ -1,7 +1,6 @@
 #include <iostream>
-#include <utilities/Utilities.hpp>
 #include <utilities/GetOpt_pp.hpp>
-#include <cvrp/data/Reader.hpp>
+#include <cvrp/Reader.hpp>
 #include <core/solvers/MIPSolver.hpp>
 
 int main(int argc, char **argv) {
@@ -13,5 +12,5 @@ int main(int argc, char **argv) {
     ops >> Utilities::GetOpt::Option( 't' , "timeout", timeout, timeout);
     routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
     mipSolver.solve(timeout);
-    return 0;
+    return EXIT_SUCCESS;
 }

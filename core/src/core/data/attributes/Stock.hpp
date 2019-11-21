@@ -10,9 +10,9 @@ namespace routing {
          * @brief
          */
         struct Stock {
-            Stock(const Capacity &p_capacity) : capacity(p_capacity) {}
+            explicit Stock(const Capacity &p_capacity) : capacity(p_capacity) {}
 
-            EntityData<Capacity> capacity;
+            EntityData <Capacity> capacity;
 
             Capacity getCapacity() const { return this->capacity.getValue(); }
         };
