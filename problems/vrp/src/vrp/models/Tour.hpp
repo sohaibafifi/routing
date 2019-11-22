@@ -90,7 +90,7 @@ namespace vrp {
                 routing::Duration delta = 0;
                 if (position == 0) {
                     if (position == clients.size() - 1) {
-                        delta = 2 * problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot());
+                        delta = - 2 * problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot());
                     } else {
                         delta = -problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot())
                                 - problem->getDistance(*client, *clients[position + 1])
