@@ -25,15 +25,11 @@ namespace vrp {
                     routing::InsertionCost *bestCost = new routing::InsertionCost(IloInfinity, true);
                     for (unsigned cc = 0; cc < solution->notserved.size(); ++cc) {
                         models::Client *client = static_cast<models::Client *>(solution->notserved[cc]);
-                        for (unsigned r = 0; r < static_cast<models::Solution *>(solution)->getNbTour(); ++r) {
-                            for (unsigned i = 0; i <=
-                                                 int(static_cast<models::Tour *>(static_cast<models::Solution *>(solution)->getTour(
-                                                         r))->getNbClient()); ++i) {
-                                //bool possible = true;
-                                routing::InsertionCost *cost = static_cast<routing::InsertionCost *>(static_cast<models::Tour *>(static_cast<models::Solution *>(solution)->getTour(
-                                        r))->evaluateInsertion(client, i));
+                        for (unsigned r = 0; r < solution->getNbTour(); ++r) {
+                            for (unsigned i = 0; i <= solution->getTour(r)->getNbClient(); ++i) {
+                                routing::InsertionCost *cost = solution->getTour(r)->evaluateInsertion(client, i);
                                 if (!cost->isPossible()) continue;
-                                if (bestCost->getDelta() > cost->getDelta()) {
+                                if (*bestCost > *cost) {
                                     insertion_found = true;
                                     best_t = r;
                                     best_p = i;
@@ -44,13 +40,15 @@ namespace vrp {
                         }
                     }
                     if (insertion_found) {
-                        static_cast<models::Solution *>(solution)->getTour(best_t)->addClient(
-                                static_cast<models::Solution *>(solution)->notserved[best_client_i], best_p);
+                       solution->getTour(best_t)->addClient( solution->notserved[best_client_i], best_p);
                         static_cast<models::Solution *>(solution)->traveltime += bestCost->getDelta();
-                        static_cast<models::Solution *>(solution)->notserved.erase(
-                                static_cast<models::Solution *>(solution)->notserved.begin() + best_client_i);
+                        solution->notserved.erase(solution->notserved.begin() + best_client_i);
 
                     }
+//                    else {
+//                        solution->pushTour(
+//                            new models::Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour()));
+//                    }
                 }
                 return insertion_found;
             }

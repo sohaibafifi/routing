@@ -30,7 +30,6 @@ namespace routing {
 
             virtual double getCost() = 0;
 
-            virtual void update(routing::models::Solution *copy) = 0;
 
             virtual void pushTour(Tour *tour) = 0;
 
