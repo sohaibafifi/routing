@@ -27,7 +27,7 @@ namespace routing {
                 InitialFound = false;
             }
 
-            ~HeuristicCallback() {}
+            ~HeuristicCallback() = default;
 
         protected:
             bool InitialFound;
@@ -40,6 +40,7 @@ namespace routing {
                 if (hasIncumbent()) {
                     if (shouldDive()) {
                         solution = this->extractPartialSolution(problem);
+                        if(solution == nullptr) return;
                         if (diver->dive(solution))
                             getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
                                            << std::endl;
@@ -115,7 +116,7 @@ namespace routing {
             }
 
             virtual routing::models::Solution *extractPartialSolution(routing::Problem *problem) {
-                throw new std::logic_error("Not implemented");
+                return nullptr;
             }
         };
     }
