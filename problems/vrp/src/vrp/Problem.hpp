@@ -14,12 +14,6 @@ namespace vrp {
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;
 
-        virtual routing::callback::UserCutCallback *setUserCutCallback(IloEnv &env) override;
-
-        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback(IloEnv &env) override;
-
-        virtual routing::callback::InformationCallback *setInformationCallback(IloEnv &env) override;
-
         virtual routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const override;
 

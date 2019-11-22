@@ -9,9 +9,7 @@
 
 template<class Reader>
 class Solver {
-    IloEnv env;
-    IloCplex cplex;
-    IloCplex model;
+
 protected :
     routing::Problem *problem;
     routing::models::Solution *solution;

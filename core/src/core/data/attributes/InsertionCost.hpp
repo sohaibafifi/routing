@@ -14,7 +14,7 @@ namespace routing {
         routing::Duration delta;
         bool possible;
     public:
-        bool operator>(const InsertionCost &rhs) const{
+        bool operator>(const InsertionCost &rhs) const {
             return delta > rhs.delta;
         }
 
@@ -23,22 +23,23 @@ namespace routing {
             return delta;
         }
 
-        void setDelta(routing::Duration delta){
+        void setDelta(routing::Duration delta) {
             InsertionCost::delta = delta;
         }
 
-        bool isPossible() const{
+        bool isPossible() const {
             return possible;
         }
 
-        void setPossible(bool possible){
+        void setPossible(bool possible) {
             InsertionCost::possible = possible;
         }
 
         InsertionCost(routing::Duration delta, bool possible) : delta(delta), possible(possible) {}
+
         InsertionCost() : delta(0), possible(true) {}
 
-        InsertionCost(const InsertionCost &cost): delta(cost.getDelta()), possible(cost.isPossible()){}
+        InsertionCost(const InsertionCost &cost) : delta(cost.getDelta()), possible(cost.isPossible()) {}
     };
 }
 

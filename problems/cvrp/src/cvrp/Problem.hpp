@@ -11,7 +11,6 @@ namespace cvrp {
     public :
         std::vector<IloNumVar> consumption;
     protected:
-        routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
 
         virtual void addCapacityConstraints();
 
