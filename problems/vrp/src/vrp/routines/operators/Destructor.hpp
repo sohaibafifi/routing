@@ -18,7 +18,7 @@ namespace vrp {
 
             RandomDestructionParameters(unsigned long dmax) : dmax(dmax) {}
 
-            RandomDestructionParameters(routing::Problem *problem) : dmax(problem->vehicles.size()) {}
+            RandomDestructionParameters(routing::Problem *problem) : dmax( std::min(problem->vehicles.size(), problem->clients.size())) {}
 
             void setDmax(unsigned long dmax) {
                 RandomDestructionParameters::dmax = dmax;
@@ -32,6 +32,8 @@ namespace vrp {
 
         private:
             virtual void destruct(routing::models::Solution *solution) {
+                assert(solution->notserved.size() == 0);
+                assert(solution->getNbTour() > 0);
                 RandomDestructionParameters *parameters = static_cast<RandomDestructionParameters *>(params);
                 if (solution->notserved.size() == solution->getProblem()->clients.size()) return;
                 std::random_device rd;
@@ -47,11 +49,12 @@ namespace vrp {
                     static_cast<models::Solution *>(solution)->notserved.push_back(client);
                     routing::Duration traveltime = static_cast<models::Tour *>(solution->getTour(t))->getTraveltime();
                     solution->getTour(t)->removeClient(position);
+//                    if(solution->getTour(t)->getNbClient() == 0)
+//                        solution->removeTour(t);
                     static_cast<models::Solution *>(solution)->traveltime =
                             static_cast<models::Solution *>(solution)->traveltime
                             - traveltime
                             + static_cast<models::Tour *>(solution->getTour(t))->getTraveltime();
-
                 } while (static_cast<models::Solution *>(solution)->notserved.size() < drem);
             }
 

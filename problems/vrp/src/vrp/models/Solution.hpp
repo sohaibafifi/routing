@@ -20,13 +20,21 @@ namespace vrp {
 
             }
 
+            Solution(const Solution &p_solution) :
+                    routing::models::Solution(p_solution) {
+                for (int i = 0; i < this->notserved.size(); i++) {
+                    this->notserved[i] = p_solution.notserved[i];
+                }
+                this->traveltime = p_solution.traveltime;
+                for (int j = 0; j < this->tours.size(); ++j) {
+                    this->tours[j] = p_solution.getTour(j);
+                }
+            }
+
             double getCost() override {
                 return traveltime;
             }
 
-            void update(routing::models::Solution *copy) override {
-
-            }
 
             void pushTour(routing::models::Tour *tour) override {
                 addTour(tour, getNbTour());
@@ -85,8 +93,8 @@ namespace vrp {
 
                 for (unsigned t = 0; t < getNbTour(); t++) {
                     out << "tour " << t << " : ";
-                    for (unsigned i = 0; i < static_cast<Tour *>(this->getTour(t))->getNbClient(); ++i) {
-                        out << static_cast<Tour *>(this->getTour(t))->getClient(i)->getID() << " ";
+                    for (unsigned i = 0; i < this->getTour(t)->getNbClient(); ++i) {
+                        out << this->getTour(t)->getClient(i)->getID() << " ";
                     }
                     out << std::endl;
                 }

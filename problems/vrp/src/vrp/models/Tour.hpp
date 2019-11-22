@@ -32,10 +32,8 @@ namespace vrp {
             }
 
             void addClient(routing::models::Client *client, unsigned long position) override {
-                bool possible = true; // we assume that this is already verified
                 //TODO : optimize to not recalculate the insertion cost
-                traveltime += static_cast<routing::InsertionCost *>(this->evaluateInsertion(client,
-                                                                                            position))->getDelta();
+                traveltime += this->evaluateInsertion(client, position)->getDelta();
                 clients.insert(clients.begin() + position, static_cast<Client *>(client));
             }
 
@@ -55,7 +53,6 @@ namespace vrp {
             routing::InsertionCost *
             evaluateInsertion(routing::models::Client *client, unsigned long position) override {
                 routing::InsertionCost *cost = new routing::InsertionCost();
-
 
                 routing::Duration delta = 0;
                 if (clients.empty()) {
