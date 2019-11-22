@@ -8,26 +8,26 @@
 #include <utilities/Utilities.hpp>
 #include <core/routines/callbacks.hpp>
 
+#include "routines/operators/Generator.hpp"
+#include "routines/operators/Constructor.hpp"
+#include "routines/operators/Destructor.hpp"
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
-    return nullptr;
+    std::vector<routing::Neighborhood *> dummyNeighborhoods;
+    return new routing::callback::HeuristicCallback(env,
+                                                    this,
+                                                    new vrp::routines::Generator(this, new vrp::routines::Constructor(),
+                                                                                 new vrp::routines::Destructor(
+                                                                                         new routines::RandomDestructionParameters(
+                                                                                                 this))),
+                                                    new routing::dummyDiver(),
+                                                    dummyNeighborhoods);
 }
 
 routing::callback::IncumbentCallback *vrp::Problem::setIncumbentCallback(IloEnv &env) {
     return new routing::callback::IncumbentCallback(env, this);
 }
 
-routing::callback::UserCutCallback *vrp::Problem::setUserCutCallback(IloEnv &env) {
-    return nullptr;
-}
-
-routing::callback::LazyConstraintCallback *vrp::Problem::setLazyConstraintCallback(IloEnv &env) {
-    return nullptr;
-}
-
-routing::callback::InformationCallback *vrp::Problem::setInformationCallback(IloEnv &env) {
-    return nullptr;
-}
 
 routing::Duration
 vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const {
@@ -116,6 +116,7 @@ void vrp::Problem::addRoutingConstraints() {
 }
 
 void vrp::Problem::addSequenceConstraints() {
+
     for (unsigned i = 0; i <= clients.size(); ++i) {
         order.push_back(IloNumVar(model.getEnv(), 0, clients.size(), std::string("o_" + Utilities::itos(i)).c_str()));
         model.add(order.back());
@@ -132,12 +133,12 @@ void vrp::Problem::addSequenceConstraints() {
     for (unsigned i = 1; i <= clients.size(); ++i) {
         for (unsigned j = 0; j <= clients.size(); ++j) {
             if (i == j) continue;
-            model.add(
-                    order[i] - order[j]
-                    + IloInt(clients.size() - 1) * arcs[i][j]
-                    + IloInt(clients.size() - 3) * arcs[j][i]
-                    <= IloInt(clients.size() - 2)
-            );
+//            model.add(
+//                    order[i] - order[j]
+//                    + IloInt(clients.size() - 1) * arcs[i][j]
+//                    + IloInt(clients.size() - 3) * arcs[j][i]
+//                    <= IloInt(clients.size() - 2)
+//            );
         }
     }
 }

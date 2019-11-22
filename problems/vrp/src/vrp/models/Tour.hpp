@@ -5,6 +5,7 @@
 #pragma once
 
 #include <core/data/models/Tour.hpp>
+#include "Client.hpp"
 
 namespace vrp {
     namespace models {
@@ -14,6 +15,12 @@ namespace vrp {
             std::vector<Client *> clients;
             routing::Duration traveltime;
         public:
+
+            Tour(Problem *p_problem, unsigned vehicleID) :
+                    routing::models::Tour(p_problem, vehicleID),
+                    traveltime(0),
+                    clients(std::vector<Client *>()) {}
+
             routing::Duration getTraveltime() const {
                 return traveltime;
             }

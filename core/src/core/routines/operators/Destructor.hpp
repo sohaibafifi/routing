@@ -9,7 +9,9 @@ namespace routing {
 
     class Destructor {
     public:
-        routing::DestructionParameters *param;
+        routing::DestructionParameters *params;
+
+        Destructor(routing::DestructionParameters *p_params) : params(p_params) {}
 
         virtual void destruct(models::Solution *solution) = 0;
 

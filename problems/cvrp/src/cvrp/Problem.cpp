@@ -51,14 +51,3 @@ void cvrp::Problem::addVariables() {
         model.add(consumption.back());
     }
 }
-
-routing::callback::HeuristicCallback *cvrp::Problem::setHeuristicCallback(IloEnv &env) {
-    std::vector<routing::Neighborhood *> dummyNeighborhoods;
-    return new routing::callback::HeuristicCallback(env,
-                                                    this,
-                                                    new vrp::routines::Generator(this, new routing::dummyConstructor(),
-                                                                                 new routing::dummyDestructor()),
-                                                    new routing::dummyDiver(),
-                                                    dummyNeighborhoods);
-
-}

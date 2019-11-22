@@ -24,11 +24,13 @@ namespace routing {
                     generator(p_generator),
                     diver(p_diver),
                     neighbors(p_neighbors) {
+                InitialFound = false;
             }
 
             ~HeuristicCallback() {}
 
         protected:
+            bool InitialFound;
             Problem *problem;
             routing::Generator *generator;
             routing::Diver *diver;
@@ -76,6 +78,25 @@ namespace routing {
                     }
                     getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
                                    << std::endl;
+                }
+
+                if (!hasIncumbent() || solution->getCost() < getIncumbentObjValue() - 1e-9) {
+                    IloNumVarArray vars(getEnv());
+                    IloNumArray vals(getEnv());
+                    solution->getVarsVals(vars, vals);
+
+                    for (unsigned i = 0; i < vars.getSize(); ++i) setBounds(vars[i], vals[i], vals[i]);
+
+                    solve();
+                    if (hasIncumbent())
+                        getEnv().out() << "CVRPHeuristicCallback from " << getIncumbentObjValue() << " to "
+                                       << solution->getCost()
+                                       << " -  " << getObjValue() << "  " << getCplexStatus() << std::endl;
+                    InitialFound = (getCplexStatus() == CPX_STAT_OPTIMAL);
+                    for (unsigned i = 0; i < vars.getSize(); ++i) vals[i] = getValue(vars[i]);
+                    setSolution(vars, vals, getObjValue());
+                    vals.end();
+                    vars.end();
                 }
             }
 

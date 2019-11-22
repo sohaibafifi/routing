@@ -13,7 +13,7 @@ namespace vrp {
 
         class Solution : public routing::models::Solution {
         public:
-            Solution(vrp::Problem *p_problem)
+            Solution(routing::Problem *p_problem)
                     : routing::models::Solution(p_problem),
                       traveltime(0),
                       tours(std::vector<Tour *>()) {
@@ -55,7 +55,6 @@ namespace vrp {
                         values[last][static_cast<Tour *>(this->getTour(k))->getClient(i)->getID()] = IloTrue;
                         last = static_cast<Tour *>(this->getTour(k))->getClient(i)->getID();
                         affectation[last][k] = IloTrue;
-
                     }
                     values[last][0] = IloTrue;
                 }
@@ -63,12 +62,20 @@ namespace vrp {
                 for (unsigned i = 0; i < problem->arcs.size(); ++i) {
                     for (unsigned j = 0; j < problem->arcs.size(); ++j) {
                         if (i == j) continue;
-                        vars.add(problem->arcs[i][j]);
-                        vals.add(values[i][j]);
+//                        if (values[i][j])
+                        {
+                            vars.add(problem->arcs[i][j]);
+                            vals.add(values[i][j]);
+
+                        }
                     }
+
                     for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
-                        vars.add(static_cast<Problem *>(problem)->affectation[i][k]);
-                        vals.add(affectation[i][k]);
+//                        if (affectation[i][k])
+                        {
+                            vars.add(static_cast<Problem *>(problem)->affectation[i][k]);
+                            vals.add(affectation[i][k]);
+                        }
                     }
                 }
             }
@@ -93,9 +100,10 @@ namespace vrp {
                 return tours.at(t);
             }
 
+            routing::Duration traveltime;
+
         protected :
             std::vector<Tour *> tours;
-            routing::Duration traveltime;
         };
 
     }

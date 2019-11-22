@@ -42,15 +42,15 @@ namespace routing {
             return Reader().readFile(filepath);
         }
 
-        virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) = 0;
+        virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) { return nullptr; }
 
-        virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) = 0;
+        virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) { return nullptr; }
 
-        virtual routing::callback::UserCutCallback *setUserCutCallback(IloEnv &env) = 0;
+        virtual routing::callback::UserCutCallback *setUserCutCallback(IloEnv &env) { return nullptr; }
 
-        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback(IloEnv &env) = 0;
+        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback(IloEnv &env) { return nullptr; }
 
-        virtual routing::callback::InformationCallback *setInformationCallback(IloEnv &env) = 0;
+        virtual routing::callback::InformationCallback *setInformationCallback(IloEnv &env) { return nullptr; }
 
         std::string getName() const {
             return name;
@@ -86,7 +86,6 @@ namespace routing {
         virtual void addVariables() = 0;
 
         virtual void addConstraints() = 0;
-
 
         virtual void addObjective() = 0;
     };
