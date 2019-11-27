@@ -39,9 +39,9 @@ namespace vrp {
                             new routines::RandomDestructionParameters(
                                     this->problem))
                     ));
-//             neighbors.push_back(new routing::Move(
-//                     new vrp::routines::Constructor()
-//                    ));
+             neighbors.push_back(new routing::Move(
+                     new vrp::routines::Constructor()
+                    ));
             this->setNeighbors(neighbors);
 
         }

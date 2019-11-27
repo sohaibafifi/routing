@@ -13,6 +13,8 @@ namespace routing {
         }
 
         virtual bool look(models::Solution *solution) {
+            assert(solution->notserved.size() == 0);
+
             routing::models::Solution *best = solution->clone();
             bool improved = false;
             double bestCost = solution->getCost();
@@ -23,15 +25,15 @@ namespace routing {
                 unsigned bestRemove_position = 0;
                 for (int p = 1; p < solution->getTour(t)->getNbClient(); ++p) {
                     routing::RemoveCost *cost = solution->getTour(t)->evaluateRemove(p);
-                    if (&bestRemove < &cost) {
+                    if (&bestRemove > &cost) {
                         bestRemove_position = p;
                         bestRemove = cost;
                     }
                 }
+                models::Client *client = solution->getTour(t)->getClient(bestRemove_position);
                 solution->getTour(t)->removeClient(bestRemove_position);
-                // we use for now best insertion to reinsert the client
-                // TODO : best insertion should have a version with custom list or only one client
-                if (constructor->bestInsertion(solution) && solution->getCost() < bestCost - 1e-9) {
+                solution->notserved.push_back(client);
+                if (constructor->bestInsertion(solution, client) && solution->getCost() < bestCost - 1e-9) {
                     bestCost = solution->getCost();
                     best = solution->clone();
                     improved = true;
