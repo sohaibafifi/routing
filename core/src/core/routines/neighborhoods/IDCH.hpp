@@ -14,7 +14,7 @@ namespace routing {
         }
 
         virtual bool look(models::Solution *solution) {
-
+            assert(solution->notserved.size() == 0);
             int itermax = solution->getProblem()->clients.size() * solution->getProblem()->clients.size();
             int iter = 0;
             routing::models::Solution *best = solution->clone();

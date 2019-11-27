@@ -13,6 +13,43 @@ namespace vrp {
         class Constructor : public routing::Constructor {
 
         public:
+            bool bestInsertion(routing::models::Solution *solution, routing::models::Client *client) override {
+                if (std::find(solution->notserved.begin(), solution->notserved.end(), client) ==
+                    solution->notserved.end()) {
+                    return false;
+                }
+                while (solution->getNbTour() < solution->getProblem()->vehicles.size()) {
+                    solution->pushTour(
+                            new models::Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour()));
+                }
+                bool insertion_found = false;
+                unsigned best_t = 0, best_p = 0, best_client_i = 0;
+                routing::InsertionCost *bestCost = new routing::InsertionCost(IloInfinity, true);
+
+                for (unsigned r = 0; r < solution->getNbTour(); ++r) {
+                    for (unsigned i = 0; i <= solution->getTour(r)->getNbClient(); ++i) {
+                        routing::InsertionCost *cost = solution->getTour(r)->evaluateInsertion(client, i);
+                        if (!cost->isPossible()) continue;
+                        if (*bestCost > *cost) {
+                            insertion_found = true;
+                            best_t = r;
+                            best_p = i;
+                            *bestCost = *cost;
+                        }
+                    }
+                }
+
+                if (insertion_found) {
+                    solution->getTour(best_t)->addClient(client, best_p);
+                    static_cast<models::Solution *>(solution)->traveltime += bestCost->getDelta();
+                    solution->notserved.erase(
+                            std::remove(solution->notserved.begin(), solution->notserved.end(), client),
+                            solution->notserved.end());
+                }
+
+                return insertion_found;
+            }
+
             bool bestInsertion(routing::models::Solution *solution) override {
                 while (solution->getNbTour() < solution->getProblem()->vehicles.size()) {
                     solution->pushTour(
@@ -40,7 +77,7 @@ namespace vrp {
                         }
                     }
                     if (insertion_found) {
-                       solution->getTour(best_t)->addClient( solution->notserved[best_client_i], best_p);
+                        solution->getTour(best_t)->addClient(solution->notserved[best_client_i], best_p);
                         static_cast<models::Solution *>(solution)->traveltime += bestCost->getDelta();
                         solution->notserved.erase(solution->notserved.begin() + best_client_i);
 
