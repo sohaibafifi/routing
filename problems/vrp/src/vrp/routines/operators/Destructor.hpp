@@ -46,9 +46,8 @@ namespace vrp {
                     }
                     unsigned long position = (rd() % static_cast<models::Tour *>(solution->getTour(t))->getNbClient());
                     models::Client *client = static_cast<models::Client *>(solution->getTour(t)->getClient(position));
-                    static_cast<models::Solution *>(solution)->notserved.push_back(client);
                     routing::Duration traveltime = static_cast<models::Tour *>(solution->getTour(t))->getTraveltime();
-                    solution->getTour(t)->removeClient(position);
+                    solution->removeClient(t, position);
 //                    if(solution->getTour(t)->getNbClient() == 0)
 //                        solution->removeTour(t);
                     static_cast<models::Solution *>(solution)->traveltime =
