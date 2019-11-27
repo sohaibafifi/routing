@@ -14,7 +14,8 @@ namespace vrp {
 
         public:
             bool bestInsertion(routing::models::Solution *solution,
-                               std::vector<routing::models::Client *> clients) override {
+                               const std::vector<routing::models::Client *> p_clients) override {
+                std::vector<routing::models::Client *> clients = p_clients;
                 while (solution->getNbTour() < solution->getProblem()->vehicles.size()) {
                     solution->pushTour(
                             new models::Tour(static_cast<Problem *>(solution->getProblem()), solution->getNbTour()));
