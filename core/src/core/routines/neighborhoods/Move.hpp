@@ -31,8 +31,7 @@ namespace routing {
                     }
                 }
                 models::Client *client = solution->getTour(t)->getClient(bestRemove_position);
-                solution->getTour(t)->removeClient(bestRemove_position);
-                solution->notserved.push_back(client);
+                solution->removeClient(t, bestRemove_position);
                 if (constructor->bestInsertion(solution, client) && solution->getCost() < bestCost - 1e-9) {
                     bestCost = solution->getCost();
                     best = solution->clone();

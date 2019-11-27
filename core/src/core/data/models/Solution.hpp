@@ -44,6 +44,29 @@ namespace routing {
             virtual models::Solution *clone() const = 0;
 
             virtual routing::models::Tour *getTour(unsigned t) const = 0;
+
+
+            virtual void pushClient(unsigned  long index_tour, Client *client){
+                 this->notserved.erase(
+                                std::remove(this->notserved.begin(), this->notserved.end(),
+                                            client),
+                                this->notserved.end());
+                this->getTour(index_tour)->pushClient(client);
+            }
+
+            virtual void addClient(unsigned  long index_tour, Client *client, unsigned long position){
+                this->notserved.erase(
+                                std::remove(this->notserved.begin(), this->notserved.end(),
+                                            client),
+                                this->notserved.end());
+                this->getTour(index_tour)->addClient(client, position);
+            }
+
+            virtual void removeClient(unsigned  long index_tour, unsigned long position) {
+                this->notserved.push_back(this->getTour(index_tour)->getClient(position));
+                this->getTour(index_tour)->removeClient(position);
+            }
+
         };
 
 

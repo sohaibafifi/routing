@@ -42,14 +42,9 @@ namespace vrp {
                         }
                     }
                     if (insertion_found) {
-                        solution->getTour(best_t)->addClient(clients[best_client_i], best_p);
+                        solution->addClient(best_t, clients[best_client_i], best_p);
                         static_cast<models::Solution *>(solution)->traveltime += bestCost->getDelta();
-                        solution->notserved.erase(
-                                std::remove(solution->notserved.begin(), solution->notserved.end(),
-                                            clients[best_client_i]),
-                                solution->notserved.end());
                         clients.erase(clients.begin() + best_client_i);
-
                     }
                 }
                 return insertion_found;
