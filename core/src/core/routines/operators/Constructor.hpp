@@ -14,7 +14,7 @@ namespace routing {
             clients.push_back(client);
             return this->bestInsertion(solution, clients);
         }
-        virtual bool bestInsertion(models::Solution *solution, std::vector<models::Client*> clients) = 0;
+        virtual bool bestInsertion(models::Solution *solution, const std::vector<models::Client*> clients) = 0;
     };
 
     class dummyConstructor : public Constructor {
