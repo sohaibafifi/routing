@@ -23,6 +23,7 @@ namespace vrp {
         std::vector<std::vector<IloNumVar> > arcs;
         std::vector<std::vector<IloNumVar> > affectation;
         std::vector<IloNumVar> order;
+        std::vector<IloNumVar> consumption;
         std::vector<std::vector<routing::Duration> > distances, distances_to_depots;
 
         virtual models::Depot *getDepot() {
@@ -49,6 +50,8 @@ namespace vrp {
         virtual void addRoutingConstraints();
 
         virtual void addSequenceConstraints();
+
+        virtual void addCapacityConstraints();
     };
 
 }

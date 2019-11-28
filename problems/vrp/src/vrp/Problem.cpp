@@ -7,6 +7,8 @@
 #include "models/Depot.hpp"
 #include <utilities/Utilities.hpp>
 #include <core/routines/callbacks.hpp>
+#include <core/data/attributes/Consumer.hpp>
+#include <core/data/attributes/Stock.hpp>
 
 #include "routines/operators/Generator.hpp"
 #include "routines/operators/Constructor.hpp"
@@ -48,6 +50,24 @@ void vrp::Problem::addVariables() {
             if (i == j) model.add(arcs.back().back() == 0);
             else model.add(arcs.back().back());
         }
+    }
+
+    for (unsigned i = 0; i <= clients.size(); ++i) {
+        routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]);
+        if (!stock) continue;
+        if (i == 0) {
+            consumption.push_back(IloNumVar(model.getEnv(),
+                                            0, 0,
+                                            std::string("q_" + Utilities::itos(i)).c_str()));
+        } else {
+            if (routing::attributes::Consumer *client = dynamic_cast<routing::attributes::Consumer *>(clients[
+                    i - 1]))
+                consumption.push_back(IloNumVar(model.getEnv(),
+                                                client->getDemand(),
+                                                stock->getCapacity(),
+                                                std::string("q_" + Utilities::itos(i)).c_str()));
+        }
+        model.add(consumption.back());
     }
 }
 
@@ -130,17 +150,7 @@ void vrp::Problem::addSequenceConstraints() {
                       - clients.size() * (1 - arcs[i][j]) <= 0);
         }
     }
-    for (unsigned i = 1; i <= clients.size(); ++i) {
-        for (unsigned j = 0; j <= clients.size(); ++j) {
-            if (i == j) continue;
-//            model.add(
-//                    order[i] - order[j]
-//                    + IloInt(clients.size() - 1) * arcs[i][j]
-//                    + IloInt(clients.size() - 3) * arcs[j][i]
-//                    <= IloInt(clients.size() - 2)
-//            );
-        }
-    }
+
 }
 
 void vrp::Problem::addTotalDistanceObjective() {
@@ -153,4 +163,30 @@ void vrp::Problem::addTotalDistanceObjective() {
         }
     }
     model.add(IloMinimize(model.getEnv(), obj));
+}
+
+
+void vrp::Problem::addCapacityConstraints() {
+    for (auto k = 0; k < vehicles.size(); ++k) {
+        IloExpr expr(model.getEnv());
+        for (auto i = 1; i <= clients.size(); ++i) {
+            if (routing::attributes::Consumer *client = dynamic_cast<routing::attributes::Consumer *>(clients[i - 1]))
+                expr += client->getDemand() * affectation[i][k];
+        }
+        if (routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[k]))
+            model.add(expr <= stock->getCapacity());
+    }
+    if (routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]))
+        for (auto i = 1; i <= clients.size(); ++i) {
+            for (auto j = 1; j <= clients.size(); ++j) {
+                if (i == j) continue;
+                if (routing::attributes::Consumer *client = dynamic_cast<routing::attributes::Consumer *>(clients[j -
+                                                                                                                  1]))
+                    model.add(consumption[i]
+                              + client->getDemand()
+                              <= consumption[j]
+                                 + (stock->getCapacity()
+                                    + client->getDemand()) * (1 - arcs[i][j]));
+            }
+        }
 }
