@@ -73,6 +73,7 @@ namespace routing {
 
         virtual IloModel generateModel(IloEnv &env) {
             this->model = IloModel(env);
+            this->model.setName(this->getName().c_str());
             this->addVariables();
             this->addConstraints();
 
