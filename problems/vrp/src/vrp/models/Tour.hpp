@@ -5,6 +5,8 @@
 #pragma once
 
 #include <core/data/models/Tour.hpp>
+#include <core/data/attributes/Consumer.hpp>
+#include <core/data/attributes/Stock.hpp>
 #include "Client.hpp"
 
 namespace vrp {
@@ -14,31 +16,43 @@ namespace vrp {
         protected:
             std::vector<Client *> clients;
             routing::Duration traveltime;
+            routing::Demand consumption;
         public:
 
             Tour(Problem *p_problem, unsigned vehicleID) :
                     routing::models::Tour(p_problem, vehicleID),
                     traveltime(0),
+                    consumption(0),
                     clients(std::vector<Client *>()) {}
 
             routing::Duration getTraveltime() const {
                 return traveltime;
             }
 
+            routing::Duration getConsumption() const {
+                return consumption;
+            }
+
             void pushClient(routing::models::Client *client) override {
                 traveltime += static_cast<routing::InsertionCost *>(Tour::evaluateInsertion(client,
                                                                                             getNbClient()))->getDelta();
+                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
+                    consumption += consumer->getDemand();
                 clients.insert(clients.begin() + getNbClient(), static_cast<Client *>(client));
             }
 
             void addClient(routing::models::Client *client, unsigned long position) override {
                 //TODO : optimize to not recalculate the insertion cost
                 traveltime += this->evaluateInsertion(client, position)->getDelta();
+                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
+                    consumption += consumer->getDemand();
                 clients.insert(clients.begin() + position, static_cast<Client *>(client));
             }
 
             void removeClient(unsigned long position) override {
                 traveltime += static_cast<routing::RemoveCost *>(this->evaluateRemove(position))->getDelta();
+                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(position)))
+                    consumption -= consumer->getDemand();
                 clients.erase(clients.begin() + position);
             }
 
@@ -52,6 +66,11 @@ namespace vrp {
 
             routing::InsertionCost *
             evaluateInsertion(routing::models::Client *client, unsigned long position) override {
+                routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client);
+                routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(problem->vehicles[this->getID()]);
+
+                if (consumer && stock && consumer->getDemand() + getConsumption() > stock->getCapacity())
+                    return new routing::InsertionCost(0, false);
                 routing::InsertionCost *cost = new routing::InsertionCost();
 
                 routing::Duration delta = 0;
@@ -87,7 +106,7 @@ namespace vrp {
                 routing::Duration delta = 0;
                 if (position == 0) {
                     if (position == clients.size() - 1) {
-                        delta = - 2 * problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot());
+                        delta = -2 * problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot());
                     } else {
                         delta = -problem->getDistance(*client, *static_cast< Problem *>(problem)->getDepot())
                                 - problem->getDistance(*client, *clients[position + 1])

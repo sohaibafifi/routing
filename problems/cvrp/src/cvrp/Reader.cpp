@@ -11,9 +11,10 @@
 #include <random>
 #include <utilities/Utilities.hpp>
 #include <vrp/models/Depot.hpp>
+#include <vrp/Problem.hpp>
 
 routing::Problem *cvrp::Reader::readFile(std::string filepath) {
-    cvrp::Problem *problem = new cvrp::Problem();
+    vrp::Problem *problem = new vrp::Problem();
     std::fstream fh(filepath.c_str(), std::ios_base::in);
     try {
         if (!fh.good()) throw std::string("file open error");
