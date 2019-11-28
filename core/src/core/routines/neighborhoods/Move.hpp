@@ -34,13 +34,13 @@ namespace routing {
                 solution->removeClient(t, bestRemove_position);
                 if (constructor->bestInsertion(solution, client) && solution->getCost() < bestCost - 1e-9) {
                     bestCost = solution->getCost();
-                    best = solution->clone();
+                    best->copy(solution);
                     improved = true;
                 }
 
             }
 
-            solution = best->clone();
+            solution->copy(best);
             return improved;
         }
 

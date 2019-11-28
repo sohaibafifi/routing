@@ -34,14 +34,14 @@ namespace vrp {
 
             std::vector<routing::Neighborhood *> neighbors = std::vector<routing::Neighborhood *>();
             neighbors.push_back(new routing::IDCH(
-                     new vrp::routines::Constructor(),
+                    new vrp::routines::Constructor(),
                     new vrp::routines::Destructor(
                             new routines::RandomDestructionParameters(
                                     this->problem))
-                    ));
-             neighbors.push_back(new routing::Move(
-                     new vrp::routines::Constructor()
-                    ));
+            ));
+            neighbors.push_back(new routing::Move(
+                    new vrp::routines::Constructor()
+            ));
             this->setNeighbors(neighbors);
 
         }

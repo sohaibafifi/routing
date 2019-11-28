@@ -26,6 +26,8 @@ namespace routing {
 
             virtual unsigned long getNbClient() = 0;
 
+            virtual Tour *clone() const = 0;
+
             virtual routing::InsertionCost *evaluateInsertion(Client *client, unsigned long position) = 0;
 
             virtual routing::RemoveCost *evaluateRemove(unsigned long position) = 0;

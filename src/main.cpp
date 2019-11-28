@@ -1,6 +1,6 @@
 #include <iostream>
 #include <utilities/GetOpt_pp.hpp>
-#include <cvrp/Reader.hpp>
+#include <cvrptw/Reader.hpp>
 #include <core/solvers/MIPSolver.hpp>
 #include <vrp/solvers/LSSolver.hpp>
 
@@ -12,13 +12,13 @@ int main(int argc, char **argv) {
     ops >> Utilities::GetOpt::Option('i', "input", inputFile);
     ops >> Utilities::GetOpt::Option('t', "timeout", timeout, timeout);
     try {
-        routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
+        routing::MIPSolver<cvrptw::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
     }catch (IloCplex::Exception & exception){
         std::cout << exception.getMessage() << std::endl;
     }
 
-    vrp::LSSolver<cvrp::Reader> lsSolver(inputFile);
+    vrp::LSSolver<cvrptw::Reader> lsSolver(inputFile);
     lsSolver.solve(timeout);
     return EXIT_SUCCESS;
 }

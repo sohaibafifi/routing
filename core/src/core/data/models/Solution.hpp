@@ -43,6 +43,16 @@ namespace routing {
 
             virtual models::Solution *clone() const = 0;
 
+            virtual void copy(const models::Solution *)  = 0;
+
+            Solution &operator=(const Solution &p_solution) { // copy assignment constructor
+                // protect against self assignment
+                if (this != &p_solution) {
+                    this->copy(&p_solution);
+                }
+                return *this;
+            }
+
             virtual routing::models::Tour *getTour(unsigned t) const = 0;
 
 
@@ -68,8 +78,7 @@ namespace routing {
             }
 
         };
-
-
+        
     }
 }
 

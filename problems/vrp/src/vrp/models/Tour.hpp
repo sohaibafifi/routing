@@ -19,11 +19,17 @@ namespace vrp {
             routing::Demand consumption;
         public:
 
-            Tour(Problem *p_problem, unsigned vehicleID) :
+            Tour(routing::Problem *p_problem, unsigned vehicleID) :
                     routing::models::Tour(p_problem, vehicleID),
                     traveltime(0),
                     consumption(0),
                     clients(std::vector<Client *>()) {}
+
+            Tour *clone() const override {
+                Tour *tour = new Tour(this->problem, this->getID());
+                *tour = *this;
+                return tour;
+            }
 
             routing::Duration getTraveltime() const {
                 return traveltime;
@@ -51,7 +57,8 @@ namespace vrp {
 
             void removeClient(unsigned long position) override {
                 traveltime += static_cast<routing::RemoveCost *>(this->evaluateRemove(position))->getDelta();
-                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(position)))
+                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
+                        position)))
                     consumption -= consumer->getDemand();
                 clients.erase(clients.begin() + position);
             }
