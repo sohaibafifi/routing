@@ -8,15 +8,17 @@
 
 namespace cvrp {
     class Problem : public vrp::Problem {
-    public :
-        std::vector<IloNumVar> consumption;
     protected:
 
-        virtual void addCapacityConstraints();
+        virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override {
+            return nullptr;
+        }
 
-        void addConstraints() override;
+        void addConstraints() override {
+            vrp::Problem::addConstraints();
+            this->addCapacityConstraints();
+        }
 
-        void addVariables() override;
     };
 
 }

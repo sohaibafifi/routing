@@ -1,9 +1,8 @@
 #include <iostream>
 #include <utilities/GetOpt_pp.hpp>
-#include <vrp/Reader.hpp>
+#include <cvrp/Reader.hpp>
 #include <core/solvers/MIPSolver.hpp>
 #include <vrp/solvers/LSSolver.hpp>
-#include <vrp/routines/operators/Generator.hpp>
 
 int main(int argc, char **argv) {
     Utilities::GetOpt::GetOpt_pp ops(argc, argv);
@@ -21,7 +20,7 @@ int main(int argc, char **argv) {
 
 
 
-    vrp::LSSolver<vrp::Reader> lsSolver(inputFile);
-    lsSolver.solve(timeout);
+    routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
+    mipSolver.solve(timeout);
     return EXIT_SUCCESS;
 }

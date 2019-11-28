@@ -26,7 +26,6 @@ template<class Reader>
 routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostream &os):Solver<Reader>(
         p_inputFile) {
     this->model = this->problem->generateModel(this->env);
-
     this->cplex = IloCplex(this->model);
     this->cplex.exportModel("model.lp");
     std::vector<IloCplex::CallbackI *> callbacks = std::vector<IloCplex::CallbackI *>();
