@@ -11,16 +11,14 @@ int main(int argc, char **argv) {
     double timeout = 200;
     ops >> Utilities::GetOpt::Option('i', "input", inputFile);
     ops >> Utilities::GetOpt::Option('t', "timeout", timeout, timeout);
-//    try {
-//        routing::MIPSolver<vrp::Reader> mipSolver(inputFile);
-//        mipSolver.solve(timeout);
-//    }catch (IloCplex::Exception & exception){
-//        std::cout << exception.getMessage() << std::endl;
-//    }
+    try {
+        routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
+        mipSolver.solve(timeout);
+    }catch (IloCplex::Exception & exception){
+        std::cout << exception.getMessage() << std::endl;
+    }
 
-
-
-    routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
-    mipSolver.solve(timeout);
+    vrp::LSSolver<cvrp::Reader> lsSolver(inputFile);
+    lsSolver.solve(timeout);
     return EXIT_SUCCESS;
 }
