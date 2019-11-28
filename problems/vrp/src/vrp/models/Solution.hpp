@@ -22,12 +22,24 @@ namespace vrp {
 
             Solution(const Solution &p_solution) :
                     routing::models::Solution(p_solution) {
-                for (int i = 0; i < this->notserved.size(); i++) {
-                    this->notserved[i] = p_solution.notserved[i];
+                this->copy(&p_solution);
+            }
+
+            Solution *clone() const override {
+                Solution *solution = new Solution(this->problem);
+                *solution = *this;
+                return solution;
+            }
+
+            void copy(const routing::models::Solution *p_solution) override {
+                this->traveltime = dynamic_cast<const Solution *>(p_solution)->traveltime;
+                this->notserved.clear();
+                for (int i = 0; i < p_solution->notserved.size(); i++) {
+                    this->notserved.push_back(p_solution->notserved[i]);
                 }
-                this->traveltime = p_solution.traveltime;
-                for (int j = 0; j < this->tours.size(); ++j) {
-                    this->tours[j] = p_solution.getTour(j);
+                this->tours.clear();
+                for (int j = 0; j < dynamic_cast<const Solution *>(p_solution)->tours.size(); ++j) {
+                    this->tours.push_back(dynamic_cast<const Solution *>(p_solution)->getTour(j)->clone());
                 }
             }
 
@@ -100,13 +112,11 @@ namespace vrp {
                 }
             }
 
-            Solution *clone() const override {
-                return new Solution(*this);
-            }
 
             Tour *getTour(unsigned t) const override {
                 return tours.at(t);
             }
+
 
             routing::Duration traveltime;
 

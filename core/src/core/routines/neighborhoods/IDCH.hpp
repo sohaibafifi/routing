@@ -27,13 +27,11 @@ namespace routing {
                 if (constructor->bestInsertion(solution) && solution->getCost() < bestCost - 1e-9) {
                     bestCost = solution->getCost();
                     iter = 1;
-                    best = solution->clone();
+                    best->copy(solution);
                     improved = true;
                 }
-
-
             }
-            solution = best->clone();
+            solution->copy(best);
             return improved;
 
         }
