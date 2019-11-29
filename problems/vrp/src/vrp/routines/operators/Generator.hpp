@@ -12,8 +12,7 @@ namespace vrp {
         class Generator : public routing::Generator {
 
             virtual models::Solution *initialSolution() {
-                return new models::Solution(
-                        this->problem);
+                return dynamic_cast<models::Solution *>(this->problem->initialSolution());
             };
 
         public:

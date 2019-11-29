@@ -8,8 +8,13 @@
 #include "models/Depot.hpp"
 
 namespace vrp {
+    namespace models{
+        class Solution;
+    }
     class Problem : public routing::Problem {
     public:
+
+        virtual routing::models::Solution * initialSolution() override;
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;

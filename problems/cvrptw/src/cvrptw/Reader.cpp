@@ -10,13 +10,11 @@
 #include <cmath>
 #include <queue>
 #include <random>
-#include <utilities/Utilities.hpp>
-#include <vrp/models/Depot.hpp>
-#include <vrp/Problem.hpp>
+#include "Problem.hpp"
 
 routing::Problem *cvrptw::Reader::readFile(std::string filepath) {
-    vrp::Problem *problem = new vrp::Problem();
-   std::fstream fh(filepath.c_str(), std::ios_base::in);
+    cvrptw::Problem *problem = new cvrptw::Problem();
+    std::fstream fh(filepath.c_str(), std::ios_base::in);
 	try {
 
 		if (!fh.good()) throw std::string("file open error");
