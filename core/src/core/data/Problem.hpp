@@ -29,6 +29,9 @@ namespace routing {
 
         class InformationCallback;
     }
+    namespace models{
+        class Solution;
+    }
     class Problem {
     public :
         virtual ~Problem() {
@@ -41,6 +44,8 @@ namespace routing {
         static Problem *loadFromFile(std::string filepath) {
             return Reader().readFile(filepath);
         }
+
+        virtual models::Solution * initialSolution() = 0;
 
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) { return nullptr; }
 

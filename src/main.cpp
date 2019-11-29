@@ -11,6 +11,9 @@ int main(int argc, char **argv) {
     double timeout = 200;
     ops >> Utilities::GetOpt::Option('i', "input", inputFile);
     ops >> Utilities::GetOpt::Option('t', "timeout", timeout, timeout);
+    vrp::LSSolver<cvrptw::Reader> lsSolver(inputFile);
+    lsSolver.solve(timeout);
+
     try {
         routing::MIPSolver<cvrptw::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
@@ -18,7 +21,6 @@ int main(int argc, char **argv) {
         std::cout << exception.getMessage() << std::endl;
     }
 
-    vrp::LSSolver<cvrptw::Reader> lsSolver(inputFile);
-    lsSolver.solve(timeout);
+
     return EXIT_SUCCESS;
 }

@@ -190,3 +190,7 @@ void vrp::Problem::addCapacityConstraints() {
             }
         }
 }
+
+routing::models::Solution *vrp::Problem::initialSolution() {
+      return new models::Solution(this);
+}
