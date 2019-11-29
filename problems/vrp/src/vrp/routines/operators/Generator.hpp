@@ -11,10 +11,6 @@ namespace vrp {
     namespace routines {
         class Generator : public routing::Generator {
 
-            virtual models::Solution *initialSolution() {
-                return dynamic_cast<models::Solution *>(this->problem->initialSolution());
-            };
-
         public:
             Generator(routing::Problem *pProblem, routing::Constructor *pConstructor, routing::Destructor *pDestructor)
                     : routing::Generator(pProblem, pConstructor, pDestructor) {

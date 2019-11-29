@@ -41,7 +41,11 @@ namespace routing {
 
             virtual void print(std::ostream &out) = 0;
 
-            virtual models::Solution *clone() const = 0;
+            virtual models::Solution *clone() const  {
+                Solution *solution = this->problem->initialSolution();
+                *solution = *this;
+                return solution;
+            }
 
             virtual void copy(const models::Solution *)  = 0;
 
