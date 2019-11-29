@@ -25,11 +25,7 @@ namespace vrp {
                 this->copy(&p_solution);
             }
 
-            Solution *clone() const override {
-                Solution *solution = new Solution(this->problem);
-                *solution = *this;
-                return solution;
-            }
+
 
             void copy(const routing::models::Solution *p_solution) override {
                 this->traveltime = dynamic_cast<const Solution *>(p_solution)->traveltime;
@@ -116,7 +112,6 @@ namespace vrp {
             Tour *getTour(unsigned t) const override {
                 return tours.at(t);
             }
-
 
             routing::Duration traveltime;
 
