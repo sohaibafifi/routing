@@ -31,7 +31,23 @@ namespace routing {
     }
     namespace models{
         class Solution;
+
+        class Tour;
     }
+    class Problem;
+    class Initializer {
+        Problem * problem;
+    public:
+        Initializer(Problem * p_problem)
+        :problem(p_problem){
+
+        }
+
+        Problem * getProblem() const{ return problem; }
+        virtual models::Solution *initialSolution() = 0;
+
+        virtual models::Tour *initialTour(int vehicleID) = 0;
+    };
     class Problem {
     public :
         virtual ~Problem() {
@@ -45,7 +61,7 @@ namespace routing {
             return Reader().readFile(filepath);
         }
 
-        virtual models::Solution * initialSolution() = 0;
+        virtual Initializer *initializer() = 0;
 
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) { return nullptr; }
 
