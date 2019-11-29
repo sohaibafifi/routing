@@ -5,6 +5,7 @@
 
 #include "Problem.hpp"
 #include "models/Depot.hpp"
+#include "models/Tour.hpp"
 #include <utilities/Utilities.hpp>
 #include <core/routines/callbacks.hpp>
 #include <core/data/attributes/Consumer.hpp>
@@ -13,6 +14,7 @@
 #include "routines/operators/Generator.hpp"
 #include "routines/operators/Constructor.hpp"
 #include "routines/operators/Destructor.hpp"
+
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
@@ -191,6 +193,12 @@ void vrp::Problem::addCapacityConstraints() {
         }
 }
 
-routing::models::Solution *vrp::Problem::initialSolution() {
-      return new models::Solution(this);
+
+
+routing::models::Solution *vrp::Initializer::initialSolution() {
+    return new models::Solution(this->getProblem());
+}
+
+routing::models::Tour *vrp::Initializer::initialTour(int vehicleID) {
+    return new models::Tour(this->getProblem(), vehicleID);
 }

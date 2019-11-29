@@ -16,7 +16,7 @@ namespace routing {
         }
 
         virtual models::Solution *initialSolution() {
-            return this->problem->initialSolution();
+            return this->problem->initializer()->initialSolution();
         };
 
         virtual models::Solution *generate() {

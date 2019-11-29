@@ -13,10 +13,15 @@ namespace vrp {
 
         class Solution : public routing::models::Solution {
         public:
+
+
             Solution(routing::Problem *p_problem)
                     : routing::models::Solution(p_problem),
                       traveltime(0),
                       tours(std::vector<Tour *>()) {
+                while (this->getNbTour() < this->getProblem()->vehicles.size()) {
+                    this->pushTour(this->problem->initializer()->initialTour(this->getNbTour()));
+                }
 
             }
 
