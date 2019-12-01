@@ -12,10 +12,10 @@
 namespace cvrptw {
     namespace models {
         struct Depot : public vrp::models::Depot,
-                public routing::attributes::Rendezvous{
+                       public routing::attributes::Rendezvous {
             Depot(unsigned id, const routing::Duration &x, const routing::Duration &y, const routing::TW &timewindow) :
                     vrp::models::Depot(id, x, y),
-                    routing::attributes::Rendezvous(timewindow){
+                    routing::attributes::Rendezvous(timewindow) {
             }
         };
     }

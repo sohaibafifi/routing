@@ -30,7 +30,7 @@ namespace vrp {
                 this->copy(&p_solution);
             }
 
-
+            void update() override {}
 
             void copy(const routing::models::Solution *p_solution) override {
                 this->traveltime = dynamic_cast<const Solution *>(p_solution)->traveltime;
@@ -39,7 +39,7 @@ namespace vrp {
                     this->notserved.push_back(p_solution->notserved[i]);
                 }
                 this->tours.clear();
-                for (int j = 0; j < dynamic_cast<const Solution *>(p_solution)->tours.size(); ++j) {
+                for (unsigned int j = 0; j < dynamic_cast<const Solution *>(p_solution)->tours.size(); ++j) {
                     this->tours.push_back(dynamic_cast<const Solution *>(p_solution)->getTour(j)->clone());
                 }
             }
@@ -72,9 +72,9 @@ namespace vrp {
                 }
                 for (unsigned k = 0; k < this->getNbTour(); ++k) {
                     unsigned last = 0;
-                    for (unsigned i = 0; i < static_cast<Tour *>(this->getTour(k))->getNbClient(); ++i) {
-                        values[last][static_cast<Tour *>(this->getTour(k))->getClient(i)->getID()] = IloTrue;
-                        last = static_cast<Tour *>(this->getTour(k))->getClient(i)->getID();
+                    for (unsigned i = 0; i < this->getTour(k)->getNbClient(); ++i) {
+                        values[last][this->getTour(k)->getClient(i)->getID()] = IloTrue;
+                        last = this->getTour(k)->getClient(i)->getID();
                         affectation[last][k] = IloTrue;
                     }
                     values[last][0] = IloTrue;
@@ -94,7 +94,7 @@ namespace vrp {
                     for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
 //                        if (affectation[i][k])
                         {
-                            vars.add(static_cast<Problem *>(problem)->affectation[i][k]);
+                            vars.add(problem->affectation[i][k]);
                             vals.add(affectation[i][k]);
                         }
                     }

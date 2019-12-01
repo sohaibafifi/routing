@@ -18,7 +18,8 @@ namespace vrp {
 
             RandomDestructionParameters(unsigned long dmax) : dmax(dmax) {}
 
-            RandomDestructionParameters(routing::Problem *problem) : dmax( std::min(problem->vehicles.size(), problem->clients.size())) {}
+            RandomDestructionParameters(routing::Problem *problem) : dmax(
+                    std::min(problem->vehicles.size(), problem->clients.size())) {}
 
             void setDmax(unsigned long dmax) {
                 RandomDestructionParameters::dmax = dmax;
@@ -38,9 +39,9 @@ namespace vrp {
                 if (solution->notserved.size() == solution->getProblem()->clients.size()) return;
                 std::random_device rd;
 
-                unsigned drem = 1 + rd() % parameters->getDmax();
+                unsigned long drem = 1 + rd() % parameters->getDmax();
                 do {
-                    unsigned t = rd() % solution->getNbTour();
+                    unsigned long t = rd() % solution->getNbTour();
                     while (static_cast<models::Tour *>(solution->getTour(t))->getNbClient() < 1) {
                         t = rd() % solution->getNbTour();
                     }
