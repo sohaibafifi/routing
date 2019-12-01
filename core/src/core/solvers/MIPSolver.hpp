@@ -62,12 +62,8 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
 
 template<class Reader>
 routing::MIPSolver<Reader>::~MIPSolver() {
-    this->os << "deleting the problem from memory" << std::endl;
     delete this->problem;
-    this->os << "deleting cplex" << std::endl;
     this->cplex.end();
-    this->os << "deleting env" << std::endl;
     this->env.end();
-    this->os << "solver done" << std::endl;
 }
 

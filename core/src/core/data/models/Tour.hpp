@@ -16,6 +16,8 @@ namespace routing {
         protected:
             Problem *problem;
         public :
+            virtual void update() = 0;
+
             virtual void pushClient(Client *client) = 0;
 
             virtual void addClient(Client *client, unsigned long position) = 0;
