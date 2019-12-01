@@ -29,25 +29,28 @@ namespace routing {
 
         class InformationCallback;
     }
-    namespace models{
+    namespace models {
         class Solution;
 
         class Tour;
     }
     class Problem;
+
     class Initializer {
-        Problem * problem;
+        Problem *problem;
     public:
-        Initializer(Problem * p_problem)
-        :problem(p_problem){
+        Initializer(Problem *p_problem)
+                : problem(p_problem) {
 
         }
 
-        Problem * getProblem() const{ return problem; }
+        Problem *getProblem() const { return problem; }
+
         virtual models::Solution *initialSolution() = 0;
 
         virtual models::Tour *initialTour(int vehicleID) = 0;
     };
+
     class Problem {
     public :
         virtual ~Problem() {

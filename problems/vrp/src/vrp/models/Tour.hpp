@@ -19,6 +19,7 @@ namespace vrp {
             routing::Demand consumption;
         public:
 
+
             Tour(routing::Problem *p_problem, unsigned vehicleID) :
                     routing::models::Tour(p_problem, vehicleID),
                     traveltime(0),
@@ -31,6 +32,8 @@ namespace vrp {
                 return tour;
             }
 
+            void update() override {}
+
             routing::Duration getTraveltime() const {
                 return traveltime;
             }
@@ -40,8 +43,7 @@ namespace vrp {
             }
 
             void pushClient(routing::models::Client *client) override {
-                traveltime += static_cast<routing::InsertionCost *>(Tour::evaluateInsertion(client,
-                                                                                            getNbClient()))->getDelta();
+                traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
                 if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + getNbClient(), static_cast<Client *>(client));
@@ -56,7 +58,7 @@ namespace vrp {
             }
 
             void removeClient(unsigned long position) override {
-                traveltime += static_cast<routing::RemoveCost *>(this->evaluateRemove(position))->getDelta();
+                traveltime += this->evaluateRemove(position)->getDelta();
                 if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
                         position)))
                     consumption -= consumer->getDemand();

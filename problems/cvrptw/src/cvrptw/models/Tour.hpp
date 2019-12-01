@@ -11,7 +11,8 @@ namespace cvrptw {
     namespace models {
         class Tour : public vrp::models::Tour {
         protected:
-            routing::Duration  totalTime;
+            routing::Duration totalTime;
+
             Tour *clone() const override {
                 Tour *tour = new Tour(this->problem, this->getID());
                 *tour = *this;
@@ -20,13 +21,15 @@ namespace cvrptw {
 
         public:
             models::Client *getClient(unsigned long i) const override {
-                 return dynamic_cast<Client *>(clients[i]);
+                return dynamic_cast<Client *>(clients[i]);
             }
 
-        public:
             Tour(routing::Problem *p_problem, unsigned vehicleID) :
                     vrp::models::Tour(p_problem, vehicleID),
-                    totalTime(0){}
+                    totalTime(0) {}
+
+            void update() override {}
+
         };
     }
 }

@@ -194,7 +194,6 @@ void vrp::Problem::addCapacityConstraints() {
 }
 
 
-
 routing::models::Solution *vrp::Initializer::initialSolution() {
     return new models::Solution(this->getProblem());
 }

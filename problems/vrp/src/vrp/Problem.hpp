@@ -8,18 +8,21 @@
 #include "models/Depot.hpp"
 
 namespace vrp {
-    namespace models{
+    namespace models {
         class Solution;
+
         class Tour;
     }
-    class  Initializer : public routing::Initializer{
+    class Initializer : public routing::Initializer {
     public:
-        Initializer(routing::Problem *pProblem):routing::Initializer(pProblem){}
+        Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
 
     private:
-        routing::models::Solution * initialSolution() override;
-        routing::models::Tour * initialTour(int vehicleID) override;
+        routing::models::Solution *initialSolution() override;
+
+        routing::models::Tour *initialTour(int vehicleID) override;
     };
+
     class Problem : public routing::Problem {
     public:
 
@@ -49,7 +52,7 @@ namespace vrp {
             depots.push_back(depot);
         }
 
-        routing::Initializer * initializer() override {
+        routing::Initializer *initializer() override {
             return new Initializer(this);
         }
 
