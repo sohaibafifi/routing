@@ -13,7 +13,7 @@ routing::Problem *vrp::Reader::readFile(std::string filepath) {
     vrp::Problem *problem = new vrp::Problem();
     problem->setName("dummy");
     problem->vehicles = std::vector<routing::models::Vehicle *>();
-    for (int i = 1; i <= 50; ++i) {
+    for (unsigned int i = 1; i <= 50; ++i) {
         problem->vehicles.push_back(new routing::models::Vehicle(i));
     }
     problem->depots = std::vector<routing::models::Depot *>();
@@ -23,7 +23,7 @@ routing::Problem *vrp::Reader::readFile(std::string filepath) {
     for (int i = 1; i <= 10; ++i) {
         problem->clients.push_back(new vrp::models::Client(i, rd() % 100, rd() % 100));
     }
-    int nbClients = problem->clients.size();
+    unsigned long nbClients = problem->clients.size();
     problem->distances = std::vector<std::vector<routing::Duration> >(nbClients);
     problem->distances_to_depots = std::vector<std::vector<routing::Duration> >(1);
     problem->distances_to_depots[0] = std::vector<routing::Duration>(nbClients);

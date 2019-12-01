@@ -8,8 +8,24 @@
 #include "models/Depot.hpp"
 
 namespace vrp {
+    namespace models {
+        class Solution;
+
+        class Tour;
+    }
+    class Initializer : public routing::Initializer {
+    public:
+        Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
+
+    private:
+        routing::models::Solution *initialSolution() override;
+
+        routing::models::Tour *initialTour(int vehicleID) override;
+    };
+
     class Problem : public routing::Problem {
     public:
+
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;
@@ -34,6 +50,10 @@ namespace vrp {
         virtual void setDepot(models::Depot *depot) {
             depots.clear();
             depots.push_back(depot);
+        }
+
+        routing::Initializer *initializer() override {
+            return new Initializer(this);
         }
 
     protected:

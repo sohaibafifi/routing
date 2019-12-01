@@ -29,10 +29,9 @@ target_include_directories(routing PUBLIC utilities/src/)
 
 add_subdirectory(problems/vrp)
 add_subdirectory(problems/cvrp)
-add_subdirectory(problems/cvrptw)
+
 target_include_directories(routing PUBLIC problems/vrp/src/)
 target_include_directories(routing PUBLIC problems/cvrp/src/)
-target_include_directories(routing PUBLIC problems/cvrptw/src/)
 
 target_include_directories(routing PUBLIC core/src/)
 
@@ -44,7 +43,6 @@ target_compile_definitions(routing PRIVATE IL_STD)
 target_link_libraries(routing PUBLIC utilities)
 target_link_libraries(routing PUBLIC vrp)
 target_link_libraries(routing PUBLIC cvrp)
-target_link_libraries(routing PUBLIC cvrptw)
 target_link_libraries(routing PUBLIC dl)
 target_link_libraries(routing PUBLIC cp)
 target_link_libraries(routing PUBLIC ilocplex)

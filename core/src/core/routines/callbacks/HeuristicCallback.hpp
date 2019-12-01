@@ -40,7 +40,7 @@ namespace routing {
                 if (hasIncumbent()) {
                     if (shouldDive()) {
                         solution = this->extractPartialSolution(problem);
-                        if(solution == nullptr) return;
+                        if (solution == nullptr) return;
                         if (diver->dive(solution))
                             getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
                                            << std::endl;
