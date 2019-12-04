@@ -11,10 +11,7 @@ namespace vrp {
     class Initializer : public routing::Initializer {
     public:
         explicit Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
-
-    private:
         routing::models::Solution *initialSolution() override;
-
         routing::models::Tour *initialTour(int vehicleID) override;
     };
 

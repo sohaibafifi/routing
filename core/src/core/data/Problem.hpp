@@ -18,17 +18,16 @@
 #pragma GCC diagnostic pop
 
 namespace routing {
+#ifdef CPLEX
     namespace callback {
         class UserCutCallback;
-
         class HeuristicCallback;
-
         class IncumbentCallback;
-
         class LazyConstraintCallback;
-
         class InformationCallback;
     }
+#endif
+
     namespace models {
         class Solution;
 
@@ -41,13 +40,10 @@ namespace routing {
     public:
         Initializer(Problem *p_problem)
                 : problem(p_problem) {
-
         }
 
         Problem *getProblem() const { return problem; }
-
         virtual models::Solution *initialSolution() = 0;
-
         virtual models::Tour *initialTour(int vehicleID) = 0;
     };
 
@@ -107,7 +103,6 @@ namespace routing {
         std::vector<models::Vehicle *> vehicles;
         std::vector<models::Depot *> depots;
         std::vector<models::Client *> clients;
-
 
         std::string name;
 
