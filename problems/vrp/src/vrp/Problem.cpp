@@ -7,7 +7,9 @@
 #include "models/Depot.hpp"
 #include "models/Tour.hpp"
 #include <utilities/Utilities.hpp>
+#ifdef CPLEX
 #include <core/routines/callbacks.hpp>
+#endif
 #include <core/data/attributes/Consumer.hpp>
 #include <core/data/attributes/Stock.hpp>
 
@@ -15,6 +17,7 @@
 #include "routines/operators/Constructor.hpp"
 #include "routines/operators/Destructor.hpp"
 
+#ifdef CPLEX
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
@@ -30,16 +33,6 @@ routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv 
 
 routing::callback::IncumbentCallback *vrp::Problem::setIncumbentCallback(IloEnv &env) {
     return new routing::callback::IncumbentCallback(env, this);
-}
-
-
-routing::Duration
-vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const {
-    return distances[c1.getID() - 1][c2.getID() - 1];
-}
-
-routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Depot &d) const {
-    return distances_to_depots[d.getID() - 1][c1.getID() - 1];
 }
 
 
@@ -191,6 +184,17 @@ void vrp::Problem::addCapacityConstraints() {
                                     + client->getDemand()) * (1 - arcs[i][j]));
             }
         }
+}
+
+#endif
+
+routing::Duration
+vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const {
+    return distances[c1.getID() - 1][c2.getID() - 1];
+}
+
+routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Depot &d) const {
+    return distances_to_depots[d.getID() - 1][c1.getID() - 1];
 }
 
 

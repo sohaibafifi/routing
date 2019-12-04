@@ -25,10 +25,16 @@ namespace vrp {
 
     class Problem : public routing::Problem {
     public:
-
+#ifdef CPLEX
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;
+
+        std::vector<std::vector<IloNumVar> > arcs;
+        std::vector<std::vector<IloNumVar> > affectation;
+        std::vector<IloNumVar> order;
+        std::vector<IloNumVar> consumption;
+#endif
 
         virtual routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const override;
@@ -36,10 +42,6 @@ namespace vrp {
         virtual routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Depot &d) const override;
 
-        std::vector<std::vector<IloNumVar> > arcs;
-        std::vector<std::vector<IloNumVar> > affectation;
-        std::vector<IloNumVar> order;
-        std::vector<IloNumVar> consumption;
         std::vector<std::vector<routing::Duration> > distances, distances_to_depots;
 
         virtual models::Depot *getDepot() {
@@ -57,11 +59,14 @@ namespace vrp {
         }
 
     protected:
+#ifdef CPLEX
+
         virtual void addVariables() override;
 
         virtual void addConstraints() override;
 
         virtual void addObjective() override;
+
 
         virtual void addTotalDistanceObjective();
 
@@ -72,6 +77,7 @@ namespace vrp {
         virtual void addSequenceConstraints();
 
         virtual void addCapacityConstraints();
+#endif
     };
 
 }

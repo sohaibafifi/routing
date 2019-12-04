@@ -21,7 +21,7 @@ namespace vrp {
                 while (!clients.empty() && insertion_found) {
                     unsigned best_t = 0, best_p = 0, best_client_i = 0;
                     insertion_found = false;
-                    routing::InsertionCost *bestCost = new routing::InsertionCost(IloInfinity, true);
+                    routing::InsertionCost *bestCost = new routing::InsertionCost(std::numeric_limits<routing::Duration>::max(), true);
                     for (unsigned cc = 0; cc < clients.size(); ++cc) {
                         models::Client *client = static_cast<models::Client *>(clients[cc]);
                         for (unsigned r = 0; r < solution->getNbTour(); ++r) {

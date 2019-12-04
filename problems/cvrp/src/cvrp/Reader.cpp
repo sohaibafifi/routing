@@ -12,6 +12,7 @@
 #include <utilities/Utilities.hpp>
 #include <vrp/models/Depot.hpp>
 #include <vrp/Problem.hpp>
+#include <fstream>
 
 routing::Problem *cvrp::Reader::readFile(std::string filepath) {
     vrp::Problem *problem = new vrp::Problem();
