@@ -7,6 +7,7 @@
 #include <core/data/models/Tour.hpp>
 #include <core/data/attributes/Consumer.hpp>
 #include <core/data/attributes/Stock.hpp>
+#include <utilities/Utilities.hpp>
 #include "Client.hpp"
 
 namespace vrp {
@@ -24,7 +25,8 @@ namespace vrp {
                     routing::models::Tour(p_problem, vehicleID),
                     traveltime(0),
                     consumption(0),
-                    clients(std::vector<Client *>()) {}
+                    clients(std::vector<Client *>()),
+                    updated(true) {}
 
             Tour *clone() const override {
                 Tour *tour = new Tour(this->problem, this->getID());
@@ -44,6 +46,7 @@ namespace vrp {
 
             void pushClient(routing::models::Client *client) override {
                 traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+                updated = true;
                 if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + getNbClient(), static_cast<Client *>(client));
@@ -51,6 +54,7 @@ namespace vrp {
 
             void addClient(routing::models::Client *client, unsigned long position) override {
                 //TODO : optimize to not recalculate the insertion cost
+                updated = true;
                 traveltime += this->evaluateInsertion(client, position)->getDelta();
                 if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
@@ -58,6 +62,7 @@ namespace vrp {
             }
 
             void removeClient(unsigned long position) override {
+                updated = true;
                 traveltime += this->evaluateRemove(position)->getDelta();
                 if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
                         position)))
@@ -136,6 +141,33 @@ namespace vrp {
                     }
                 }
                 return new routing::RemoveCost(delta);
+            }
+
+            bool updated = true;
+            long hash = 0;
+
+            long getHash() override {
+                if (updated) {
+                    if (clients.empty()) {
+                        updated = false;
+                        hash = 0;
+                        return hash;
+                    }
+                    std::vector<bool> bit_sequence(problem->clients.size(), false);
+                    std::string sequence;
+                    for (int i = 0; i < clients.size(); ++i) {
+                        bit_sequence[clients[i]->getID()] = true;
+                        sequence.append(Utilities::itos(clients[i]->getID()));
+                        sequence.push_back('-');
+                    }
+                    std::hash<std::string> hash_fn_sequence;
+                    updated = false;
+                    hash = hash_fn_sequence(sequence);
+//                    std::hash<std::vector<bool>> hash_fn;
+//                    updated = false;
+//                    hash = hash_fn(bit_sequence);
+                }
+                return hash;
             }
 
 
