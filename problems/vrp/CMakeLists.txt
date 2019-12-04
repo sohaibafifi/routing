@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 file(GLOB_RECURSE vrp_SRC
         "src/**.h"
         "src/**.hpp"
+        "src/Problem.cpp"
         "src/**.cpp"
         )
 set(CMAKE_VERBOSE_MAKEFILE on)
