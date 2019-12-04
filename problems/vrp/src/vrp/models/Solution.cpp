@@ -3,7 +3,6 @@
 //
 
 #include "Solution.hpp"
-#include "../routines/operators/Constructor.hpp"
 
 
 vrp::models::Solution *
@@ -23,13 +22,13 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
             if(! tour.evaluateInsertion(sequence[j], tour.getNbClient())->isPossible()) break;
             tour.pushClient(sequence[j]);
             if (i == j) {
-                distance = problem->getDistance(*sequence[j], *static_cast<Problem *>(problem)->getDepot());
+                distance = problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
             } else {
                 distance =
-                        distance - problem->getDistance(*sequence[j - 1], *static_cast<Problem *>(problem)->getDepot())
+                        distance - problem->getDistance(*sequence[j - 1], *dynamic_cast<Problem *>(problem)->getDepot())
                         + problem->getDistance(*sequence[j - 1], *sequence[j]);
             }
-            distance = distance + problem->getDistance(*sequence[j], *static_cast<Problem *>(problem)->getDepot());
+            distance = distance + problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
             routing::Duration lastCost = (i == 0) ? 0.0 : labels.at(i - 1);
             if (lastCost + distance < labels.at(j)) {
                 labels[j] = lastCost + distance;

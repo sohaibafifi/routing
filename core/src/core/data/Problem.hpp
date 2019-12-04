@@ -53,8 +53,7 @@ namespace routing {
 
     class Problem {
     public :
-        // FIXME : remove default constructor
-        Problem(){}
+
         virtual ~Problem() {
             for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
             for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
@@ -95,12 +94,11 @@ namespace routing {
 
         IloModel model;
         IloExpr obj;
- virtual IloModel generateModel(IloEnv &env) {
+        virtual IloModel generateModel(IloEnv &env) {
             this->model = IloModel(env);
             this->model.setName(this->getName().c_str());
             this->addVariables();
             this->addConstraints();
-
             this->addObjective();
             return this->model;
         }

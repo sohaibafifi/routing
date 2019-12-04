@@ -19,7 +19,7 @@ namespace vrp {
 
 
     public:
-        LSSolver(const std::string &p_inputFile,
+        explicit LSSolver(const std::string &p_inputFile,
 
                  std::ostream &os = std::cout) :
                 routing::LSSolver<Reader>(p_inputFile, os) {
