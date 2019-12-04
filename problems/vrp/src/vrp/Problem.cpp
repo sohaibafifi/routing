@@ -7,6 +7,9 @@
 #include "models/Tour.hpp"
 #ifdef CPLEX
 #include <core/routines/callbacks.hpp>
+#include "routines/operators/Generator.hpp"
+#include "routines/operators/Constructor.hpp"
+#include "routines/operators/Destructor.hpp"
 #endif
 #include "models/Solution.hpp"
 #ifdef CPLEX
