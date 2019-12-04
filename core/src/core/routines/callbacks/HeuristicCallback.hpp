@@ -112,7 +112,8 @@ namespace routing {
             }
 
             virtual bool shouldDive() {
-                return false;
+                // extract solution should work
+                return true;
             }
 
             virtual routing::models::Solution *extractPartialSolution(routing::Problem *problem) {
