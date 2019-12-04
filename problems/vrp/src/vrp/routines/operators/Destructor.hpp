@@ -52,10 +52,10 @@ namespace vrp {
                     solution->removeClient(t, position);
 //                    if(solution->getTour(t)->getNbClient() == 0)
 //                        solution->removeTour(t);
-                    dynamic_cast<models::Solution *>(solution)->traveltime =
-                            dynamic_cast<models::Solution *>(solution)->traveltime
-                            - traveltime
-                            + dynamic_cast<models::Tour *>(solution->getTour(t))->getTraveltime();
+//                    dynamic_cast<models::Solution *>(solution)->traveltime =
+//                            dynamic_cast<models::Solution *>(solution)->traveltime
+//                            - traveltime
+//                            + dynamic_cast<models::Tour *>(solution->getTour(t))->getTraveltime();
                 } while (dynamic_cast<models::Solution *>(solution)->notserved.size() < drem);
             }
 

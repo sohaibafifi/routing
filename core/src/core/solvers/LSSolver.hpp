@@ -39,14 +39,11 @@ namespace routing {
             this->solution = generator->generate();
             std::random_device rd;
 
-            bool improved = false;
             std::vector<bool> run(neighbors.size(), false);
             while (std::find(run.begin(), run.end(), false) != run.end()) {
                 unsigned i = 0;
                 do { i = rd() % run.size(); } while (run[i]);
-
                 if (neighbors[i]->look(this->solution)) {
-                    improved = true;
                     run = std::vector<bool>(neighbors.size(), false);
                 } else {
                     run[i] = true;
@@ -55,6 +52,7 @@ namespace routing {
             this->os << this->problem->getName()
                      << "\t" << this->solution->getCost()
                      << std::endl;
+            this->solution->print(this->os);
             return this->solution != nullptr;
         }
 
