@@ -196,7 +196,9 @@ routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, c
 }
 
 vrp::Problem::~Problem() {
-    routing::Problem::~Problem();
+    for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
+    for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
+    for (unsigned d = 0; d < depots.size(); ++d) delete depots[d];
 }
 
 
