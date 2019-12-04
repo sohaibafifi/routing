@@ -4,9 +4,7 @@
 
 
 #include "Problem.hpp"
-#include "models/Depot.hpp"
 #include "models/Tour.hpp"
-#include <utilities/Utilities.hpp>
 #ifdef CPLEX
 #include <core/routines/callbacks.hpp>
 #endif
