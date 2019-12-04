@@ -32,7 +32,7 @@ namespace routing {
                 }
                 models::Client *client = solution->getTour(t)->getClient(bestRemove_position);
                 solution->removeClient(t, bestRemove_position);
-                if (constructor->bestInsertion(solution, client) && solution->getCost() < bestCost - 1e-9) {
+                if (constructor->insertClient(solution, client) && solution->getCost() < bestCost - 1e-9) {
                     bestCost = solution->getCost();
                     best->copy(solution);
                     improved = true;

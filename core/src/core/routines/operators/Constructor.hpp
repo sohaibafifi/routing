@@ -10,7 +10,7 @@ namespace routing {
             return this->bestInsertion(solution, solution->notserved);
         }
 
-        virtual bool bestInsertion(models::Solution *solution, models::Client *client) {
+        virtual bool insertClient(models::Solution *solution, models::Client *client) {
             std::vector<models::Client *> clients = std::vector<models::Client *>();
             clients.push_back(client);
             return this->bestInsertion(solution, clients);
