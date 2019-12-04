@@ -45,7 +45,7 @@ namespace vrp {
                         solution->getTour(best_t)->update();
                     }
                 }
-                return insertion_found;
+                return insertion_found && clients.empty();
 
             }
 
