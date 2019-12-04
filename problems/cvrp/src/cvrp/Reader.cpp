@@ -224,7 +224,7 @@ routing::Problem *cvrp::Reader::readFile(std::string filepath) {
 
     }
     catch (std::string emsg) {
-        throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " :" + emsg);
+        throw std::string(std::string(__PRETTY_FUNCTION__) + " :" + emsg);
     }
 
 }
