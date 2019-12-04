@@ -25,12 +25,17 @@ namespace routing {
             while (iter < itermax) {
                 iter++;
                 destructor->destruct(solution);
-                if (constructor->bestInsertion(solution) && solution->getCost() < bestCost - 1e-9) {
-                    bestCost = solution->getCost();
-                    iter = 1;
-                    best->copy(solution);
-                    improved = true;
-                }
+                if (constructor->bestInsertion(solution)) {
+                    if (solution->getCost() < bestCost - 1e-9) {
+                        bestCost = solution->getCost();
+                        std::cout << bestCost << std::endl;
+                        iter = 1;
+                        best->copy(solution);
+                        improved = true;
+                    }
+                } else
+                    solution->copy(best);
+
             }
             solution->copy(best);
             return improved;
