@@ -180,6 +180,14 @@ void vrp::Problem::addCapacityConstraints() {
 
 #endif
 
+routing::models::Solution *vrp::Initializer::initialSolution() {
+    return new models::Solution(this->getProblem());
+}
+
+routing::models::Tour *vrp::Initializer::initialTour(int vehicleID) {
+    return new models::Tour(this->getProblem(), vehicleID);
+}
+
 routing::Duration
 vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const {
     return distances[c1.getID() - 1][c2.getID() - 1];
@@ -189,11 +197,3 @@ routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, c
     return distances_to_depots[d.getID() - 1][c1.getID() - 1];
 }
 
-
-routing::models::Solution *vrp::Initializer::initialSolution() {
-    return new models::Solution(this->getProblem());
-}
-
-routing::models::Tour *vrp::Initializer::initialTour(int vehicleID) {
-    return new models::Tour(this->getProblem(), vehicleID);
-}
