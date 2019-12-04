@@ -7,6 +7,7 @@
 #include "Solver.hpp"
 #include "../routines/operators/Generator.hpp"
 #include "../routines/neighborhoods/Neighborhood.hpp"
+#include <cassert>
 
 namespace routing {
     template<class Reader>

@@ -4,6 +4,7 @@
 #include "Neighborhood.hpp"
 #include "core/routines/operators/Destructor.hpp"
 #include "core/routines/operators/Constructor.hpp"
+#include <cassert>
 
 namespace routing {
     class IDCH : public Neighborhood {
