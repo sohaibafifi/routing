@@ -195,6 +195,10 @@ routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, c
     return distances_to_depots[d.getID() - 1][c1.getID() - 1];
 }
 
+vrp::Problem::~Problem() {
+    routing::Problem::~Problem();
+}
+
 
 routing::models::Solution *vrp::Initializer::initialSolution() {
     return new models::Solution(this->getProblem());

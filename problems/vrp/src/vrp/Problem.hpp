@@ -60,6 +60,8 @@ namespace vrp {
             return new Initializer(this);
         }
 
+        ~Problem() override;
+
     protected:
 #ifdef CPLEX
 
