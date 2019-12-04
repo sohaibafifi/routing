@@ -25,7 +25,7 @@ namespace vrp {
 
     class Problem : public routing::Problem {
     public:
-        Problem() {}
+        Problem() :routing::Problem(){}
 
 #ifdef CPLEX
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
