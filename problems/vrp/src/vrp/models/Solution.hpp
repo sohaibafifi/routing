@@ -60,11 +60,32 @@ namespace vrp {
                 traveltime += dynamic_cast<Tour *>( tour )->getTraveltime();
             }
 
+            void removeClient(unsigned long index_tour, unsigned long position) override {
+                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::models::Solution::removeClient(index_tour, position);
+                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                this->traveltime += delta;
+            }
+
+            void pushClient(unsigned long index_tour, routing::models::Client *client) override {
+                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::models::Solution::pushClient(index_tour, client);
+                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                this->traveltime += delta;
+            }
+
+            void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position) override {
+                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::models::Solution::addClient(index_tour, client, position);
+                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                this->traveltime += delta;
+            }
+
             unsigned long getNbTour() const override {
                 return tours.size();
             }
-#ifdef CPLEX
 
+#ifdef CPLEX
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
                 std::vector<std::vector<IloBool> > values(problem->arcs.size());
@@ -128,7 +149,8 @@ namespace vrp {
         protected :
             std::vector<Tour *> tours;
 
-        Solution * initFromSequence(routing::Problem *problem, std::vector<routing::models::Client*> sequence) override ;
+            Solution *
+            initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) override;
 
         };
 
