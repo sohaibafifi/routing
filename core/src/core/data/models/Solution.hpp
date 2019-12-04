@@ -11,6 +11,7 @@ namespace routing {
         struct Solution : public Model {
         protected:
             Problem *problem;
+
         public :
             Solution(Problem *p_problem) :
                     problem(p_problem),
@@ -21,6 +22,9 @@ namespace routing {
             }
 
             virtual ~Solution() {}
+
+
+            virtual Solution * initFromSequence(Problem *problem, std::vector<Client*> sequence) = 0;
 
             Problem *getProblem() {
                 return problem;

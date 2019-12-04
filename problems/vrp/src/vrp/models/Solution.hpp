@@ -122,6 +122,9 @@ namespace vrp {
 
         protected :
             std::vector<Tour *> tours;
+
+        Solution * initFromSequence(routing::Problem *problem, std::vector<routing::models::Client*> sequence) override ;
+
         };
 
     }
