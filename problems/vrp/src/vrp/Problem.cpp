@@ -8,13 +8,7 @@
 #ifdef CPLEX
 #include <core/routines/callbacks.hpp>
 #endif
-#include <core/data/attributes/Consumer.hpp>
-#include <core/data/attributes/Stock.hpp>
-
-#include "routines/operators/Generator.hpp"
-#include "routines/operators/Constructor.hpp"
-#include "routines/operators/Destructor.hpp"
-
+#include "models/Solution.hpp"
 #ifdef CPLEX
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
@@ -193,12 +187,6 @@ vrp::Problem::getDistance(const routing::models::Client &c1, const routing::mode
 
 routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, const routing::models::Depot &d) const {
     return distances_to_depots[d.getID() - 1][c1.getID() - 1];
-}
-
-vrp::Problem::~Problem() {
-    for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
-    for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
-    for (unsigned d = 0; d < depots.size(); ++d) delete depots[d];
 }
 
 

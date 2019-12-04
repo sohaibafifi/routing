@@ -11,7 +11,7 @@
 #include "Problem.hpp"
 
 vrp::Problem *vrp::Reader::readFile(std::string filepath) {
-    vrp::Problem *problem = new vrp::Problem();
+    auto *problem = new vrp::Problem();
     problem->setName("dummy");
     problem->vehicles = std::vector<routing::models::Vehicle *>();
     for (unsigned int i = 1; i <= 50; ++i) {

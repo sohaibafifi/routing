@@ -15,7 +15,7 @@ namespace vrp {
         public:
 
 
-            Solution(routing::Problem *p_problem)
+            explicit Solution(routing::Problem *p_problem)
                     : routing::models::Solution(p_problem),
                       traveltime(0),
                       tours(std::vector<Tour *>()) {
@@ -26,7 +26,8 @@ namespace vrp {
             }
 
             Solution(const Solution &p_solution) :
-                    routing::models::Solution(p_solution) {
+                    routing::models::Solution(p_solution) ,
+                    traveltime(p_solution.traveltime){
                 this->copy(&p_solution);
             }
 
@@ -36,8 +37,8 @@ namespace vrp {
             void copy(const routing::models::Solution *p_solution) override {
                 this->traveltime = dynamic_cast<const Solution *>(p_solution)->traveltime;
                 this->notserved.clear();
-                for (int i = 0; i < p_solution->notserved.size(); i++) {
-                    this->notserved.push_back(p_solution->notserved[i]);
+                for (auto i : p_solution->notserved) {
+                    this->notserved.push_back(i);
                 }
                 this->tours.clear();
                 for (unsigned int j = 0; j < dynamic_cast<const Solution *>(p_solution)->tours.size(); ++j) {
@@ -55,8 +56,8 @@ namespace vrp {
             }
 
             void addTour(routing::models::Tour *tour, unsigned long position) override {
-                tours.insert(tours.begin() + position, static_cast<Tour *>(tour));
-                traveltime += static_cast<Tour *>( tour )->getTraveltime();
+                tours.insert(tours.begin() + position, dynamic_cast<Tour *>(tour));
+                traveltime += dynamic_cast<Tour *>( tour )->getTraveltime();
             }
 
             unsigned long getNbTour() const override {
@@ -121,7 +122,7 @@ namespace vrp {
                 return tours.at(t);
             }
 
-            routing::Duration traveltime;
+            routing::Duration traveltime{};
 
 
         protected :

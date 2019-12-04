@@ -47,24 +47,24 @@ namespace vrp {
             void pushClient(routing::models::Client *client) override {
                 traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
                 updated = true;
-                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
+                if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
-                clients.insert(clients.begin() + getNbClient(), static_cast<Client *>(client));
+                clients.insert(clients.begin() + getNbClient(), dynamic_cast<Client *>(client));
             }
 
             void addClient(routing::models::Client *client, unsigned long position) override {
                 //TODO : optimize to not recalculate the insertion cost
                 updated = true;
                 traveltime += this->evaluateInsertion(client, position)->getDelta();
-                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
+                if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
-                clients.insert(clients.begin() + position, static_cast<Client *>(client));
+                clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
             }
 
             void removeClient(unsigned long position) override {
                 updated = true;
                 traveltime += this->evaluateRemove(position)->getDelta();
-                if (routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
+                if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
                         position)))
                     consumption -= consumer->getDemand();
                 clients.erase(clients.begin() + position);
@@ -80,12 +80,12 @@ namespace vrp {
 
             routing::InsertionCost *
             evaluateInsertion(routing::models::Client *client, unsigned long position) override {
-                routing::attributes::Consumer *consumer = dynamic_cast<routing::attributes::Consumer *>(client);
-                routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(problem->vehicles[this->getID()]);
+                auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client);
+                auto *stock = dynamic_cast<routing::attributes::Stock *>(problem->vehicles[this->getID()]);
 
                 if (consumer && stock && consumer->getDemand() + getConsumption() > stock->getCapacity())
                     return new routing::InsertionCost(0, false);
-                routing::InsertionCost *cost = new routing::InsertionCost();
+                auto *cost = new routing::InsertionCost();
 
                 routing::Duration delta = 0;
                 if (clients.empty()) {
@@ -155,9 +155,9 @@ namespace vrp {
                     }
                     std::vector<bool> bit_sequence(problem->clients.size(), false);
                     std::string sequence;
-                    for (int i = 0; i < clients.size(); ++i) {
-                        bit_sequence[clients[i]->getID()] = true;
-                        sequence.append(Utilities::itos(clients[i]->getID()));
+                    for (auto & client : clients) {
+                        bit_sequence[client->getID()] = true;
+                        sequence.append(Utilities::itos(client->getID()));
                         sequence.push_back('-');
                     }
                     std::hash<std::string> hash_fn_sequence;

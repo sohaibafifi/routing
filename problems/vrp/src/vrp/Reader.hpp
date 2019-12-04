@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Problem.hpp"
-
 #include <core/data/Reader.hpp>
 
 namespace vrp {

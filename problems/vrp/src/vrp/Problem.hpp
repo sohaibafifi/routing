@@ -8,14 +8,9 @@
 #include "models/Depot.hpp"
 
 namespace vrp {
-    namespace models {
-        class Solution;
-
-        class Tour;
-    }
     class Initializer : public routing::Initializer {
     public:
-        Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
+        explicit Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
 
     private:
         routing::models::Solution *initialSolution() override;
@@ -25,7 +20,6 @@ namespace vrp {
 
     class Problem : public routing::Problem {
     public:
-        Problem() :routing::Problem(){}
 
 #ifdef CPLEX
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
@@ -37,6 +31,8 @@ namespace vrp {
         std::vector<IloNumVar> order;
         std::vector<IloNumVar> consumption;
 #endif
+
+        Problem() = default;
 
         virtual routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const override;
@@ -59,8 +55,6 @@ namespace vrp {
         routing::Initializer *initializer() override {
             return new Initializer(this);
         }
-
-        ~Problem() override;
 
     protected:
 #ifdef CPLEX
