@@ -62,6 +62,7 @@ namespace vrp {
             unsigned long getNbTour() const override {
                 return tours.size();
             }
+#ifdef CPLEX
 
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
@@ -101,6 +102,7 @@ namespace vrp {
                     }
                 }
             }
+#endif
 
             void print(std::ostream &out) override {
                 out << "solution cost " << getCost() << std::endl;
