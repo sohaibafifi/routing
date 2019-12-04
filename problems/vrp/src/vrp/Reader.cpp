@@ -8,6 +8,7 @@
 #include "models/Depot.hpp"
 #include <cmath>
 #include <random>
+#include "Problem.hpp"
 
 routing::Problem *vrp::Reader::readFile(std::string filepath) {
     vrp::Problem *problem = new vrp::Problem();
