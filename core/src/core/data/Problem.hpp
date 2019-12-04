@@ -53,6 +53,8 @@ namespace routing {
 
     class Problem {
     public :
+        // FIXME : remove default constructor
+        Problem(){}
         virtual ~Problem() {
             for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
             for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
