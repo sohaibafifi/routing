@@ -3,6 +3,7 @@
 #include "core/data/Model.hpp"
 #include "Tour.hpp"
 #include "core/data/Problem.hpp"
+#include <algorithm>
 
 namespace routing {
 
