@@ -33,6 +33,8 @@ namespace routing {
             virtual routing::InsertionCost *evaluateInsertion(Client *client, unsigned long position) = 0;
 
             virtual routing::RemoveCost *evaluateRemove(unsigned long position) = 0;
+
+            virtual long getHash() = 0;
         };
     }
 }

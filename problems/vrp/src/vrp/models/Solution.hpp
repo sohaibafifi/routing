@@ -30,6 +30,7 @@ namespace vrp {
                 this->copy(&p_solution);
             }
 
+
             void update() override {}
 
             void copy(const routing::models::Solution *p_solution) override {
@@ -109,7 +110,7 @@ namespace vrp {
                     for (unsigned i = 0; i < this->getTour(t)->getNbClient(); ++i) {
                         out << this->getTour(t)->getClient(i)->getID() << " ";
                     }
-                    out << std::endl;
+                    out << "[" <<this->getTour(t)->getHash() << "]" << std::endl;
                 }
             }
 
@@ -119,6 +120,7 @@ namespace vrp {
             }
 
             routing::Duration traveltime;
+
 
         protected :
             std::vector<Tour *> tours;
