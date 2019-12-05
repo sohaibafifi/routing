@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(routing)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 14)
 file(GLOB_RECURSE routing_SRC
@@ -29,6 +30,8 @@ target_include_directories(routing PUBLIC utilities/src/)
 
 add_subdirectory(problems/vrp)
 add_subdirectory(problems/cvrp)
+add_subdirectory(tests)
+add_test(routing tests/basic_tests/runBasicCheckTest)
 
 target_include_directories(routing PUBLIC problems/vrp/src/)
 target_include_directories(routing PUBLIC problems/cvrp/src/)
