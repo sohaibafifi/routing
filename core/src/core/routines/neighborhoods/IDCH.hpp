@@ -28,7 +28,6 @@ namespace routing {
                 if (constructor->bestInsertion(solution)) {
                     if (solution->getCost() < bestCost - 1e-9) {
                         bestCost = solution->getCost();
-                        std::cout << bestCost << std::endl;
                         iter = 1;
                         best->copy(solution);
                         improved = true;

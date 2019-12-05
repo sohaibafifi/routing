@@ -40,6 +40,12 @@ namespace routing {
             return nullptr;
         }
 
+        Constructor *getConstructor() const { return this->constructor; }
+
+        Destructor *getDestructor() const { return this->destructor; }
+
+        routing::Problem *getProblem() const { return this->problem; }
+
     protected:
         Constructor *constructor;
         Destructor *destructor;
