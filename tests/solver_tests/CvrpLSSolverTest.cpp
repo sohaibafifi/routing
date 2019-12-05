@@ -23,5 +23,5 @@ TEST_F(CvrpLSSolverTest, solve){
      EXPECT_EQ(dynamic_cast<vrp::Problem*>(lsSolver.getProblem())->clients.size(), 5);
      bool solution_found = lsSolver.solve();
      EXPECT_TRUE(solution_found);
-     EXPECT_GT(lsSolver.getSolution()->getCost(), 0);
+     EXPECT_GT(lsSolver.getSolution()->getCost(), 190);
 }
