@@ -35,7 +35,6 @@ namespace routing {
 
             virtual double getCost() = 0;
 
-
             virtual void update() = 0;
 
             virtual void pushTour(Tour *tour) = 0;
