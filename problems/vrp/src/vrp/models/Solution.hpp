@@ -128,7 +128,6 @@ namespace vrp {
 
             void print(std::ostream &out) override {
                 out << "solution cost " << getCost() << std::endl;
-
                 for (unsigned t = 0; t < getNbTour(); t++) {
                     out << "tour " << t << " : ";
                     for (unsigned i = 0; i < this->getTour(t)->getNbClient(); ++i) {
@@ -138,14 +137,12 @@ namespace vrp {
                 }
             }
 
-
             Tour *getTour(unsigned t) const override {
                 return tours.at(t);
             }
 
-            routing::Duration traveltime{};
-
-
+            routing::Duration traveltime;
+            
         protected :
             std::vector<Tour *> tours;
 

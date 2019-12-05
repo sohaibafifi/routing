@@ -34,7 +34,7 @@ namespace vrp {
 
         private:
              void destruct(routing::models::Solution *solution) override {
-                assert(solution->notserved.empty());
+                // assert(solution->notserved.empty());
                 assert(solution->getNbTour() > 0);
                 RandomDestructionParameters *parameters = static_cast<RandomDestructionParameters *>(params);
                 if (solution->notserved.size() == solution->getProblem()->clients.size()) return;

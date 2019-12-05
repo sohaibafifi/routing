@@ -9,7 +9,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: submodules
+      run: git submodule update --init --recursive
     - name: configure
       run: mkdir build && cd build && cmake ..
     - name: build
       run: cmake --build build
+    - name: tests
+      run: cd build; make; make test

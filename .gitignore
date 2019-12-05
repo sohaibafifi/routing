@@ -84,3 +84,4 @@ CTestTestfile.cmake
 _deps
 
 *.lp
+build
