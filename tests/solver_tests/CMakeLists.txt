@@ -1,0 +1,21 @@
+project(solver_tests)
+include_directories(../lib/googletest/googletest/include ../lib/googletest/googletest)
+
+add_executable(VrpLSSolverTest VrpLSSolverTest.cpp)
+target_include_directories(VrpLSSolverTest PUBLIC ../../problems/vrp/src/)
+target_include_directories(VrpLSSolverTest PUBLIC ../../core/src/)
+target_link_libraries(VrpLSSolverTest gtest gtest_main)
+target_link_libraries(VrpLSSolverTest  utilities)
+target_link_libraries(VrpLSSolverTest  vrp)
+add_test(VrpLSSolverTest VrpLSSolverTest)
+
+
+add_executable(CvrpLSSolverTest CvrpLSSolverTest.cpp)
+target_include_directories(CvrpLSSolverTest PUBLIC ../../problems/vrp/src/)
+target_include_directories(CvrpLSSolverTest PUBLIC ../../problems/cvrp/src/)
+target_include_directories(CvrpLSSolverTest PUBLIC ../../core/src/)
+target_link_libraries(CvrpLSSolverTest gtest gtest_main)
+target_link_libraries(CvrpLSSolverTest  utilities)
+target_link_libraries(CvrpLSSolverTest  vrp)
+target_link_libraries(CvrpLSSolverTest  cvrp)
+add_test(CvrpLSSolverTest CvrpLSSolverTest)

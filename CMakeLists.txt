@@ -30,8 +30,6 @@ target_include_directories(routing PUBLIC utilities/src/)
 
 add_subdirectory(problems/vrp)
 add_subdirectory(problems/cvrp)
-add_subdirectory(tests)
-add_test(routing tests/basic_tests/runBasicCheckTest)
 
 target_include_directories(routing PUBLIC problems/vrp/src/)
 target_include_directories(routing PUBLIC problems/cvrp/src/)
@@ -57,3 +55,5 @@ if (EXISTS "${CPLEX_STUDIO_DIR}/cplex/include/ilcplex/ilocplexi.h")
     target_link_libraries(routing PUBLIC concert)
     target_link_libraries(routing PUBLIC pthread)
 endif ()
+
+add_subdirectory(tests)
