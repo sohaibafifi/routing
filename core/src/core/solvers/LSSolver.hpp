@@ -48,9 +48,6 @@ namespace routing {
                 } else {
                     run[i] = true;
                 }
-                this->os << this->problem->getName()
-                     << "\t" << this->solution->getCost()
-                     << std::endl;
             }
             this->os << this->problem->getName()
                      << "\t" << this->solution->getCost()
