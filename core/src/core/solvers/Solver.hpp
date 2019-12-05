@@ -26,6 +26,7 @@ public:
     virtual bool solve(double timeout = 3600) = 0;
 
     routing::models::Solution *getSolution() const;
+    routing::Problem *getProblem() const { return problem; }
 };
 
 template<class Reader>
