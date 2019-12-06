@@ -9,6 +9,15 @@ target_link_libraries(VrpLSSolverTest  utilities)
 target_link_libraries(VrpLSSolverTest  vrp)
 add_test(VrpLSSolverTest VrpLSSolverTest)
 
+
+add_executable(VrpGASolverTest VrpGASolverTest.cpp)
+target_include_directories(VrpGASolverTest PUBLIC ../../problems/vrp/src/)
+target_include_directories(VrpGASolverTest PUBLIC ../../core/src/)
+target_link_libraries(VrpGASolverTest gtest gtest_main)
+target_link_libraries(VrpGASolverTest  utilities)
+target_link_libraries(VrpGASolverTest  vrp)
+add_test(VrpGASolverTest VrpGASolverTest)
+
 add_executable(VrpVNSSolverTest VrpVNSSolverTest.cpp)
 target_include_directories(VrpVNSSolverTest PUBLIC ../../problems/vrp/src/)
 target_include_directories(VrpVNSSolverTest PUBLIC ../../core/src/)
@@ -39,3 +48,15 @@ target_link_libraries(CvrpVNSSolverTest  utilities)
 target_link_libraries(CvrpVNSSolverTest  vrp)
 target_link_libraries(CvrpVNSSolverTest  cvrp)
 add_test(CvrpVNSSolverTest CvrpVNSSolverTest)
+
+
+
+add_executable(CvrpGASolverTest CvrpGASolverTest.cpp)
+target_include_directories(CvrpGASolverTest PUBLIC ../../problems/vrp/src/)
+target_include_directories(CvrpGASolverTest PUBLIC ../../problems/cvrp/src/)
+target_include_directories(CvrpGASolverTest PUBLIC ../../core/src/)
+target_link_libraries(CvrpGASolverTest gtest gtest_main)
+target_link_libraries(CvrpGASolverTest  utilities)
+target_link_libraries(CvrpGASolverTest  vrp)
+target_link_libraries(CvrpGASolverTest  cvrp)
+add_test(CvrpGASolverTest CvrpGASolverTest)

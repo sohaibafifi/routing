@@ -141,6 +141,16 @@ namespace vrp {
                 return tours.at(t);
             }
 
+            std::vector<routing::models::Client *> getSequence() override {
+                std::vector<routing::models::Client *> sequence;
+                for (int t = 0; t < tours.size(); ++t) {
+                    for (int i = 0; i < getTour(t)->getNbClient(); ++i) {
+                        sequence.push_back(getTour(t)->getClient(i));
+                    }
+                }
+                return sequence;
+            }
+
             routing::Duration traveltime;
             
         protected :
