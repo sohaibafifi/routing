@@ -26,6 +26,7 @@ namespace routing {
 
 
             virtual Solution * initFromSequence(Problem *problem, std::vector<Client*> sequence) = 0;
+            virtual std::vector<Client*>  getSequence() = 0;
 
             Problem *getProblem() {
                 return problem;
