@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/solvers/GASolver.hpp>
+#include <core/solvers/MASolver.hpp>
 #include "../models/Solution.hpp"
 #include "../routines/operators/Generator.hpp"
 #include "../routines/operators/Constructor.hpp"
@@ -15,14 +15,14 @@
 
 namespace vrp {
     template<class Reader>
-    class GASolver : public routing::GASolver<Reader> {
+    class MASolver : public routing::MASolver<Reader> {
 
 
     public:
-        explicit GASolver(const std::string &p_inputFile,
+        explicit MASolver(const std::string &p_inputFile,
 
                  std::ostream &os = std::cout) :
-                routing::GASolver<Reader>(p_inputFile, os) {
+                routing::MASolver<Reader>(p_inputFile, os) {
             this->setGenerator(new routines::Generator(
                     this->problem,
                     new vrp::routines::Constructor(),
@@ -33,6 +33,15 @@ namespace vrp {
             );
 
             std::vector<routing::Neighborhood *> neighbors = std::vector<routing::Neighborhood *>();
+            neighbors.push_back(new routing::IDCH(
+                    new vrp::routines::Constructor(),
+                    new vrp::routines::Destructor(
+                            new routines::RandomDestructionParameters(
+                                    this->problem))
+            ));
+            neighbors.push_back(new routing::Move(
+                    new vrp::routines::Constructor()
+            ));
             this->setNeighbors(neighbors);
 
         }
