@@ -93,11 +93,16 @@ namespace routing {
             }
         }
 
+        static Population *initialize(Problem *p_problem) {
+            Population *population = new Population(p_problem);
+            return population;
+        }
+
         Sequence *best() const {
             return *(this->sequences.begin());
         }
 
-        virtual bool evolve() {
+        virtual Sequence *evolve() {
             std::random_device rd;
             int i1 = rd() % sequences.size();
             int i2 = i1;
@@ -127,8 +132,13 @@ namespace routing {
                 }
             }
             Sequence *child = new Sequence(problem, child_sequence);
-            if (*child < **sequences.rbegin()) {
-                if (sequences.insert(child).second) {
+            return child;
+
+        }
+
+        bool insert(Sequence *sequence) {
+            if (*sequence < **sequences.rbegin()) {
+                if (sequences.insert(sequence).second) {
                     sequences.erase(prev(sequences.end()));
                     return true;
                 } else return false;
@@ -170,23 +180,33 @@ namespace routing {
 
         virtual void setNeighbors(std::vector<routing::Neighborhood *> p_neighbors) { this->neighbors = p_neighbors; }
 
+        virtual void mutate(Sequence * sequence){
+
+        }
+
         virtual bool solve(double timeout = 3600) override {
             assert(generator != nullptr);
             this->solution = this->problem->initializer()->initialSolution();
-            Population population(this->problem);
+            Population *population = Population::initialize(this->problem);
             int itermax = this->problem->clients.size() * this->problem->clients.size();
             int iter = 1;
-            routing::models::Solution *best = population.best()->decode()->clone();
+            routing::models::Solution *best = population->best()->decode()->clone();
             double bestCost = best->getCost();
+            std::random_device rd;
             while (iter++ < itermax) {
-                if (population.evolve()) iter = 1;
-                if (population.best()->decode()->getCost() < bestCost - 1e-9) {
+                Sequence *child = population->evolve();
+                // TODO : investigate mutation probability
+                if( (rd() * 1.0 / rd.max() * 1.0) < (iter * 1.0 / itermax * 1.0)   )
+                     mutate(child);
+                if (population->insert(child)) iter = 1;
+                if (population->best()->decode()->getCost() < bestCost - 1e-9) {
                     this->os << bestCost << std::endl;
-                    best->copy(population.best()->decode());
+                    best->copy(population->best()->decode());
                     bestCost = best->getCost();
                 }
             }
             this->solution->copy(best);
+            delete population;
             return this->solution != nullptr;
         }
 
