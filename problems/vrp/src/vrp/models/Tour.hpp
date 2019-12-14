@@ -49,7 +49,7 @@ namespace vrp {
                 updated = true;
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
-                clients.insert(clients.begin() + getNbClient(), dynamic_cast<Client *>(client));
+                clients.push_back(dynamic_cast<Client *>(client));
             }
 
             void addClient(routing::models::Client *client, unsigned long position) override {

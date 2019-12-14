@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "attributes.hpp"
+#include "Memory.hpp"
 
 #include "core/data/models/Client.hpp"
 #include "core/data/models/Depot.hpp"
@@ -49,6 +50,7 @@ namespace routing {
 
     class Problem {
     public :
+        virtual Memory *getMemory() = 0;
 
         virtual ~Problem() {
             for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];

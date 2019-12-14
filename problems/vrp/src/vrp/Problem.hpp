@@ -11,8 +11,16 @@ namespace vrp {
     class Initializer : public routing::Initializer {
     public:
         explicit Initializer(routing::Problem *pProblem) : routing::Initializer(pProblem) {}
+
         routing::models::Solution *initialSolution() override;
+
         routing::models::Tour *initialTour(int vehicleID) override;
+    };
+
+    class Memory : public routing::Memory {
+    public:
+        static routing::Memory *get();
+
     };
 
     class Problem : public routing::Problem {
@@ -52,6 +60,8 @@ namespace vrp {
         routing::Initializer *initializer() override {
             return new Initializer(this);
         }
+
+        routing::Memory *getMemory() override;
 
     protected:
 #ifdef CPLEX

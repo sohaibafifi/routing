@@ -18,8 +18,9 @@ namespace routing {
         bool updated = true;
         bool decoded = false;
         long hash = 0;
-        double cost = 0;
+        routing::Duration cost = 0;
         models::Solution *solution = nullptr;
+
     public :
         Problem *problem;
         std::vector<models::Client *> sequence;
@@ -49,16 +50,25 @@ namespace routing {
             std::shuffle(sequence.begin(), sequence.end(), rd);
             hash = getHash();
             cost = decode()->getCost();
+            problem->getMemory()->add(hash, cost);
         }
 
         models::Solution *decode() {
             if (decoded && solution != nullptr) return solution;
             models::Solution *solution = problem->initializer()->initialSolution();
             this->solution = solution->initFromSequence(problem, this->sequence);
+            this->cost = this->solution->getCost();
             decoded = true;
             return this->solution;
         }
 
+        double getCost(){
+            if(decoded) return cost;
+            auto history_cost = problem->getMemory()->at(getHash());
+            if(history_cost.first)
+                return history_cost.second;
+            return decode()->getCost();
+        }
 
         long getHash() {
             if (updated) {
@@ -203,7 +213,7 @@ namespace routing {
                 if( (rd() * 1.0 / rd.max() * 1.0) < (iter * 1.0 / itermax * 1.0)   )
                      mutate(child);
                 if (population->insert(child)) iter = 1;
-                if (population->best()->decode()->getCost() < bestCost - 1e-9) {
+                if (population->best()->getCost() < bestCost - 1e-9) {
                     this->os << bestCost << std::endl;
                     best->copy(population->best()->decode());
                     bestCost = best->getCost();

@@ -200,3 +200,12 @@ routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, c
     return distances_to_depots[d.getID() - 1][c1.getID() - 1];
 }
 
+routing::Memory *vrp::Problem::getMemory() {
+    return Memory::get();
+}
+routing::Memory * routing::Memory::singleton = nullptr;
+routing::Memory *vrp::Memory::get() {
+    if (!singleton)
+         singleton = new vrp::Memory;
+      return singleton;
+}
