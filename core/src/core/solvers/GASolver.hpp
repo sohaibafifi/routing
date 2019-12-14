@@ -14,7 +14,12 @@
 
 namespace routing {
     class Sequence {
-
+    protected :
+        bool updated = true;
+        bool decoded = false;
+        long hash = 0;
+        double cost = 0;
+        models::Solution *solution = nullptr;
     public :
         Problem *problem;
         std::vector<models::Client *> sequence;
@@ -47,13 +52,13 @@ namespace routing {
         }
 
         models::Solution *decode() {
+            if (decoded && solution != nullptr) return solution;
             models::Solution *solution = problem->initializer()->initialSolution();
-            return solution->initFromSequence(problem, this->sequence);
+            this->solution = solution->initFromSequence(problem, this->sequence);
+            decoded = true;
+            return this->solution;
         }
 
-        bool updated = true;
-        long hash = 0;
-        double cost = 0;
 
         long getHash() {
             if (updated) {
@@ -133,7 +138,6 @@ namespace routing {
             }
             Sequence *child = new Sequence(problem, child_sequence);
             return child;
-
         }
 
         bool insert(Sequence *sequence) {
