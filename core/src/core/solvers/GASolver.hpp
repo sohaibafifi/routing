@@ -29,12 +29,14 @@ namespace routing {
             sequence = p_solution->getSequence();
             hash = getHash();
             cost = p_solution->getCost();
+            problem->getMemory()->add(hash, cost);
         }
 
         Sequence(Problem *p_problem, std::vector<models::Client *> p_sequence) : problem(p_problem) {
             sequence = p_sequence;
             hash = getHash();
             cost = decode()->getCost();
+            problem->getMemory()->add(hash, cost);
         }
 
         friend bool operator<(const Sequence &lhs, const Sequence &rhs) {
@@ -202,10 +204,9 @@ namespace routing {
             assert(generator != nullptr);
             this->solution = this->problem->initializer()->initialSolution();
             Population *population = Population::initialize(this->problem);
-            int itermax = this->problem->clients.size() * this->problem->clients.size();
+            int itermax = this->problem->clients.size() * this->problem->clients.size() * this->problem->clients.size();
             int iter = 1;
-            routing::models::Solution *best = population->best()->decode()->clone();
-            double bestCost = best->getCost();
+            double bestCost = population->best()->getCost();
             std::random_device rd;
             while (iter++ < itermax) {
                 Sequence *child = population->evolve();
@@ -215,12 +216,12 @@ namespace routing {
                 if (population->insert(child)) iter = 1;
                 if (population->best()->getCost() < bestCost - 1e-9) {
                     this->os << bestCost << std::endl;
-                    best->copy(population->best()->decode());
-                    bestCost = best->getCost();
+                    bestCost = population->best()->getCost();
                 }
             }
-            this->solution->copy(best);
+            this->solution->copy(population->best()->decode());
             delete population;
+            auto memory = this->problem->getMemory();
             return this->solution != nullptr;
         }
 
