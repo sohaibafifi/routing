@@ -14,9 +14,9 @@
 #include <vrp/Problem.hpp>
 #include <fstream>
 
-routing::Problem *cvrp::Reader::readFile(std::string filepath) {
+routing::Problem *cvrp::Reader::readFile(std::string filePath) {
     vrp::Problem *problem = new vrp::Problem();
-    std::fstream fh(filepath.c_str(), std::ios_base::in);
+    std::fstream fh(filePath.c_str(), std::ios_base::in);
     try {
         if (!fh.good()) throw std::string("file open error");
         unsigned short edge_weight_type;
@@ -63,7 +63,7 @@ routing::Problem *cvrp::Reader::readFile(std::string filepath) {
         while (getline(fh, line)) {
             if (line.find("NAME") != std::string::npos) {
                 std::stringstream(line) >> dummy >> dummy >> problem->name;
-                std::cout << "problem name :" << problem->name << std::endl;
+                std::cout << "problem name : " << problem->name << std::endl;
                 std::vector<std::string> parts = Utilities::splitString(problem->name, '-');
                 parts[2][0] = '0';
                 std::stringstream(parts[2]) >> nbVehicles;
