@@ -1,5 +1,5 @@
-NAME :  X-n6-k5
-COMMENT : (Augerat et al, No of trucks: 5, Optimal value: 669)
+NAME :  Toy-n6-k5
+COMMENT : (Test instance, Optimal value: 190)
 TYPE : CVRP
 DIMENSION : 6
 EDGE_WEIGHT_TYPE : EUC_2D

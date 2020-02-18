@@ -24,12 +24,10 @@ namespace routing {
                  Generator *p_generator,
                  const std::vector<Neighborhood *> &p_neighbors,
                  std::ostream &os = std::cout) : GASolver<Reader>(p_inputFile, p_generator, p_neighbors, os) {
-
         }
 
         MASolver(const std::string &p_inputFile,
                  std::ostream &os = std::cout) : GASolver<Reader>(p_inputFile, os) {
-
         }
 
         void mutate(Sequence *sequence) override {
