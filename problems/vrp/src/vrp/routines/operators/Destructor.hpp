@@ -19,8 +19,10 @@ namespace vrp {
 
             explicit RandomDestructionParameters(unsigned long dmax) : dmax(dmax) {}
 
-            explicit RandomDestructionParameters(routing::Problem *problem) : dmax(
-                    std::min(problem->vehicles.size(), problem->clients.size())) {}
+
+            static RandomDestructionParameters *getDefault(routing::Problem *problem) {
+                return new RandomDestructionParameters(std::min(problem->vehicles.size(), problem->clients.size()));
+            }
 
             void setDmax(unsigned long dmax) {
                 RandomDestructionParameters::dmax = dmax;
@@ -32,10 +34,13 @@ namespace vrp {
         public:
             explicit Destructor(routing::DestructionParameters *p_params) : routing::Destructor(p_params) {}
 
+            Destructor() {}
         private:
              void destruct(routing::models::Solution *solution) override {
                 // assert(solution->notserved.empty());
                 assert(solution->getNbTour() > 0);
+                 if (this->params == nullptr)
+                     this->params = RandomDestructionParameters::getDefault(solution->getProblem());
                 RandomDestructionParameters *parameters = static_cast<RandomDestructionParameters *>(params);
                 if (solution->notserved.size() == solution->getProblem()->clients.size()) return;
                 std::random_device rd;
