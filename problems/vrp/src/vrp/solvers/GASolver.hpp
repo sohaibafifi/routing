@@ -26,11 +26,8 @@ namespace vrp {
             this->setGenerator(new routines::Generator(
                     this->problem,
                     new vrp::routines::Constructor(),
-                    new vrp::routines::Destructor(
-                            new routines::RandomDestructionParameters(
-                                    this->problem)))
-
-            );
+                    new vrp::routines::Destructor()
+            ));
 
             std::vector<routing::Neighborhood *> neighbors = std::vector<routing::Neighborhood *>();
             this->setNeighbors(neighbors);
