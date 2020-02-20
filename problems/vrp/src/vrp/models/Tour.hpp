@@ -36,7 +36,7 @@ namespace vrp {
 
             void update() override {}
 
-            routing::Duration getTraveltime() const {
+            routing::Duration getTravelTime() const {
                 return traveltime;
             }
 
@@ -45,6 +45,7 @@ namespace vrp {
             }
 
             void pushClient(routing::models::Client *client) override {
+                // TODO : prevent using evaluateInsertion when pushing a client!
                 traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
                 updated = true;
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
@@ -69,6 +70,14 @@ namespace vrp {
                     consumption -= consumer->getDemand();
                 clients.erase(clients.begin() + position);
             }
+
+            void clear() override {
+                updated = true;
+                traveltime = 0;
+                consumption = 0;
+                clients = std::vector<Client *>();
+            }
+
 
             routing::models::Client *getClient(unsigned long i) const override {
                 return clients[i];

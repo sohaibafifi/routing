@@ -42,6 +42,8 @@ namespace routing {
 
             virtual void addTour(Tour *tour, unsigned long position) = 0;
 
+            virtual void overrideTour(Tour *tour, unsigned long position) = 0;
+
             virtual unsigned long getNbTour() const = 0;
 
 #ifdef CPLEX

@@ -4,7 +4,8 @@
 
 namespace routing {
     class DestructionParameters {
-        static DestructionParameters* getDefault(){
+    public :
+        static DestructionParameters *getDefault() {
             return new DestructionParameters;
         }
     };
@@ -24,11 +25,4 @@ namespace routing {
 
 
     };
-
-    class dummyDestructor : public Destructor {
-    public:
-        virtual void destruct(models::Solution *solution) {}
-    };
-
-
 }

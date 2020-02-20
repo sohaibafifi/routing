@@ -57,27 +57,33 @@ namespace vrp {
 
             void addTour(routing::models::Tour *tour, unsigned long position) override {
                 tours.insert(tours.begin() + position, dynamic_cast<Tour *>(tour));
-                traveltime += dynamic_cast<Tour *>( tour )->getTraveltime();
+                traveltime += dynamic_cast<Tour *>( tour )->getTravelTime();
+            }
+
+            void overrideTour(routing::models::Tour *tour, unsigned long position) override {
+                traveltime -= dynamic_cast<Tour *>( tours.at(position))->getTravelTime();
+                tours.at(position) = dynamic_cast<Tour *>(tour);
+                traveltime += dynamic_cast<Tour *>( tour )->getTravelTime();
             }
 
             void removeClient(unsigned long index_tour, unsigned long position) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::removeClient(index_tour, position);
-                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
                 this->traveltime += delta;
             }
 
             void pushClient(unsigned long index_tour, routing::models::Client *client) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::pushClient(index_tour, client);
-                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
                 this->traveltime += delta;
             }
 
             void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTraveltime();
+                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::addClient(index_tour, client, position);
-                routing::Duration delta = this->getTour(index_tour)->getTraveltime() - oldCost;
+                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
                 this->traveltime += delta;
             }
 
