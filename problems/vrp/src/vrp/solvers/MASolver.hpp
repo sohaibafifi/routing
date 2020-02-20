@@ -12,6 +12,7 @@
 #include <core/routines/neighborhoods/Neighborhood.hpp>
 #include <core/routines/neighborhoods/IDCH.hpp>
 #include <core/routines/neighborhoods/Move.hpp>
+#include <core/routines/neighborhoods/TwoOpt.hpp>
 
 namespace vrp {
     template<class Reader>
@@ -38,6 +39,8 @@ namespace vrp {
             neighbors.push_back(new routing::Move(
                     new vrp::routines::Constructor()
             ));
+
+            neighbors.push_back(new routing::TwoOpt());
             this->setNeighbors(neighbors);
 
         }

@@ -11,6 +11,7 @@
 #include "../routines/operators/Destructor.hpp"
 #include <core/routines/neighborhoods/Neighborhood.hpp>
 #include <core/routines/neighborhoods/IDCH.hpp>
+#include <core/routines/neighborhoods/TwoOpt.hpp>
 #include <core/routines/neighborhoods/Move.hpp>
 
 namespace vrp {
@@ -38,6 +39,8 @@ namespace vrp {
             neighbors.push_back(new routing::Move(
                     new vrp::routines::Constructor()
             ));
+
+            neighbors.push_back(new routing::TwoOpt());
             this->setNeighbors(neighbors);
 
         }

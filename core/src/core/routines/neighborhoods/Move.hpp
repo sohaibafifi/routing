@@ -24,7 +24,7 @@ namespace routing {
                 if (solution->getTour(t)->getNbClient() == 0) continue;
                 routing::RemoveCost *bestRemove = solution->getTour(t)->evaluateRemove(0);
                 unsigned bestRemove_position = 0;
-                for (int p = 1; p < solution->getTour(t)->getNbClient(); ++p) {
+                for (int p = 0; p < solution->getTour(t)->getNbClient(); ++p) {
                     routing::RemoveCost *cost = solution->getTour(t)->evaluateRemove(p);
                     if (*cost > *bestRemove) {
                         bestRemove_position = p;

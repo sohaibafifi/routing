@@ -24,6 +24,8 @@ namespace routing {
 
             virtual void removeClient(unsigned long position) = 0;
 
+            virtual void clear() = 0;
+
             virtual Client *getClient(unsigned long) const = 0;
 
             virtual unsigned long getNbClient() = 0;

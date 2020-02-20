@@ -3,10 +3,28 @@
 #include "../../data/models/Solution.hpp"
 
 namespace routing {
+    class ConstructionParameters {
+    public :
+        static ConstructionParameters *getDefault() {
+            return new ConstructionParameters;
+        }
+    };
 
     class Constructor {
     public:
+        routing::ConstructionParameters *params = nullptr;
+
+        Constructor(routing::ConstructionParameters *p_params) : params(p_params) {}
+
+        Constructor() {}
+
+        Constructor *setParams(routing::ConstructionParameters *p_params) {
+            this->params = p_params;
+            return this;
+        }
+
         virtual bool bestInsertion(models::Solution *solution) {
+            if (this->params == nullptr) this->params = ConstructionParameters::getDefault();
             return this->bestInsertion(solution, solution->notserved);
         }
 
@@ -17,10 +35,5 @@ namespace routing {
         }
 
         virtual bool bestInsertion(models::Solution *solution, const std::vector<models::Client *> clients) = 0;
-    };
-
-    class dummyConstructor : public Constructor {
-    public:
-        virtual bool bestInsertion(models::Solution *solution, std::vector<models::Client *> clients) { return false; }
     };
 }
