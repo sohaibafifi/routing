@@ -204,7 +204,7 @@ namespace routing {
             assert(generator != nullptr);
             this->solution = this->problem->initializer()->initialSolution();
             Population *population = Population::initialize(this->problem);
-            int itermax = this->problem->clients.size() * this->problem->clients.size() * this->problem->clients.size();
+            int itermax = this->problem->clients.size() * this->problem->clients.size();
             int iter = 1;
             double bestCost = population->best()->getCost();
             std::random_device rd;
