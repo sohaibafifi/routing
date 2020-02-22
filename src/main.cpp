@@ -1,10 +1,12 @@
 #include <iostream>
 #include <utilities/GetOpt_pp.hpp>
-#include <cvrp/Reader.hpp>
+#include <vrp/Reader.hpp>
 #ifdef CPLEX
 #include <core/solvers/MIPSolver.hpp>
 #endif
+
 #include <vrp/solvers/LSSolver.hpp>
+#include <vrp/solvers/MASolver.hpp>
 
 int main(int argc, char **argv) {
     Utilities::GetOpt::GetOpt_pp ops(argc, argv);
@@ -22,7 +24,7 @@ int main(int argc, char **argv) {
     }
 #endif
 
-    vrp::LSSolver<cvrp::Reader> lsSolver(inputFile);
-    lsSolver.solve(timeout);
+    vrp::MASolver<vrp::Reader> maSolver(inputFile);
+    maSolver.solve(timeout);
     return EXIT_SUCCESS;
 }
