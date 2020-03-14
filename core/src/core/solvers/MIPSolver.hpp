@@ -14,7 +14,12 @@ namespace routing {
         IloCplex cplex;
         IloModel model;
     public:
+
         MIPSolver(const std::string &p_inputFile, std::ostream &os = std::cout);
+
+        virtual void setDefaultConfiguration() override {
+            this->configuration = new Configuration();
+        };
 
         virtual bool solve(double timeout = 3600) override;
 
@@ -27,7 +32,8 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
         p_inputFile) {
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
-    this->cplex.exportModel("model.lp");
+    this->setDefaultConfiguration();
+
     std::vector<IloCplex::CallbackI *> callbacks = std::vector<IloCplex::CallbackI *>();
     callbacks.push_back(this->problem->setHeuristicCallback(this->env));
     callbacks.push_back(this->problem->setUserCutCallback(this->env));
@@ -38,6 +44,7 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
         if (callback != nullptr)
             this->cplex.use(callback);
     }
+
 
 }
 
