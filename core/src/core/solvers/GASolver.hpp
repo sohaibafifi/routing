@@ -184,27 +184,34 @@ namespace routing {
                  std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os),
                                                  generator(p_generator),
                                                  neighbors(p_neighbors) {
+            this->setDefaultConfiguration();
 
         }
 
         GASolver(const std::string &p_inputFile,
                  std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os) {
-
+            this->setDefaultConfiguration();
         }
 
         virtual void setGenerator(Generator *p_generator) { this->generator = p_generator; }
 
         virtual void setNeighbors(std::vector<routing::Neighborhood *> p_neighbors) { this->neighbors = p_neighbors; }
 
-        virtual void mutate(Sequence * sequence){
+        virtual void mutate(Sequence *sequence) {
 
         }
+
+        virtual void setDefaultConfiguration() override {
+            this->configuration = new Configuration();
+            this->configuration->setIntParam(this->configuration->itermax,
+                                             this->problem->clients.size() * this->problem->clients.size());
+        };
 
         virtual bool solve(double timeout = 3600) override {
             assert(generator != nullptr);
             this->solution = this->problem->initializer()->initialSolution();
             Population *population = Population::initialize(this->problem);
-            int itermax = this->problem->clients.size() * this->problem->clients.size();
+            int itermax = this->configuration->getIntParam(this->configuration->itermax);
             int iter = 1;
             double bestCost = population->best()->getCost();
             std::random_device rd;

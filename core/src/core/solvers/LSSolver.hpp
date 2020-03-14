@@ -22,17 +22,22 @@ namespace routing {
                  std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os),
                                                  generator(p_generator),
                                                  neighbors(p_neighbors) {
+            this->setDefaultConfiguration();
 
         }
 
         LSSolver(const std::string &p_inputFile,
                  std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os) {
-
+            this->setDefaultConfiguration();
         }
 
         virtual void setGenerator(Generator *p_generator) { this->generator = p_generator; }
 
         virtual void setNeighbors(std::vector<routing::Neighborhood *> p_neighbors) { this->neighbors = p_neighbors; }
+
+        virtual void setDefaultConfiguration() override {
+            this->configuration = new Configuration();
+        };
 
         virtual bool solve(double timeout = 3600) override {
             assert(generator != nullptr);

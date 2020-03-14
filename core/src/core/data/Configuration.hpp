@@ -22,8 +22,7 @@ namespace routing {
         std::map<std::string, double> doubleParams;
         std::map<std::string, bool> boolParams;
     public :
-        static const std::string ga_itermax;
-        static const std::string ma_itermax;
+        static const std::string itermax;
 
         int getIntParam(std::string id) {
             auto element = this->intParams.find(id);
@@ -45,8 +44,20 @@ namespace routing {
                 throw new ParameterNotFound(id);
             } else return element->second;
         }
+
+
+        void setIntParam(std::string id, int value) {
+            this->intParams[id] = value;
+        }
+
+        void setBoolParam(std::string id, bool value) {
+            this->boolParams[id] = value;
+        }
+
+        void setDoubleParam(std::string id, double value) {
+            this->doubleParams[id] = value;
+        }
     };
-     const std::string Configuration::ga_itermax = "ga/itermax";
-     const std::string Configuration::ma_itermax = "ma/itermax";
+     const std::string Configuration::itermax = "itermax";
 }
 

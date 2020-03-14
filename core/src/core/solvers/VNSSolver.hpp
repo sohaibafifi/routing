@@ -22,11 +22,13 @@ namespace routing {
                   std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os),
                                                   generator(p_generator),
                                                   neighbors(p_neighbors) {
+        this->setDefaultConfiguration();
 
         }
 
         VNSSolver(const std::string &p_inputFile,
                   std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os) {
+        this->setDefaultConfiguration();
 
         }
 
@@ -41,11 +43,17 @@ namespace routing {
             if (!solutionFound) solution->copy(save);
         }
 
+        virtual void setDefaultConfiguration() override {
+            this->configuration = new Configuration();
+            this->configuration->setIntParam(this->configuration->itermax,
+                    this->problem->clients.size() * this->problem->clients.size());
+        };
+
         virtual bool solve(double timeout = 3600) override {
             assert(generator != nullptr);
             this->solution = generator->generate();
             std::random_device rd;
-            int itermax = this->problem->clients.size() * this->problem->clients.size();
+            int itermax = this->configuration->getIntParam(this->configuration->itermax);
             int iter = 1;
             routing::models::Solution *best = this->solution->clone();
             double bestCost = this->solution->getCost();
