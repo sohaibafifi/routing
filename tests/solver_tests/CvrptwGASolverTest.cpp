@@ -25,5 +25,4 @@ TEST_F(CvrptwGASolverTest, solve) {
     EXPECT_EQ(dynamic_cast<vrp::Problem *>(gaSolver.getProblem())->clients.size(), 5);
     bool solution_found = gaSolver.solve();
     EXPECT_TRUE(solution_found);
-    EXPECT_GT(gaSolver.getSolution()->getCost(), 10);
 }
