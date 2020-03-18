@@ -1,14 +1,17 @@
-//
-// Created by Sohaib LAFIFI on 29/11/2019.
-//
+// Copyright (c) 2020. Sohaib LAFIFI <sohaib.lafifi@univ-artois.fr>
+// You are allowed to use this project for research purposes as a member of
+// a non-commercial and academic institution.
+
 
 #include <utilities/Utilities.hpp>
 #include "Problem.hpp"
 #include "models/Depot.hpp"
+
 routing::Initializer *cvrptw::Problem::initializer() {
     return new cvrptw::Initializer(this);
 }
 
+#ifdef CPLEX
 void cvrptw::Problem::addVariables() {
     vrp::Problem::addVariables();
     for (unsigned i = 0; i <= clients.size(); ++i) {
@@ -67,3 +70,4 @@ void cvrptw::Problem::addSequenceConstraints() {
     }
 
 }
+#endif

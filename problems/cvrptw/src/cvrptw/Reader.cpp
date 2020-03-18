@@ -1,6 +1,7 @@
-//
-// Created by Sohaib LAFIFI on 20/11/2019.
-//
+// Copyright (c) 2020. Sohaib LAFIFI <sohaib.lafifi@univ-artois.fr>
+// You are allowed to use this project for research purposes as a member of
+// a non-commercial and academic institution.
+
 
 #include "Reader.hpp"
 
@@ -10,6 +11,7 @@
 #include <cmath>
 #include <queue>
 #include <random>
+#include <fstream>
 #include "Problem.hpp"
 
 routing::Problem *cvrptw::Reader::readFile(std::string filepath) {

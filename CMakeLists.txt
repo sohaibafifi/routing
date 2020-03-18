@@ -31,9 +31,11 @@ target_include_directories(routing PUBLIC utilities/src/)
 
 add_subdirectory(problems/vrp)
 add_subdirectory(problems/cvrp)
+add_subdirectory(problems/cvrptw)
 
 target_include_directories(routing PUBLIC problems/vrp/src/)
 target_include_directories(routing PUBLIC problems/cvrp/src/)
+target_include_directories(routing PUBLIC problems/cvrptw/src/)
 
 target_include_directories(routing PUBLIC core/src/)
 
@@ -41,6 +43,7 @@ target_include_directories(routing PUBLIC core/src/)
 target_link_libraries(routing PUBLIC utilities)
 target_link_libraries(routing PUBLIC vrp)
 target_link_libraries(routing PUBLIC cvrp)
+target_link_libraries(routing PUBLIC cvrptw)
 
 
 if (EXISTS "${CPLEX_STUDIO_DIR}/cplex/include/ilcplex/ilocplexi.h")
