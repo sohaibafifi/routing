@@ -14,6 +14,7 @@
 #include "models/Solution.hpp"
 #ifdef CPLEX
 
+
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
     return new routing::callback::HeuristicCallback(env,

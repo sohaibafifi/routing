@@ -42,6 +42,8 @@ namespace routing {
 
             virtual void update() = 0;
 
+            virtual void update() = 0;
+
             virtual void pushTour(Tour *tour) = 0;
 
             virtual void addTour(Tour *tour, unsigned long position) = 0;
