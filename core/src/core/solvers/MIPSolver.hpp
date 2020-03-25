@@ -35,6 +35,7 @@ namespace routing {
 template<class Reader>
 routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostream &os):Solver<Reader>(
         p_inputFile) {
+    this->env.setOut(os);
     this->model = this->problem->generateModel(this->env);
     this->cplex = IloCplex(this->model);
     this->setDefaultConfiguration();
