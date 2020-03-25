@@ -21,9 +21,7 @@ routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv 
     return new routing::callback::HeuristicCallback(env,
                                                     this,
                                                     new vrp::routines::Generator(this, new vrp::routines::Constructor(),
-                                                                                 new vrp::routines::Destructor(
-                                                                                         new routines::RandomDestructionParameters(
-                                                                                                 this))),
+                                                                                 new vrp::routines::Destructor()),
                                                     new routing::dummyDiver(),
                                                     dummyNeighborhoods);
 }

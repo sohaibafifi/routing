@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     ops >> Utilities::GetOpt::Option('t', "timeout", timeout, timeout);
 #ifdef CPLEX
     try {
-        routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
+        routing::MIPSolver<vrp::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
     }catch (IloCplex::Exception & exception){
         std::cout << exception.getMessage() << std::endl;

@@ -10,10 +10,10 @@ file(GLOB_RECURSE cvrptw_SRC
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CPLEX_STUDIO_DIR /Applications/CPLEX_Studio129/)
+    set(CPLEX_STUDIO_DIR /Applications/CPLEX_Studio1210/)
     set(CPLEX_STUDIO_ARCH x86-64_osx)
 else ()
-    set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio128)
+    set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio1210)
     set(CPLEX_STUDIO_ARCH x86-64_linux)
 endif ()
 
@@ -27,7 +27,10 @@ target_include_directories(cvrptw PUBLIC ../cvrp/src/)
 target_include_directories(cvrptw PUBLIC ../../core/src/)
 
 
-target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)
-target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/cplex/include)
-target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/cpoptimizer/include)
-target_compile_definitions(cvrptw PRIVATE IL_STD)
+if (EXISTS "${CPLEX_STUDIO_DIR}/cplex/include/ilcplex/ilocplexi.h")
+    target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/concert/include)
+    target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/cplex/include)
+    target_include_directories(cvrptw PUBLIC ${CPLEX_STUDIO_DIR}/cpoptimizer/include)
+    target_compile_definitions(cvrptw PRIVATE IL_STD)
+    target_compile_definitions(cvrptw PRIVATE CPLEX)
+endif ()
