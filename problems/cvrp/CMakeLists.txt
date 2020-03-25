@@ -10,10 +10,10 @@ file(GLOB_RECURSE cvrp_SRC
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CPLEX_STUDIO_DIR /Applications/CPLEX_Studio129/)
+    set(CPLEX_STUDIO_DIR /Applications/CPLEX_Studio1210/)
     set(CPLEX_STUDIO_ARCH x86-64_osx)
 else ()
-    set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio128)
+    set(CPLEX_STUDIO_DIR /opt/ibm/ILOG/CPLEX_Studio1210)
     set(CPLEX_STUDIO_ARCH x86-64_linux)
 endif ()
 
