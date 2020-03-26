@@ -13,7 +13,6 @@ namespace cvrptw {
         class Solution : public vrp::models::Solution {
         public :
 
-
             explicit Solution(routing::Problem *p_problem)
                     : vrp::models::Solution(p_problem) {
             }
