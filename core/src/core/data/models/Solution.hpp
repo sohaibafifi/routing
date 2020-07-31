@@ -80,15 +80,16 @@ namespace routing {
                         std::remove(this->notserved.begin(), this->notserved.end(),
                                     client),
                         this->notserved.end());
-                this->getTour(index_tour)->pushClient(client);
+                this->getTour(index_tour)->_pushClient(client);
             }
 
-            virtual void addClient(unsigned long index_tour, Client *client, unsigned long position) {
+            virtual void addClient(unsigned long index_tour, Client *client, unsigned long position, routing::InsertionCost * cost) {
+                assert(cost->isPossible());
                 this->notserved.erase(
                         std::remove(this->notserved.begin(), this->notserved.end(),
                                     client),
                         this->notserved.end());
-                this->getTour(index_tour)->addClient(client, position);
+                this->getTour(index_tour)->addClient(client, position, cost);
             }
 
             virtual void removeClient(unsigned long index_tour, unsigned long position) {

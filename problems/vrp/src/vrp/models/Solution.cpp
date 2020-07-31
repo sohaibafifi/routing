@@ -20,8 +20,9 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
         Tour tour(problem, 0);
         int j = i;
         do {
-            if(! tour.evaluateInsertion(sequence[j], tour.getNbClient())->isPossible()) break;
-            tour.pushClient(sequence[j]);
+            auto cost = tour.evaluateInsertion(sequence[j], tour.getNbClient());
+            if(! cost->isPossible()) break;
+            tour._pushClient(sequence[j]);
             if (i == j) {
                 distance = problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
             } else {
@@ -51,6 +52,7 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
     delimiters.push_back(sequence.size() - 1);
     int tour = 0;
     for (int i = 0; i < sequence.size(); i++) {
+
         solution->pushClient(tour, sequence.at(i));
         if (sequence.at(delimiters.at(tour))->getID() == sequence.at(i)->getID()) {
 

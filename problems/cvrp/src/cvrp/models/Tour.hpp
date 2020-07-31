@@ -53,19 +53,17 @@ namespace cvrp {
             }
 
 
-            void pushClient(routing::models::Client *client) override {
-                // TODO : prevent using evaluateInsertion when pushing a client!
-                traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+            void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
+                traveltime += cost->getDelta();
                 updated = true;
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
-            void addClient(routing::models::Client *client, unsigned long position) override {
-                //TODO : optimize to not recalculate the insertion cost
+            void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
                 updated = true;
-                traveltime += this->evaluateInsertion(client, position)->getDelta();
+                traveltime += cost->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));

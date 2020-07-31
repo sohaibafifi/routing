@@ -65,15 +65,14 @@ namespace cvrptw {
 
             void update() override {}
 
-            void pushClient(routing::models::Client *client) override {
-                vrp::models::Tour::pushClient(client);
+            void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
+                vrp::models::Tour::pushClient(client, cost);
                 visits.push_back(new Visit(dynamic_cast<Client *>(client), 0, 0, 0));
                 this->update();
             }
 
-            void addClient(routing::models::Client *client, unsigned long position) override {
-                //TODO : optimize to not recalculate the insertion cost
-                InsertionCost *insertion = static_cast<InsertionCost *>(this->evaluateInsertion(client, position));
+            void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
+                InsertionCost *insertion = static_cast<InsertionCost *>(cost);
                 traveltime += insertion->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
