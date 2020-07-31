@@ -4,7 +4,6 @@
 
 
 #include <cvrptw/Reader.hpp>
-#include <vrp/Problem.hpp>
 #include <vrp/solvers/GASolver.hpp>
 #include <fstream>
 #include "gtest/gtest.h"
