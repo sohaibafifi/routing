@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include <vrp/Problem.hpp>
+#include <cvrp/Problem.hpp>
 #include "models/Solution.hpp"
 #include "models/Tour.hpp"
 
 namespace cvrptw {
-    class Problem : public vrp::Problem {
+    class Problem : public cvrp::Problem {
     protected :
         routing::Initializer *initializer() override;
 

@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include <vrp/models/Solution.hpp>
+#include <cvrp/models/Solution.hpp>
 #include "Tour.hpp"
 
 namespace cvrptw {
     namespace models {
-        class Solution : public vrp::models::Solution {
+        class Solution : public cvrp::models::Solution {
         public :
 
             explicit Solution(routing::Problem *p_problem)
-                    : vrp::models::Solution(p_problem) {
+                    : cvrp::models::Solution(p_problem) {
             }
 
             void update() override {}
