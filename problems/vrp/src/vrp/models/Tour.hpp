@@ -39,20 +39,25 @@ namespace vrp {
             }
 
 
-            void pushClient(routing::models::Client *client) override {
-                // TODO : prevent using evaluateInsertion when pushing a client!
-                traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+            void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
+                traveltime += cost->getDelta();
                 updated = true;
 
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
-            void addClient(routing::models::Client *client, unsigned long position) override {
-                //TODO : optimize to not recalculate the insertion cost
+            void _pushClient(routing::models::Client *client) override {
                 updated = true;
-                traveltime += this->evaluateInsertion(client, position)->getDelta();
+                traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+                clients.push_back(dynamic_cast<Client *>(client));
+            }
+
+            void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
+                traveltime += cost->getDelta();
 
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
+                this->update();
+                this->updated = true;
             }
 
             void removeClient(unsigned long position) override {

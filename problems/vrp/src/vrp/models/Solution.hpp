@@ -81,9 +81,9 @@ namespace vrp {
                 this->traveltime += delta;
             }
 
-            void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position) override {
+            void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
                 routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
-                routing::models::Solution::addClient(index_tour, client, position);
+                routing::models::Solution::addClient(index_tour, client, position, cost);
                 routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
                 this->traveltime += delta;
             }

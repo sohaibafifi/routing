@@ -93,13 +93,13 @@ namespace routing {
                     unsigned first = std::min(bestMovement.i, bestMovement.j), second = std::max(bestMovement.i,
                                                                                                  bestMovement.j);
                     for (int k = 0; k <= first; ++k) {
-                        tour->pushClient(solution->getTour(t)->getClient(k));
+                        tour->_pushClient(solution->getTour(t)->getClient(k));
                     }
                     for (int k = second; k > first; --k) {
-                        tour->pushClient(solution->getTour(t)->getClient(k));
+                        tour->_pushClient(solution->getTour(t)->getClient(k));
                     }
                     for (int k = second; k < solution->getTour(t)->getNbClient(); ++k) {
-                        tour->pushClient(solution->getTour(t)->getClient(k));
+                        tour->_pushClient(solution->getTour(t)->getClient(k));
                     }
                     solution->overrideTour(tour, t);
                 }
