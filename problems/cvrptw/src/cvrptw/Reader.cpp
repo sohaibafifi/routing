@@ -7,7 +7,7 @@
 
 #include "models/Client.hpp"
 #include "models/Depot.hpp"
-#include <cvrp/models/Vehicle.hpp>
+#include "models/Vehicle.hpp"
 #include <cmath>
 #include <queue>
 #include <random>
@@ -33,7 +33,7 @@ routing::Problem *cvrptw::Reader::readFile(std::string filepath) {
         routing::Capacity Q;
         std::stringstream(line) >> k >> Q;
         for (unsigned i = 0; i < k; ++i) {
-            problem->vehicles.push_back(new cvrp::models::Vehicle(i, Q));
+            problem->vehicles.push_back(new cvrptw::models::Vehicle(i, Q));
         }
         getline(fh, line);
         getline(fh, line);

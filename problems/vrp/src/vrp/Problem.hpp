@@ -35,7 +35,6 @@ namespace vrp {
         std::vector<std::vector<IloNumVar> > arcs;
         std::vector<std::vector<IloNumVar> > affectation;
         std::vector<IloNumVar> order;
-        std::vector<IloNumVar> consumption;
 #endif
 
         Problem() = default;
@@ -82,7 +81,6 @@ namespace vrp {
 
         virtual void addSequenceConstraints();
 
-        virtual void addCapacityConstraints();
 #endif
     };
 
