@@ -12,7 +12,7 @@ routing::Initializer *cvrp::Problem::initializer() {
 
 #ifdef CPLEX
 void cvrp::Problem::addConstraints() {
-    vrp::Problem::addConstraints()();
+    vrp::Problem::addConstraints();
     this->addCapacityConstraints();
 }
 
