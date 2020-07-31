@@ -11,6 +11,8 @@
 
 namespace cvrp {
     class Problem : public vrp::Problem {
+    public:
+        Problem() = default;
     protected :
         routing::Initializer *initializer() override;
 
