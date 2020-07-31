@@ -6,6 +6,7 @@
 
 #include "models/Client.hpp"
 #include "models/Vehicle.hpp"
+#include "Problem.hpp"
 #include <cmath>
 #include <queue>
 #include <random>
@@ -15,7 +16,7 @@
 #include <fstream>
 
 routing::Problem *cvrp::Reader::readFile(std::string filePath) {
-    vrp::Problem *problem = new vrp::Problem();
+    cvrp::Problem *problem = new cvrp::Problem();
     std::fstream fh(filePath.c_str(), std::ios_base::in);
     try {
         if (!fh.good()) throw std::string("file open error");

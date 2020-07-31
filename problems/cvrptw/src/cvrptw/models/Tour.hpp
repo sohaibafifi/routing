@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <vrp/models/Tour.hpp>
+#include <cvrp/models/Tour.hpp>
 #include "Client.hpp"
 
 namespace cvrptw {
@@ -42,7 +42,7 @@ namespace cvrptw {
 
         };
 
-        class Tour : public vrp::models::Tour {
+        class Tour : public cvrp::models::Tour {
         protected:
             routing::Duration totalTime;
             std::vector<Visit *> visits;
@@ -59,7 +59,7 @@ namespace cvrptw {
             }
 
             Tour(routing::Problem *p_problem, unsigned vehicleID) :
-                    vrp::models::Tour(p_problem, vehicleID),
+                    cvrp::models::Tour(p_problem, vehicleID),
                     visits(std::vector<Visit *>()),
                     totalTime(0) {}
 
