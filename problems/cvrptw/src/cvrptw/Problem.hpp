@@ -12,7 +12,7 @@
 namespace cvrptw {
     class Problem : public cvrp::Problem {
     public :
-        Problem() = default;
+        Problem() {  };
     protected :
         routing::Initializer *initializer() override;
 
