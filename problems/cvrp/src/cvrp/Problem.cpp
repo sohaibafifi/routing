@@ -5,7 +5,6 @@
 
 #include <utilities/Utilities.hpp>
 #include "Problem.hpp"
-#include "models/Depot.hpp"
 
 routing::Initializer *cvrp::Problem::initializer() {
     return new cvrp::Initializer(this);
