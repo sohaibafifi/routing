@@ -22,8 +22,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -ffast-math")
 add_library(cvrptw ${cvrptw_SRC})
 
 target_include_directories(cvrptw PUBLIC ../../utilities/src/)
-target_include_directories(cvrptw PUBLIC ../vrp/src/)
 target_include_directories(cvrptw PUBLIC ../cvrp/src/)
+target_include_directories(cvrptw PUBLIC ../vrp/src/)
 target_include_directories(cvrptw PUBLIC ../../core/src/)
 
 
