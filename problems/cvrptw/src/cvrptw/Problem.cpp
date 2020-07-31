@@ -13,7 +13,7 @@ routing::Initializer *cvrptw::Problem::initializer() {
 
 #ifdef CPLEX
 void cvrptw::Problem::addVariables() {
-    vrp::Problem::addVariables();
+    cvrp::Problem::addVariables();
     for (unsigned i = 0; i <= clients.size(); ++i) {
         if (i == 0)
             start.push_back(IloNumVar(model.getEnv(),
