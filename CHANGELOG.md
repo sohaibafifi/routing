@@ -7,4 +7,7 @@ __Feature:__
 
 __Additions:__
 
-* CHANGELOG.md file
+* README.md, CHANGELOG.md, CONTRIBUTING.md files
+* Markdown preview script 'doc/preview.py'
+* empty LICENSE file
+* Specific documentation files in 'doc/'
