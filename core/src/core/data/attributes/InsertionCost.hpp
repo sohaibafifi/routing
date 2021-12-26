@@ -8,7 +8,7 @@
 namespace routing {
     class InsertionCost {
     private:
-        routing::Duration delta;
+        routing::Duration delta; // delta on cost
         bool possible;
     public:
         bool operator>(const InsertionCost &rhs) const {
@@ -32,7 +32,9 @@ namespace routing {
             InsertionCost::possible = possible;
         }
 
+
         InsertionCost(routing::Duration delta, bool possible) : delta(delta), possible(possible) {}
+
 
         InsertionCost() : delta(0), possible(true) {}
 

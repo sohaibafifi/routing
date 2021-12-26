@@ -17,8 +17,11 @@ namespace cvrptw {
                     : cvrp::models::Solution(p_problem) {
             }
 
-            void update() override {}
-
+            void update() override {
+                for (int t = 0; t < vrp::models::Solution::getNbTour(); ++t) {
+                    vrp::models::Solution::getTour(t)->update();
+                }
+            }
         };
     }
 }
