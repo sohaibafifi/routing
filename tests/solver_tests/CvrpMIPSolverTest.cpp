@@ -3,7 +3,7 @@
 // a non-commercial and academic institution.
 
 
-#include <cvrptw/Reader.hpp>
+#include <cvrp/Reader.hpp>
 #include <vrp/Problem.hpp>
 
 #ifdef CPLEX
@@ -15,21 +15,21 @@
 #include <fstream>
 #include "gtest/gtest.h"
 
-class CvrptwMIPSolverTest : public ::testing::Test {
+class CvrpMIPSolverTest : public ::testing::Test {
 public :
     std::ofstream nullstream;
 
-    CvrptwMIPSolverTest() : Test() {
+    CvrpMIPSolverTest() : Test() {
         if (!nullstream.is_open())
             nullstream.open("/dev/null", std::ofstream::out | std::ofstream::app);
     }
 };
 
-TEST_F(CvrptwMIPSolverTest, solve) {
+TEST_F(CvrpMIPSolverTest, solve) {
 #ifdef CPLEX
-    routing::MIPSolver<cvrptw::Reader> mipSolver("data/CVRPTW/Solomon/25/c103.txt");
+    routing::MIPSolver<cvrp::Reader> mipSolver("data/CVRP/toy.vrp");
     EXPECT_FALSE(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.empty());
-    EXPECT_EQ(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.size(), 25);
+    EXPECT_EQ(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.size(), 5);
     bool solution_found = mipSolver.solve();
     EXPECT_TRUE(solution_found);
 #else
