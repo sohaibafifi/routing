@@ -42,7 +42,6 @@ namespace vrp {
             void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
                 traveltime += cost->getDelta();
                 updated = true;
-
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
@@ -83,9 +82,6 @@ namespace vrp {
 
             routing::InsertionCost *
             evaluateInsertion(routing::models::Client *client, unsigned long position) override {
-                auto *stock = dynamic_cast<routing::attributes::Stock *>(problem->vehicles[this->getID()]);
-
-
                 auto *cost = new routing::InsertionCost();
 
                 routing::Duration delta = 0;

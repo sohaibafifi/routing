@@ -46,27 +46,30 @@ namespace cvrp {
                     consumption(0),
                     totalTime(0) {}
 
-            void update() override {}
+            void update() override {
+                vrp::models::Tour::update();
+            }
 
             routing::Duration getConsumption() const {
                 return consumption;
             }
 
 
-            void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
+            void pushClient(routing::models::Client *client, routing::InsertionCost *cost) override {
                 traveltime += cost->getDelta();
-                updated = true;
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.push_back(dynamic_cast<Client *>(client));
+                updated = true;
             }
 
-            void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
-                updated = true;
+            void
+            addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost *cost) override {
                 traveltime += cost->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
+                updated = true;
             }
 
             void removeClient(unsigned long position) override {
