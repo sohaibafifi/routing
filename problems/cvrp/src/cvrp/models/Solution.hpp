@@ -17,7 +17,9 @@ namespace cvrp {
                     : vrp::models::Solution(p_problem) {
             }
 
-            void update() override {}
+            void update() override {
+                vrp::models::Solution::update();
+            }
 
         };
     }

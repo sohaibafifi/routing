@@ -7,7 +7,7 @@
 #include "core/data/attributes.hpp"
 
 namespace routing {
-    typedef double Demand;
+    typedef int Demand;
     namespace attributes {
 
         /**

@@ -59,7 +59,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(this->cplex.MIPEmphasis, this->cplex.MIPEmphasisFeasibility);
     this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.HeurFreq, 0); // Automatic: let CPLEX choose
-    this->cplex.setParam(this->cplex.PreInd, 0);
+    this->cplex.setParam(this->cplex.PreInd, 0); // disable presolve to keep all the variables
     this->cplex.setParam(this->cplex.MIPDisplay, 4);
     this->cplex.setParam(this->cplex.TiLim, timeout);
     bool solved = this->cplex.solve() != 0;

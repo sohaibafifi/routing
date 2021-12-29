@@ -42,6 +42,10 @@ namespace routing {
                     destructor->destruct(solution);
                 }
             }
+            // if bestInsertion fails use random sequence decode decode
+            solution = solution->initFromSequence(problem, solution->notserved);
+            solution->update();
+            return solution;
             return nullptr;
         }
 

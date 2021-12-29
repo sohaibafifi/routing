@@ -41,7 +41,6 @@ namespace vrp {
                     }
                     if (insertion_found) {
                         solution->addClient(best_t, clients[best_client_i], best_p, bestCost);
-                        //dynamic_cast<models::Solution *>(solution)->traveltime += bestCost->getDelta();
                         clients.erase(clients.begin() + best_client_i);
                         solution->getTour(best_t)->update();
                     }

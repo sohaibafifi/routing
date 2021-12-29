@@ -10,9 +10,11 @@
 #include "models/Tour.hpp"
 
 namespace cvrptw {
+
     class Problem : public cvrp::Problem {
     public :
         Problem() {  };
+        std::vector<IloNumVar> start;
     protected :
         routing::Initializer *initializer() override;
 
@@ -21,7 +23,6 @@ namespace cvrptw {
 
         void addSequenceConstraints() override;
 
-        std::vector<IloNumVar> start;
 #endif
 
     };

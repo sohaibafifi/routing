@@ -76,7 +76,7 @@ namespace routing {
 
                     }
                 } else {
-                    getEnv().out() << "Construct solution from scratch ... " << std::flush;
+                    getEnv().out() << getCurrentNodeDepth() << " Construct solution from scratch ... " << std::flush;
                     this->solution = generator->generate();
                     if (solution == nullptr) {
                         getEnv().out() << std::endl;
@@ -91,16 +91,19 @@ namespace routing {
                     IloNumArray vals(getEnv());
                     solution->getVarsVals(vars, vals);
 
-                    for (unsigned i = 0; i < vars.getSize(); ++i) setBounds(vars[i], vals[i], vals[i]);
-
-                    solve();
+                    for (unsigned i = 0; i < vars.getSize(); ++i) {
+                        setBounds(vars[i], std::floor(vals[i]), std::ceil(vals[i]));
+                    }
+                    auto solved = solve(IloCplex::Primal);
                     if (hasIncumbent())
                         getEnv().out() << "CVRPHeuristicCallback from " << getIncumbentObjValue() << " to "
                                        << solution->getCost()
-                                       << " -  " << getObjValue() << "  " << getCplexStatus() << std::endl;
-                    InitialFound = (getCplexStatus() == CPX_STAT_OPTIMAL);
-                    for (unsigned i = 0; i < vars.getSize(); ++i) vals[i] = getValue(vars[i]);
-                    setSolution(vars, vals, getObjValue());
+                                       << " - " << getObjValue() << "  " << getCplexStatus() << std::endl;
+                    InitialFound = (getCplexStatus() == IloCplex::Optimal);
+                    if (solved) {
+                        for (unsigned i = 0; i < vars.getSize(); ++i) vals[i] = getValue(vars[i]);
+                        setSolution(vars, vals, getObjValue());
+                    }
                     vals.end();
                     vars.end();
                 }

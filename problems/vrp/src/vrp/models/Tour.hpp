@@ -16,13 +16,13 @@ namespace vrp {
         class Tour : public routing::models::Tour {
         protected:
             std::vector<Client *> clients;
-            routing::Duration traveltime;
+            routing::Duration travelTime;
         public:
 
 
             Tour(routing::Problem *p_problem, unsigned vehicleID) :
                     routing::models::Tour(p_problem, vehicleID),
-                    traveltime(0),
+                    travelTime(0),
                     clients(std::vector<Client *>()),
                     updated(true) {}
 
@@ -32,27 +32,43 @@ namespace vrp {
                 return tour;
             }
 
-            void update() override {}
+            void update() override {
+                this->travelTime = 0;
+                for (int p = 0; p < clients.size(); ++p) {
+                    if (p == 0) {
+                        travelTime = problem->getDistance(
+                                *clients[p], *problem->depots[0]);
+                    } else {
+                        travelTime += problem->getDistance(
+                                *clients[p], *clients[p - 1]);
+                    }
+                }
+                if (!clients.empty())
+                    travelTime += problem->getDistance(
+                            *clients[clients.size() - 1], *problem->depots[0]);
+
+
+            }
 
             routing::Duration getTravelTime() const {
-                return traveltime;
+                return travelTime;
             }
 
 
-            void pushClient(routing::models::Client *client, routing::InsertionCost * cost) override {
-                traveltime += cost->getDelta();
+            void pushClient(routing::models::Client *client, routing::InsertionCost *cost) override {
+                travelTime += cost->getDelta();
                 updated = true;
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
             void _pushClient(routing::models::Client *client) override {
                 updated = true;
-                traveltime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+                travelTime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
             void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
-                traveltime += cost->getDelta();
+                travelTime += cost->getDelta();
 
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
                 this->update();
@@ -61,13 +77,13 @@ namespace vrp {
 
             void removeClient(unsigned long position) override {
                 updated = true;
-                traveltime += this->evaluateRemove(position)->getDelta();
+                travelTime += this->evaluateRemove(position)->getDelta();
                 clients.erase(clients.begin() + position);
             }
 
             void clear() override {
                 updated = true;
-                traveltime = 0;
+                travelTime = 0;
                 clients = std::vector<Client *>();
             }
 
