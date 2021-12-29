@@ -141,6 +141,8 @@ namespace vrp {
                 }
             }
 
+            void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) override;
+
 #endif
 
             void print(std::ostream &out) override {
