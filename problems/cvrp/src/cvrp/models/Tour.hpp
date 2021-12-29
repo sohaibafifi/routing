@@ -56,7 +56,7 @@ namespace cvrp {
 
 
             void pushClient(routing::models::Client *client, routing::InsertionCost *cost) override {
-                traveltime += cost->getDelta();
+                travelTime += cost->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.push_back(dynamic_cast<Client *>(client));
@@ -65,7 +65,7 @@ namespace cvrp {
 
             void
             addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost *cost) override {
-                traveltime += cost->getDelta();
+                travelTime += cost->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
@@ -74,7 +74,7 @@ namespace cvrp {
 
             void removeClient(unsigned long position) override {
                 updated = true;
-                traveltime += this->evaluateRemove(position)->getDelta();
+                travelTime += this->evaluateRemove(position)->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(getClient(
                         position)))
                     consumption -= consumer->getDemand();

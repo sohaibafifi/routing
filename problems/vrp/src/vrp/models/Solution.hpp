@@ -18,7 +18,7 @@ namespace vrp {
 
             explicit Solution(routing::Problem *p_problem)
                     : routing::models::Solution(p_problem),
-                      traveltime(0),
+                      travelTime(0),
                       tours(std::vector<Tour *>()) {
                 while (this->getNbTour() < this->getProblem()->vehicles.size()) {
                     this->pushTour(this->problem->initializer()->initialTour(this->getNbTour()));
@@ -27,18 +27,24 @@ namespace vrp {
             }
 
             Solution(const Solution &p_solution) :
-                    routing::models::Solution(p_solution) ,
-                    traveltime(p_solution.traveltime){
+                    routing::models::Solution(p_solution),
+                    travelTime(p_solution.travelTime) {
                 this->copy(&p_solution);
             }
 
 
-            void update() override {}
+            void update() override {
+                travelTime = 0;
+                for (int t = 0; t < getNbTour(); ++t) {
+                    getTour(t)->update();
+                    travelTime += getTour(t)->getTravelTime();
+                }
+            }
 
             void copy(const routing::models::Solution *p_solution) override {
-                this->traveltime = dynamic_cast<const Solution *>(p_solution)->traveltime;
+                this->travelTime = dynamic_cast<const Solution *>(p_solution)->travelTime;
                 this->notserved.clear();
-                for (auto i : p_solution->notserved) {
+                for (auto i: p_solution->notserved) {
                     this->notserved.push_back(i);
                 }
                 this->tours.clear();
@@ -48,7 +54,7 @@ namespace vrp {
             }
 
             double getCost() override {
-                return traveltime;
+                return travelTime;
             }
 
 
@@ -58,34 +64,35 @@ namespace vrp {
 
             void addTour(routing::models::Tour *tour, unsigned long position) override {
                 tours.insert(tours.begin() + position, dynamic_cast<Tour *>(tour));
-                traveltime += dynamic_cast<Tour *>( tour )->getTravelTime();
+                travelTime += dynamic_cast<Tour *>( tour )->getTravelTime();
             }
 
             void overrideTour(routing::models::Tour *tour, unsigned long position) override {
-                traveltime -= dynamic_cast<Tour *>( tours.at(position))->getTravelTime();
+                travelTime -= dynamic_cast<Tour *>( tours.at(position))->getTravelTime();
                 tours.at(position) = dynamic_cast<Tour *>(tour);
-                traveltime += dynamic_cast<Tour *>( tour )->getTravelTime();
+                travelTime += dynamic_cast<Tour *>( tour )->getTravelTime();
             }
 
             void removeClient(unsigned long index_tour, unsigned long position) override {
                 routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::removeClient(index_tour, position);
                 routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->traveltime += delta;
+                this->travelTime += delta;
             }
 
             void pushClient(unsigned long index_tour, routing::models::Client *client) override {
                 routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::pushClient(index_tour, client);
                 routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->traveltime += delta;
+                this->travelTime += delta;
             }
 
-            void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
+            void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position,
+                           routing::InsertionCost *cost) override {
                 routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
                 routing::models::Solution::addClient(index_tour, client, position, cost);
                 routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->traveltime += delta;
+                this->travelTime += delta;
             }
 
             unsigned long getNbTour() const override {
@@ -93,12 +100,16 @@ namespace vrp {
             }
 
 #ifdef CPLEX
+
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
                 std::vector<std::vector<IloBool> > values(problem->arcs.size());
                 std::vector<std::vector<IloBool> > affectation(problem->affectation.size());
+                std::vector<unsigned> order(problem->arcs.size());
                 for (unsigned j = 0; j < problem->arcs.size(); ++j) {
                     values[j] = std::vector<IloBool>(problem->arcs.size(), IloFalse);
+                }
+                for (unsigned j = 0; j < problem->affectation.size(); ++j) {
                     affectation[j] = std::vector<IloBool>(problem->affectation[j].size(), IloFalse);
                 }
                 for (unsigned k = 0; k < this->getNbTour(); ++k) {
@@ -107,6 +118,7 @@ namespace vrp {
                         values[last][this->getTour(k)->getClient(i)->getID()] = IloTrue;
                         last = this->getTour(k)->getClient(i)->getID();
                         affectation[last][k] = IloTrue;
+                        order[this->getTour(k)->getClient(i)->getID()] = i;
                     }
                     values[last][0] = IloTrue;
                 }
@@ -114,23 +126,21 @@ namespace vrp {
                 for (unsigned i = 0; i < problem->arcs.size(); ++i) {
                     for (unsigned j = 0; j < problem->arcs.size(); ++j) {
                         if (i == j) continue;
-//                        if (values[i][j])
-                        {
-                            vars.add(problem->arcs[i][j]);
-                            vals.add(values[i][j]);
+                        vars.add(problem->arcs[i][j]);
+                        vals.add(values[i][j]);
 
-                        }
                     }
-
                     for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
-//                        if (affectation[i][k])
-                        {
-                            vars.add(problem->affectation[i][k]);
-                            vals.add(affectation[i][k]);
-                        }
+                        vars.add(problem->affectation[i][k]);
+                        vals.add(affectation[i][k]);
+                    }
+                    if (i > 0) {
+                        vars.add(problem->order[i]);
+                        vals.add(order[i]);
                     }
                 }
             }
+
 #endif
 
             void print(std::ostream &out) override {
@@ -140,7 +150,7 @@ namespace vrp {
                     for (unsigned i = 0; i < this->getTour(t)->getNbClient(); ++i) {
                         out << this->getTour(t)->getClient(i)->getID() << " ";
                     }
-                    out << "[" <<this->getTour(t)->getHash() << "]" << std::endl;
+                    out << "[" << this->getTour(t)->getHash() << "]" << std::endl;
                 }
             }
 
@@ -158,12 +168,12 @@ namespace vrp {
                 return sequence;
             }
 
-            routing::Duration traveltime;
-            
+            routing::Duration travelTime;
+
         protected :
             std::vector<Tour *> tours;
 
-            Solution *
+            routing::models::Solution *
             initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) override;
 
         };

@@ -77,17 +77,28 @@ namespace cvrptw {
             void update() override {
                 cvrp::models::Tour::update();
                 double arrival = 0;
+                this->travelTime = 0;
                 for (int p = 0; p < visits.size(); ++p) {
                     Visit *visit = visits.at(p);
-                    if (p == 0)
-                        arrival = routing::models::Tour::problem->getDistance(
-                                *(visit->client), *routing::models::Tour::problem->depots[0]);
-                    else
-                        arrival += routing::models::Tour::problem->getDistance(
+                    if (p == 0) {
+                        arrival = problem->getDistance(
+                                *(visit->client), *problem->depots[0]);
+                        travelTime = problem->getDistance(
+                                *(visit->client), *problem->depots[0]);
+                    } else {
+                        arrival = visits.at(p - 1)->getStart()
+                                  + visits.at(p - 1)->client->getService()
+                                  + problem->getDistance(
                                 *(visit->client), *visits.at(p - 1)->client);
+                        travelTime += problem->getDistance(
+                                *(visit->client), *visits.at(p - 1)->client);
+                    }
                     visit->setStart(std::max(visit->client->getEST(), arrival));
                     visit->setWait(visit->getStart() - arrival);
                 }
+                if (!visits.empty())
+                    travelTime += problem->getDistance(
+                            *(visits.at(visits.size() - 1)->client), *problem->depots[0]);
 
                 double waitS = 0;
                 double maxShiftS = std::numeric_limits<double>::infinity();
@@ -101,8 +112,8 @@ namespace cvrptw {
                 if (!visits.empty()) // can be done using insertionCost deltaTime
                     totalTime = visits.at(visits.size() - 1)->getStart()
                                 + visits.at(visits.size() - 1)->client->getService()
-                                + routing::models::Tour::problem->getDistance(
-                            *(visits.at(visits.size() - 1)->client), *routing::models::Tour::problem->depots[0]);
+                                + problem->getDistance(
+                            *(visits.at(visits.size() - 1)->client), *problem->depots[0]);
 
             }
 
@@ -117,7 +128,7 @@ namespace cvrptw {
             void
             addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost *cost) override {
                 InsertionCost *insertion = static_cast<InsertionCost *>(cost);
-                traveltime += insertion->getDelta();
+                travelTime += insertion->getDelta();
                 if (auto *consumer = dynamic_cast<routing::attributes::Consumer *>(client))
                     consumption += consumer->getDemand();
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
@@ -147,6 +158,10 @@ namespace cvrptw {
 
             unsigned long getNbClient() override {
                 return this->visits.size();
+            }
+
+            Visit *getVisit(unsigned position) {
+                return this->visits.at(position);
             }
 
 

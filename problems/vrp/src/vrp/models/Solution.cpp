@@ -6,7 +6,7 @@
 #include "Solution.hpp"
 
 
-vrp::models::Solution *
+routing::models::Solution *
 vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) {
     Solution *solution = dynamic_cast<Solution *>(problem->initializer()->initialSolution());
     std::vector<routing::Duration> labels;
@@ -59,7 +59,7 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
             tour++;
         }
     }
-    solution->traveltime = cost;
+    solution->travelTime = cost;
     return solution;
 
 }

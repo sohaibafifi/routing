@@ -44,7 +44,6 @@ namespace vrp {
                 RandomDestructionParameters *parameters = static_cast<RandomDestructionParameters *>(params);
                 if (solution->notserved.size() == solution->getProblem()->clients.size()) return;
                 std::random_device rd;
-
                 unsigned long drem = 1 + rd() % parameters->getDmax();
                 do {
                     unsigned long t = rd() % solution->getNbTour();
@@ -52,7 +51,6 @@ namespace vrp {
                         t = rd() % solution->getNbTour();
                     }
                     unsigned long position = (rd() % static_cast<models::Tour *>(solution->getTour(t))->getNbClient());
-                    models::Client *client = dynamic_cast<models::Client *>(solution->getTour(t)->getClient(position));
                     solution->removeClient(t, position);
                 } while (dynamic_cast<models::Solution *>(solution)->notserved.size() < drem);
             }

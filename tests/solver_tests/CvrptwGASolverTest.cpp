@@ -19,9 +19,9 @@ public :
 };
 
 TEST_F(CvrptwGASolverTest, solve) {
-    vrp::GASolver<cvrptw::Reader> gaSolver("../../../data/CVRPTW/Solomon/5/c101.txt", this->nullstream);
+    vrp::GASolver<cvrptw::Reader> gaSolver("data/CVRPTW/Solomon/5/c103.txt", this->nullstream);
     EXPECT_FALSE(dynamic_cast<vrp::Problem *>(gaSolver.getProblem())->clients.empty());
-    EXPECT_EQ(dynamic_cast<vrp::Problem *>(gaSolver.getProblem())->clients.size(), 5);
+    EXPECT_EQ(dynamic_cast<vrp::Problem *>(gaSolver.getProblem())->clients.size(), 3);
     bool solution_found = gaSolver.solve();
     EXPECT_TRUE(solution_found);
 }
