@@ -6,22 +6,6 @@
 #include "Solution.hpp"
 #include "../Problem.hpp"
 
-void cvrptw::models::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals) {
-    vrp::models::Solution::getVarsVals(vars, vals);
-    for (int t = 0; t < vrp::models::Solution::getNbTour(); ++t) {
-        Tour *tour = dynamic_cast<Tour *>(tours[t]);
-        routing::Demand consumption = 0;
-        for (int v = 0; v < tour->getNbClient(); ++v) {
-            Visit *visit = tour->getVisit(v);
-            vars.add((dynamic_cast<cvrptw::Problem *>(problem))->start[visit->client->getID()]);
-            vals.add(visit->getStart());
-
-            consumption += visit->client->getDemand();
-            vars.add((dynamic_cast<cvrp::Problem *>(problem))->consumption[visit->client->getID()]);
-            vals.add(consumption);
-        }
-    }
-}
 
 routing::models::Solution *
 cvrptw::models::Solution::initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) {
@@ -61,8 +45,7 @@ cvrptw::models::Solution::initFromSequence(routing::Problem *problem, std::vecto
                     )
                 break;
 
-            // tour._pushClient(sequence[j]);
-            tour.addClient(sequence[j], tour.getNbClient(), cost); //FIXME : WIP
+            tour.addClient(sequence[j], tour.getNbClient(), cost);
             distance = distance + problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
             length = length + dynamic_cast<Client *>(sequence[j])->getService() +
                      problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
@@ -87,7 +70,6 @@ cvrptw::models::Solution::initFromSequence(routing::Problem *problem, std::vecto
     delimiters.push_back(sequence.size() - 1);
     int tour = 0;
     for (int i = 0; i < sequence.size(); i++) {
-        //solution->pushClient(tour, sequence.at(i));
         solution->addClient(tour, sequence.at(i), solution->getTour(tour)->getNbClient(), new routing::InsertionCost());
         if (sequence.at(delimiters.at(tour))->getID() == sequence.at(i)->getID()) {
             tour++;
@@ -97,3 +79,24 @@ cvrptw::models::Solution::initFromSequence(routing::Problem *problem, std::vecto
     solution->travelTime = cost;
     return solution;
 }
+
+#ifdef CPLEX
+
+void cvrptw::models::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals) {
+    vrp::models::Solution::getVarsVals(vars, vals);
+    for (int t = 0; t < vrp::models::Solution::getNbTour(); ++t) {
+        Tour *tour = dynamic_cast<Tour *>(tours[t]);
+        routing::Demand consumption = 0;
+        for (int v = 0; v < tour->getNbClient(); ++v) {
+            Visit *visit = tour->getVisit(v);
+            vars.add((dynamic_cast<cvrptw::Problem *>(problem))->start[visit->client->getID()]);
+            vals.add(visit->getStart());
+
+            consumption += visit->client->getDemand();
+            vars.add((dynamic_cast<cvrp::Problem *>(problem))->consumption[visit->client->getID()]);
+            vals.add(consumption);
+        }
+    }
+}
+
+#endif

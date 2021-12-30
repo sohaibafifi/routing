@@ -65,6 +65,7 @@ namespace cvrptw {
             }
 
         public:
+            // Add an extra layer to convert clients to visits with backward compatibility
             models::Client *getClient(unsigned long i) const override {
                 return dynamic_cast<Client *>(visits[i]->client);
             }
@@ -223,11 +224,6 @@ namespace cvrptw {
                 cost->setPossible(delta_time <= wait_j + maxShift_j);
                 return cost;
             }
-
-            routing::RemoveCost *evaluateRemove(unsigned long position) override {
-                return vrp::models::Tour::evaluateRemove(position);
-            }
-
         };
     }
 }

@@ -29,13 +29,11 @@ namespace routing {
                     generator(p_generator),
                     diver(p_diver),
                     neighbors(p_neighbors) {
-                InitialFound = false;
             }
 
             ~HeuristicCallback() = default;
 
         protected:
-            bool InitialFound;
             Problem *problem;
             routing::Generator *generator;
             routing::Diver *diver;
@@ -94,12 +92,11 @@ namespace routing {
                     for (unsigned i = 0; i < vars.getSize(); ++i) {
                         setBounds(vars[i], std::floor(vals[i]), std::ceil(vals[i]));
                     }
-                    auto solved = solve(IloCplex::Primal);
+                    auto solved = solve();
                     if (hasIncumbent())
                         getEnv().out() << "CVRPHeuristicCallback from " << getIncumbentObjValue() << " to "
                                        << solution->getCost()
                                        << " - " << getObjValue() << "  " << getCplexStatus() << std::endl;
-                    InitialFound = (getCplexStatus() == IloCplex::Optimal);
                     if (solved) {
                         for (unsigned i = 0; i < vars.getSize(); ++i) vals[i] = getValue(vars[i]);
                         setSolution(vars, vals, getObjValue());
@@ -116,12 +113,13 @@ namespace routing {
             models::Solution *solution;
 
             virtual void extractSolution() {
-                throw new std::logic_error("Not implemented");
+                this->solution = this->generator->initialSolution();
+                this->solution->constructFromModel(this);
             }
 
             virtual bool shouldDive() {
                 // extract solution should work
-                return true;
+                return false;
             }
 
             virtual routing::models::Solution *extractPartialSolution(routing::Problem *problem) {

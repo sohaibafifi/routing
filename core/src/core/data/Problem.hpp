@@ -7,13 +7,13 @@
 #include "attributes.hpp"
 #include "Memory.hpp"
 
+#include "core/data/attributes/GeoNode.hpp"
 #include "core/data/models/Client.hpp"
 #include "core/data/models/Depot.hpp"
 #include "core/data/models/Vehicle.hpp"
 #include <memory>
 #include <string>
 #include <vector>
-#include "core/data/attributes/GeoNode.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
