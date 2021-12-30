@@ -97,6 +97,8 @@ void vrp::Problem::addRoutingConstraints() {
         }
         model.add(expr == 1);
     }
+
+
     for (unsigned i = 1; i <= clients.size(); ++i) {
         IloExpr expr(model.getEnv());
         for (unsigned j = 0; j <= clients.size(); ++j) {

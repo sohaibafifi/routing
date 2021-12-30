@@ -21,7 +21,7 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
         int j = i;
         do {
             auto cost = tour.evaluateInsertion(sequence[j], tour.getNbClient());
-            if(! cost->isPossible()) break;
+            if (!cost->isPossible()) break;
             tour._pushClient(sequence[j]);
             if (i == j) {
                 distance = problem->getDistance(*sequence[j], *dynamic_cast<Problem *>(problem)->getDepot());
@@ -63,3 +63,34 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
     return solution;
 
 }
+
+#ifdef CPLEX
+
+void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCallback) {
+    std::vector<bool> inserted(dynamic_cast<Problem *>(problem)->clients.size() + 1, false);
+    for (int t = 0; t < problem->vehicles.size(); ++t) {
+        unsigned departure = 0;
+        do {
+            for (int i = 0; i <= dynamic_cast<Problem *>(problem)->clients.size(); ++i) {
+                if (i > 0 && inserted[i])
+                    continue;
+                if (pCallback->getIncumbentValue(dynamic_cast<Problem *>(problem)->arcs[departure][i]) > 0.5
+                    && (
+                            i == 0
+                            ||
+                            pCallback->getIncumbentValue(dynamic_cast<Problem *>(problem)->affectation[i][t]) > 0.5
+                    )
+                        ) {
+                    departure = i;
+                    if (departure == 0) break;
+                    inserted[i] = true;
+                    this->addClient(t, dynamic_cast<Problem *>(problem)->clients[i - 1],
+                                    this->getTour(t)->getNbClient(), new routing::InsertionCost());
+                }
+            }
+        } while (departure != 0);
+    }
+    this->update();
+}
+
+#endif

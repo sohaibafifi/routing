@@ -17,20 +17,15 @@ namespace cvrptw {
                     : cvrp::models::Solution(p_problem) {
             }
 
-            void update() override {
-                cvrp::models::Solution::update();
-            }
-
-        protected:
-            routing::models::Solution *
-            initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) override;
-
-        public:
 #ifdef CPLEX
 
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override;
 
 #endif
+
+            routing::models::Solution *
+            initFromSequence(routing::Problem *problem, std::vector<routing::models::Client *> sequence) override;
+
         };
     }
 }
