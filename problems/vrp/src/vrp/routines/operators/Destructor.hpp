@@ -7,6 +7,7 @@
 #include <core/routines/operators/Destructor.hpp>
 #include "../../models/Solution.hpp"
 #include <cassert>
+#include <random>
 
 namespace vrp {
     namespace routines {

@@ -6,11 +6,9 @@
 #include <cvrptw/Reader.hpp>
 #include <vrp/Problem.hpp>
 
-#ifdef CPLEX
 
 #include <core/solvers/MIPSolver.hpp>
 
-#endif
 
 #include <fstream>
 #include "gtest/gtest.h"
@@ -26,13 +24,10 @@ public :
 };
 
 TEST_F(CvrptwMIPSolverTest, solve) {
-#ifdef CPLEX
-    routing::MIPSolver<cvrptw::Reader> mipSolver("data/CVRPTW/Solomon/25/c103.txt");
+    routing::MIPSolver<cvrptw::Reader> mipSolver("data/CVRPTW/Solomon/100/c103.txt");
     EXPECT_FALSE(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.empty());
-    EXPECT_EQ(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.size(), 25);
+    EXPECT_EQ(dynamic_cast<vrp::Problem *>(mipSolver.getProblem())->clients.size(), 100);
     bool solution_found = mipSolver.solve();
     EXPECT_TRUE(solution_found);
-#else
 
-#endif
 }

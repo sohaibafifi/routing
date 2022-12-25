@@ -79,24 +79,3 @@ cvrptw::models::Solution::initFromSequence(routing::Problem *problem, std::vecto
     solution->travelTime = cost;
     return solution;
 }
-
-#ifdef CPLEX
-
-void cvrptw::models::Solution::getVarsVals(IloNumVarArray &vars, IloNumArray &vals) {
-    vrp::models::Solution::getVarsVals(vars, vals);
-    for (int t = 0; t < vrp::models::Solution::getNbTour(); ++t) {
-        Tour *tour = dynamic_cast<Tour *>(tours[t]);
-        routing::Demand consumption = 0;
-        for (int v = 0; v < tour->getNbClient(); ++v) {
-            Visit *visit = tour->getVisit(v);
-            vars.add((dynamic_cast<cvrptw::Problem *>(problem))->start[visit->client->getID()]);
-            vals.add(visit->getStart());
-
-            consumption += visit->client->getDemand();
-            vars.add((dynamic_cast<cvrp::Problem *>(problem))->consumption[visit->client->getID()]);
-            vals.add(consumption);
-        }
-    }
-}
-
-#endif

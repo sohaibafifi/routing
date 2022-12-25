@@ -13,23 +13,26 @@ namespace cvrptw {
 
     class Problem : public cvrp::Problem {
     public :
-        Problem() {  };
+        Problem() : cvrp::Problem(){  };
+
+
         std::vector<IloNumVar> start;
     protected :
         routing::Initializer *initializer() override;
 
-#ifdef CPLEX
         void addVariables() override;
 
         void addSequenceConstraints() override;
 
-#endif
+        void addAffectationConstraints() override;
+
+        void addCapacityConstraints() override;
 
     };
 
     class Initializer : public routing::Initializer {
     public:
-        Initializer(Problem *p_problem) :
+        explicit Initializer(Problem *p_problem) :
                 routing::Initializer(p_problem) {
 
         }

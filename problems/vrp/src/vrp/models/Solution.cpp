@@ -64,7 +64,6 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
 
 }
 
-#ifdef CPLEX
 
 void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCallback) {
     std::vector<bool> inserted(dynamic_cast<Problem *>(problem)->clients.size() + 1, false);
@@ -93,4 +92,3 @@ void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCa
     this->update();
 }
 
-#endif

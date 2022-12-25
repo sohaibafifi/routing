@@ -27,7 +27,6 @@ namespace vrp {
     class Problem : public routing::Problem {
     public:
 
-#ifdef CPLEX
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;
@@ -35,14 +34,13 @@ namespace vrp {
         std::vector<std::vector<IloNumVar> > arcs;
         std::vector<std::vector<IloNumVar> > affectation;
         std::vector<IloNumVar> order;
-#endif
 
         Problem() = default;
 
-        virtual routing::Duration
+        routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const override;
 
-        virtual routing::Duration
+        routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Depot &d) const override;
 
         std::vector<std::vector<routing::Duration> > distances, distances_to_depots;
@@ -64,7 +62,6 @@ namespace vrp {
         routing::Memory *getMemory() override;
 
     protected:
-#ifdef CPLEX
 
         virtual void addVariables() override;
 
@@ -81,7 +78,6 @@ namespace vrp {
 
         virtual void addSequenceConstraints();
 
-#endif
     };
 
 }

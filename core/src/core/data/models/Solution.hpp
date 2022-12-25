@@ -50,11 +50,9 @@ namespace routing {
 
             virtual unsigned long getNbTour() const = 0;
 
-#ifdef CPLEX
             virtual void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) = 0;
 
             virtual void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) = 0;
-#endif
 
             virtual void print(std::ostream &out) = 0;
 

@@ -23,7 +23,7 @@ namespace routing {
             virtual void update() = 0;
 
             virtual void pushClient(Client *client, routing::InsertionCost * cost) = 0;
-            virtual void _pushClient(Client *client) = 0;
+            virtual InsertionCost * _pushClient(Client *client) = 0;
 
             virtual void addClient(Client *client, unsigned long position, routing::InsertionCost * cost) = 0;
 

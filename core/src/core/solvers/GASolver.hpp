@@ -208,7 +208,7 @@ namespace routing {
 
         virtual void setDefaultConfiguration() override {
             this->configuration = new Configuration();
-            this->configuration->setIntParam(this->configuration->itermax,
+            this->configuration->setIntParam(this->configuration->iterMax,
                                              this->problem->clients.size() * this->problem->clients.size());
         };
 
@@ -216,7 +216,7 @@ namespace routing {
             assert(generator != nullptr);
             this->solution = this->problem->initializer()->initialSolution();
             Population *population = Population::initialize(this->problem);
-            int itermax = this->configuration->getIntParam(this->configuration->itermax);
+            int itermax = this->configuration->getIntParam(this->configuration->iterMax);
             int iter = 1;
             double bestCost = population->best()->getCost();
             std::random_device rd;

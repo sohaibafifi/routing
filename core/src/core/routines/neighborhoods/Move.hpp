@@ -19,6 +19,7 @@ namespace routing {
         }
 
         virtual bool look(models::Solution *solution) {
+            solution->update();
             assert(solution->notserved.size() == 0);
 
             routing::models::Solution *best = solution->clone();
@@ -42,6 +43,7 @@ namespace routing {
                     bestCost = solution->getCost();
                     best->copy(solution);
                     improved = true;
+                    return true;
                 }
 
             }

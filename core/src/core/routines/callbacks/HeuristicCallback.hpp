@@ -4,8 +4,9 @@
 
 #pragma once
 
-
 #include <ilcplex/ilocplexi.h>
+
+#include <utility>
 
 #include "../../data/Problem.hpp"
 #include "core/routines/operators/Generator.hpp"
@@ -28,19 +29,21 @@ namespace routing {
                     problem(_problem),
                     generator(p_generator),
                     diver(p_diver),
-                    neighbors(p_neighbors) {
+                    neighbors(std::move(p_neighbors)), incumbent_looked(0) {
             }
 
-            ~HeuristicCallback() = default;
+            ~HeuristicCallback() override = default;
 
         protected:
             Problem *problem;
             routing::Generator *generator;
             routing::Diver *diver;
             std::vector<routing::Neighborhood *> neighbors;
+            double incumbent_looked;
 
-            virtual void main() {
+            void main() override {
                 if (hasIncumbent()) {
+
                     if (shouldDive()) {
                         solution = this->extractPartialSolution(problem);
                         if (solution == nullptr) return;
@@ -52,7 +55,8 @@ namespace routing {
                             return;
                         }
                     } else {
-                        getEnv().out() << "Local search ... " << std::flush;
+                        // if (incumbent_looked == getIncumbentObjValue()) return;
+                        incumbent_looked = getIncumbentObjValue();
                         this->extractSolution();
                         std::random_device rd;
                         bool improved = false;
@@ -67,53 +71,73 @@ namespace routing {
                             } else {
                                 run[i] = true;
                             }
+                            break; // FIXME : add a param to choose between two modes :
+                                   // One to execute only one LS at once
+                                   // and the other uses the loop
                         }
-                        getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
-                                       << std::endl;
                         if (!improved) return;
 
                     }
                 } else {
                     getEnv().out() << getCurrentNodeDepth() << " Construct solution from scratch ... " << std::flush;
+                    getEnv().out() << " using  " << typeid(generator->getConstructor()).name()  << "  " << std::flush;
+
                     this->solution = generator->generate();
                     if (solution == nullptr) {
                         getEnv().out() << std::endl;
                         return;
                     }
-                    getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
-                                   << std::endl;
+                    getEnv().out() << solution->getCost() << std::endl;
                 }
 
                 if (!hasIncumbent() || solution->getCost() < getIncumbentObjValue() - 1e-9) {
-                    IloNumVarArray vars(getEnv());
-                    IloNumArray vals(getEnv());
-                    solution->getVarsVals(vars, vals);
+                    try {
+                        IloNumVarArray all_vars(getEnv());
+                        IloNumArray all_vals(getEnv());
+                        solution->getVarsVals(all_vars, all_vals);
 
-                    for (unsigned i = 0; i < vars.getSize(); ++i) {
-                        setBounds(vars[i], std::floor(vals[i]), std::ceil(vals[i]));
+                        for (unsigned i = 0; i < all_vars.getSize(); ++i) {
+                            setBounds(all_vars[i], std::floor(all_vals[i]), std::ceil(all_vals[i]));
+                        }
+                        // FIXME : the solution is not always accepted
+                        auto solved = solve();
+                        if (solved) {
+                            getEnv().out() << "HeuristicCallback from " << getIncumbentObjValue() << " to "
+                                           << solution->getCost()
+                                           << " - " << getObjValue() << "  " << getCplexStatus() << std::endl;
+                            IloNumVarArray vars(getEnv());
+                            IloNumArray vals(getEnv());
+                            for (unsigned i = 0; i < vars.getSize(); ++i) {
+                                // keep only not removed variables because of the pre-solve
+                                if (getFeasibility(all_vars[i]) == this->Feasible) {
+                                    vars.add(all_vars[i]);
+                                    vals.add(getValue(vars[i]));
+                                }
+                            }
+                            setSolution(vars, vals, getObjValue());
+                            vals.end();
+                            vars.end();
+                        }
+                        all_vars.end();
+                        all_vals.end();
+                    } catch (IloException &exception) {
+                        getEnv().warning() << exception.getMessage() << std::endl;
                     }
-                    auto solved = solve();
-                    if (hasIncumbent())
-                        getEnv().out() << "CVRPHeuristicCallback from " << getIncumbentObjValue() << " to "
-                                       << solution->getCost()
-                                       << " - " << getObjValue() << "  " << getCplexStatus() << std::endl;
-                    if (solved) {
-                        for (unsigned i = 0; i < vars.getSize(); ++i) vals[i] = getValue(vars[i]);
-                        setSolution(vars, vals, getObjValue());
-                    }
-                    vals.end();
-                    vars.end();
+
+
                 }
             }
 
-            IloCplex::CallbackI *duplicateCallback() const {
+            IloCplex::CallbackI *duplicateCallback() const override {
                 throw new std::logic_error("Not implemented");
             }
 
-            models::Solution *solution;
+            models::Solution *solution{};
+            std::vector<double> starts;
 
             virtual void extractSolution() {
                 this->solution = this->generator->initialSolution();
+                // TODO : transfer information about arc feasibility using pre-solve
                 this->solution->constructFromModel(this);
             }
 
@@ -128,3 +152,4 @@ namespace routing {
         };
     }
 }
+

@@ -20,7 +20,7 @@ routing::Problem *cvrptw::Reader::readFile(std::string filepath) {
     try {
 
         if (!fh.good()) throw std::string("file open error");
-        unsigned nbClients = 25;
+        unsigned nbClients = 100; // FIXME : retrieve the information
         std::string line;
         getline(fh, line);
         problem->name = line;
@@ -58,15 +58,16 @@ routing::Problem *cvrptw::Reader::readFile(std::string filepath) {
                 y[i - 1] = _y;
             }
         }
+        nbClients = problem->clients.size();
         problem->distances = std::vector<std::vector<routing::Duration> >(nbClients);
         problem->distances_to_depots = std::vector<std::vector<routing::Duration> >(1);
         problem->distances_to_depots[0] = std::vector<routing::Duration>(nbClients);
         for (unsigned i = 0; i < nbClients; ++i) {
             problem->distances[i] = std::vector<routing::Duration>(nbClients);
-            problem->distances_to_depots[0][i] = std::hypot(x[i] - problem->getDepot()->getX(),
-                                                            y[i] - problem->getDepot()->getY());
+            problem->distances_to_depots[0][i] = std::floor( std::hypot(x[i] - problem->getDepot()->getX(),
+                                                            y[i] - problem->getDepot()->getY()) * 100) / 100.0;
             for (unsigned j = 0; j < nbClients; ++j)
-                problem->distances[i][j] = std::hypot(x[i] - x[j], y[i] - y[j]);
+                problem->distances[i][j] =   std::floor(std::hypot(x[i] - x[j], y[i] - y[j]) * 100) / 100.0;
         }
         return problem;
 
