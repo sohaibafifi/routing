@@ -11,7 +11,6 @@ routing::Initializer *cvrptw::Problem::initializer() {
     return new cvrptw::Initializer(this);
 }
 
-#ifdef CPLEX
 void cvrptw::Problem::addVariables() {
     cvrp::Problem::addVariables();
     for (unsigned i = 0; i <= clients.size(); ++i) {
@@ -31,8 +30,8 @@ void cvrptw::Problem::addVariables() {
 
 }
 
+
 void cvrptw::Problem::addSequenceConstraints() {
-    vrp::Problem::addSequenceConstraints();
     for (unsigned i = 1; i <= clients.size(); ++i) {
         model.add(start[i] >= Problem::getDistance(*clients[i - 1], *getDepot()));
         for (unsigned j = 0; j <= clients.size(); ++j) {
@@ -70,4 +69,23 @@ void cvrptw::Problem::addSequenceConstraints() {
     }
 
 }
-#endif
+
+void cvrptw::Problem::addAffectationConstraints() {
+
+}
+
+void cvrptw::Problem::addCapacityConstraints() {
+if (auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]))
+        for (auto i = 1; i <= clients.size(); ++i) {
+            for (auto j = 1; j <= clients.size(); ++j) {
+                if (i == j) continue;
+                if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j -
+                                                                                                                  1]))
+                    model.add(consumption[i]
+                              + client->getDemand()
+                              <= consumption[j]
+                                 + (stock->getCapacity()
+                                    + client->getDemand()) * (1 - arcs[i][j]));
+            }
+        }
+}

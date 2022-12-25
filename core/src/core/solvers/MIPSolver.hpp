@@ -1,6 +1,3 @@
-//
-// Created by Sohaib LAFIFI on 20/11/2019.
-//
 
 // Copyright (c) 2020. Sohaib LAFIFI <sohaib.lafifi@univ-artois.fr>
 // You are allowed to use this project for research purposes as a member of
@@ -37,16 +34,16 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
         p_inputFile) {
     this->env.setOut(os);
     this->model = this->problem->generateModel(this->env);
+
     this->cplex = IloCplex(this->model);
     this->setDefaultConfiguration();
-
     std::vector<IloCplex::CallbackI *> callbacks = std::vector<IloCplex::CallbackI *>();
     callbacks.push_back(this->problem->setHeuristicCallback(this->env));
     callbacks.push_back(this->problem->setUserCutCallback(this->env));
     callbacks.push_back(this->problem->setIncumbentCallback(this->env));
     callbacks.push_back(this->problem->setInformationCallback(this->env));
     callbacks.push_back(this->problem->setLazyConstraintCallback(this->env));
-    for (auto callback : callbacks) {
+    for (auto callback: callbacks) {
         if (callback != nullptr)
             this->cplex.use(callback);
     }
@@ -54,14 +51,18 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
 
 }
 
+
+
 template<class Reader>
 bool routing::MIPSolver<Reader>::solve(double timeout) {
-    this->cplex.setParam(this->cplex.MIPEmphasis, this->cplex.MIPEmphasisFeasibility);
+    cplex.exportModel("model.lp");
+    this->cplex.setParam(this->cplex.MIPEmphasis, this->cplex.MIPEmphasisHeuristic);
     this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.HeurFreq, 0); // Automatic: let CPLEX choose
-    this->cplex.setParam(this->cplex.PreInd, 0); // disable presolve to keep all the variables
     this->cplex.setParam(this->cplex.MIPDisplay, 4);
     this->cplex.setParam(this->cplex.TiLim, timeout);
+
+    this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
              << "\t" << this->cplex.getStatus()

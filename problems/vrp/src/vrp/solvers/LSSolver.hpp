@@ -6,7 +6,6 @@
 
 #include <core/solvers/LSSolver.hpp>
 #include "../models/Solution.hpp"
-#include "../routines/operators/Generator.hpp"
 #include "../routines/operators/Constructor.hpp"
 #include "../routines/operators/Destructor.hpp"
 #include <core/routines/neighborhoods/Neighborhood.hpp>
@@ -24,7 +23,7 @@ namespace vrp {
 
                  std::ostream &os = std::cout) :
                 routing::LSSolver<Reader>(p_inputFile, os) {
-            this->setGenerator(new routines::Generator(
+            this->setGenerator(new routing::Generator(
                     this->problem,
                     new vrp::routines::Constructor(),
                     new vrp::routines::Destructor())

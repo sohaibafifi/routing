@@ -28,11 +28,13 @@ namespace routing {
         MASolver(const std::string &p_inputFile,
                  Generator *p_generator,
                  const std::vector<Neighborhood *> &p_neighbors,
-                 std::ostream &os = std::cout) : GASolver<Reader>(p_inputFile, p_generator, p_neighbors, os) {
+                 std::ostream &os = std::cout)
+                 : GASolver<Reader>(p_inputFile, p_generator, p_neighbors, os) {
         }
 
         MASolver(const std::string &p_inputFile,
-                 std::ostream &os = std::cout) : GASolver<Reader>(p_inputFile, os) {
+                 std::ostream &os = std::cout)
+                 : GASolver<Reader>(p_inputFile, os) {
         }
 
         void mutate(Sequence *sequence) override {
@@ -43,7 +45,6 @@ namespace routing {
             while (std::find(run.begin(), run.end(), false) != run.end()) {
                 unsigned i = 0;
                 do { i = rd() % run.size(); } while (run[i]);
-                this->os << typeid(this->neighbors[i]).name() << std::endl;
                 if (this->neighbors[i]->look(solution)) {
                     run = std::vector<bool>(this->neighbors.size(), false);
                 } else {

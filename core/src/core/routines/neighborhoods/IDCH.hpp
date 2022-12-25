@@ -20,8 +20,9 @@ namespace routing {
         }
 
         virtual bool look(models::Solution *solution) {
+            solution->update();
             assert(solution->notserved.size() == 0);
-            int itermax = solution->getProblem()->clients.size() * solution->getProblem()->clients.size();
+            int itermax =  10;
             int iter = 0;
             routing::models::Solution *best = solution->clone();
             bool improved = false;
@@ -32,6 +33,7 @@ namespace routing {
                 destructor->destruct(solution);
                 if (constructor->bestInsertion(solution)) {
                     if (solution->getCost() < bestCost - 1e-9) {
+                        solution->update(); // FIXME : remove
                         bestCost = solution->getCost();
                         iter = 1;
                         best->copy(solution);

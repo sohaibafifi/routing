@@ -17,13 +17,10 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
-#ifdef CPLEX
 #include <ilcplex/ilocplexi.h>
-#endif
 #pragma GCC diagnostic pop
 
 namespace routing {
-#ifdef CPLEX
     namespace callback {
         class UserCutCallback;
         class HeuristicCallback;
@@ -31,7 +28,6 @@ namespace routing {
         class LazyConstraintCallback;
         class InformationCallback;
     }
-#endif
 
     namespace models {
         class Solution;
@@ -69,7 +65,6 @@ namespace routing {
 
         virtual Initializer *initializer() = 0;
 
-#ifdef CPLEX
         virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) { return nullptr; }
 
         virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) { return nullptr; }
@@ -79,7 +74,6 @@ namespace routing {
         virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback(IloEnv &env) { return nullptr; }
 
         virtual routing::callback::InformationCallback *setInformationCallback(IloEnv &env) { return nullptr; }
-#endif
         std::string getName() const {
             return name;
         }
@@ -92,7 +86,6 @@ namespace routing {
 
         virtual routing::Duration getDistance(const models::Client &c1, const models::Depot &d) const = 0;
 
-#ifdef CPLEX
 
         IloModel model;
         IloExpr obj;
@@ -102,9 +95,9 @@ namespace routing {
             this->addVariables();
             this->addConstraints();
             this->addObjective();
+            IloCplex cplex(model); // FIXME : bug elsewhere
             return this->model;
         }
-#endif
 
         std::vector<models::Vehicle *> vehicles;
         std::vector<models::Depot *> depots;
@@ -112,15 +105,16 @@ namespace routing {
 
         std::string name;
 
-    protected:
-#ifdef CPLEX
+        std::vector<models::Client *> getClients() {
+            return this->clients;
+        }
+
 
         virtual void addVariables() = 0;
 
         virtual void addConstraints() = 0;
 
         virtual void addObjective() = 0;
-#endif
 
     };
 }

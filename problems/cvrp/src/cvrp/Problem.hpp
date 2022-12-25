@@ -12,24 +12,22 @@
 namespace cvrp {
     class Problem : public vrp::Problem {
     public:
-        Problem() {  };
+        Problem() : vrp::Problem() {  };
         std::vector<IloNumVar> consumption;
     protected :
         routing::Initializer *initializer() override;
 
-#ifdef CPLEX
 
         virtual void addConstraints() override;
         virtual void addVariables() override ;
 
         virtual void addCapacityConstraints();
-#endif
 
     };
 
     class Initializer : public routing::Initializer {
     public:
-        Initializer(Problem *p_problem) :
+        explicit Initializer(Problem *p_problem) :
                 routing::Initializer(p_problem) {
 
         }

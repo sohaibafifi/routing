@@ -17,8 +17,7 @@ namespace cvrp {
                     : vrp::models::Solution(p_problem) {
             }
 
-#ifdef  CPLEX
-#endif
+
         };
     }
 }

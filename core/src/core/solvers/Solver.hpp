@@ -17,15 +17,15 @@ template<class Reader>
 class Solver {
 
 protected :
-    routing::Problem *problem;
-    routing::models::Solution *solution;
+    routing::Problem *problem{};
+    routing::models::Solution *solution{};
 
 public:
     std::string inputFile;
     std::ostream &os;
-    routing::Configuration* configuration;
+    routing::Configuration* configuration{};
 
-    Solver(const std::string &p_inputFile, std::ostream &os = std::cout) : inputFile(p_inputFile), os(os) {
+    explicit Solver(const std::string &p_inputFile, std::ostream &os = std::cout) : inputFile(p_inputFile), os(os) {
         this->problem = Reader().readFile(p_inputFile);
 
     }

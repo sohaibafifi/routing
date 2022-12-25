@@ -3,7 +3,6 @@
 // a non-commercial and academic institution.
 
 #pragma once
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 

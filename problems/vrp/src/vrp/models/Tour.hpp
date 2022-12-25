@@ -61,15 +61,16 @@ namespace vrp {
                 clients.push_back(dynamic_cast<Client *>(client));
             }
 
-            void _pushClient(routing::models::Client *client) override {
+            routing::InsertionCost * _pushClient(routing::models::Client *client) override {
                 updated = true;
-                travelTime += Tour::evaluateInsertion(client, getNbClient())->getDelta();
+                auto evaluation = Tour::evaluateInsertion(client, getNbClient());
+                travelTime += evaluation->getDelta();
                 clients.push_back(dynamic_cast<Client *>(client));
+                return evaluation;
             }
 
             void addClient(routing::models::Client *client, unsigned long position, routing::InsertionCost * cost) override {
                 travelTime += cost->getDelta();
-
                 clients.insert(clients.begin() + position, dynamic_cast<Client *>(client));
                 this->update();
                 this->updated = true;

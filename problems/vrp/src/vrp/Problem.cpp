@@ -6,21 +6,23 @@
 #include "Problem.hpp"
 #include "models/Tour.hpp"
 
-#ifdef CPLEX
 #include <core/routines/callbacks.hpp>
-#include "routines/operators/Generator.hpp"
+#include <core/routines/neighborhoods/IDCH.hpp>
+#include <core/routines/neighborhoods/Move.hpp>
+#include <core/routines/neighborhoods/TwoOpt.hpp>
 #include "routines/operators/Constructor.hpp"
 #include "routines/operators/Destructor.hpp"
-#endif
 #include "models/Solution.hpp"
-#ifdef CPLEX
-
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
+    dummyNeighborhoods.push_back(new routing::IDCH(new vrp::routines::Constructor(), new vrp::routines::Destructor()));
+    dummyNeighborhoods.push_back(new routing::TwoOpt());
+    dummyNeighborhoods.push_back(new routing::Move(new vrp::routines::Constructor()));
+
     return new routing::callback::HeuristicCallback(env,
                                                     this,
-                                                    new vrp::routines::Generator(this, new vrp::routines::Constructor(),
+                                                    new routing::Generator(this, new vrp::routines::Constructor(),
                                                                                  new vrp::routines::Destructor()),
                                                     new routing::dummyDiver(),
                                                     dummyNeighborhoods);
@@ -35,8 +37,8 @@ void vrp::Problem::addVariables() {
     for (unsigned i = 0; i <= clients.size(); ++i) {
         arcs.push_back(std::vector<IloNumVar>());
         for (unsigned j = 0; j <= clients.size(); ++j) {
-            const char *name = std::string("X_" + Utilities::itos(i) + "_" + Utilities::itos(j)).c_str();
-            arcs.back().push_back(IloBoolVar(model.getEnv(), name));
+            std::string name = std::string("X_" + Utilities::itos(i) + "_" + Utilities::itos(j));
+            arcs.back().push_back(IloBoolVar(model.getEnv(), name.c_str()));
             if (i == j) model.add(arcs.back().back() == 0);
             else model.add(arcs.back().back());
         }
@@ -59,8 +61,8 @@ void vrp::Problem::addAffectationConstraints() {
         affectation.push_back(std::vector<IloNumVar>());
         if (i == 0) continue;
         for (unsigned k = 0; k < vehicles.size(); ++k) {
-            const char *name = std::string("A_" + Utilities::itos(i) + "_" + Utilities::itos(k)).c_str();
-            affectation.back().push_back(IloBoolVar(model.getEnv(), name));
+            std::string name = std::string("A_" + Utilities::itos(i) + "_" + Utilities::itos(k));
+            affectation.back().push_back(IloBoolVar(model.getEnv(), name.c_str()));
             model.add(affectation.back().back());
         }
     }
@@ -81,7 +83,6 @@ void vrp::Problem::addAffectationConstraints() {
             }
         }
     }
-
 }
 
 void vrp::Problem::addRoutingConstraints() {
@@ -140,7 +141,6 @@ void vrp::Problem::addTotalDistanceObjective() {
 }
 
 
-#endif
 
 routing::models::Solution *vrp::Initializer::initialSolution() {
     return new models::Solution(this->getProblem());

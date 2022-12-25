@@ -29,7 +29,7 @@ namespace routing {
         }
 
 
-        RemoveCost(routing::Duration delta) : delta(delta) {}
+        explicit RemoveCost(routing::Duration delta) : delta(delta) {}
 
         RemoveCost() : delta(0) {}
 

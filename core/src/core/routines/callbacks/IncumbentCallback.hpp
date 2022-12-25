@@ -6,9 +6,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
-
 #include <ilcplex/ilocplexi.h>
-
 #pragma GCC diagnostic pop
 
 #include "../../data/Problem.hpp"
@@ -33,7 +31,17 @@ namespace routing {
             Problem *problem;
 
             virtual void main() {
-                getEnv().out() << "Incumbent found of value " << getObjValue() << std::endl;
+                std::string source = "";
+                if(getSolutionSource() == this->NodeSolution)
+                    source = "NodeSolution";
+                if(getSolutionSource() == this->HeuristicSolution)
+                    source = "HeuristicSolution";
+                if(getSolutionSource() == this->UserSolution)
+                    source = "UserSolution";
+                if(getSolutionSource() == this->MIPStartSolution)
+                    source = "MIPStartSolution";
+
+                getEnv().out() << "Incumbent found of value " << getObjValue()  << " using "  << source << std::endl;
                 extractIncumbentSolution();
                 if (solution != nullptr)
                     solution->print(getEnv().out());

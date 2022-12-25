@@ -14,8 +14,6 @@ namespace vrp {
 
         class Solution : public routing::models::Solution {
         public:
-
-
             explicit Solution(routing::Problem *p_problem)
                     : routing::models::Solution(p_problem),
                       travelTime(0),
@@ -99,7 +97,6 @@ namespace vrp {
                 return tours.size();
             }
 
-#ifdef CPLEX
 
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
@@ -131,8 +128,8 @@ namespace vrp {
 
                     }
                     for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
-                        vars.add(problem->affectation[i][k]);
-                        vals.add(affectation[i][k]);
+                        //vars.add(problem->affectation[i][k]);
+                        //vals.add(affectation[i][k]);
                     }
                     if (i > 0) {
                         vars.add(problem->order[i]);
@@ -143,7 +140,6 @@ namespace vrp {
 
             void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) override;
 
-#endif
 
             void print(std::ostream &out) override {
                 out << "solution cost " << getCost() << std::endl;

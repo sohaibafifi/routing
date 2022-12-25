@@ -79,6 +79,7 @@ namespace cvrptw {
                 cvrp::models::Tour::update();
                 double arrival = 0;
                 this->travelTime = 0;
+                this->totalTime = 0;
                 for (int p = 0; p < visits.size(); ++p) {
                     Visit *visit = visits.at(p);
                     if (p == 0) {
@@ -124,6 +125,15 @@ namespace cvrptw {
                 updated = false; // unfinished work
                 this->update();
                 updated = true;
+            }
+
+             routing::InsertionCost * _pushClient(routing::models::Client *client) override {
+                auto evaluation = vrp::models::Tour::_pushClient(client);
+                visits.push_back(new Visit(dynamic_cast<Client *>(client), 0, 0, 0));
+                updated = false; // unfinished work
+                this->update();
+                updated = true;
+                return evaluation;
             }
 
             void

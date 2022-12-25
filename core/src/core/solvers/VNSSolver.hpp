@@ -50,7 +50,7 @@ namespace routing {
 
         virtual void setDefaultConfiguration() override {
             this->configuration = new Configuration();
-            this->configuration->setIntParam(this->configuration->itermax,
+            this->configuration->setIntParam(this->configuration->iterMax,
                     this->problem->clients.size() * this->problem->clients.size());
         };
 
@@ -58,7 +58,7 @@ namespace routing {
             assert(generator != nullptr);
             this->solution = generator->generate();
             std::random_device rd;
-            int itermax = this->configuration->getIntParam(this->configuration->itermax);
+            int itermax = this->configuration->getIntParam(this->configuration->iterMax);
             int iter = 1;
             routing::models::Solution *best = this->solution->clone();
             double bestCost = this->solution->getCost();

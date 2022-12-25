@@ -13,10 +13,10 @@ namespace routing {
         std::map<long, double> space;
     public:
         Memory(const Memory &) = delete;
-        Memory(){}
+        Memory()= default;
         Memory &operator=(const Memory &) = delete;
         std::pair<bool, double> at(long hash){
-            std::map<long, double>::iterator it =  space.find(hash);
+            auto it =  space.find(hash);
             if(it != space.end()) return std::make_pair(true, it->second);
              return std::make_pair(false, 0.0);
         }
