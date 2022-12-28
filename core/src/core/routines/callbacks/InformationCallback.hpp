@@ -29,7 +29,7 @@ namespace routing {
         protected:
             Problem *problem;
 
-            void main() {
+            void main()  {
                 if (hasIncumbent())
                     getEnv().out() << "I : " << getIncumbentObjValue() << "\t" << getBestObjValue() << "\t"
                                    << getMIPRelativeGap() << "\t" << getDetTime() << std::endl;

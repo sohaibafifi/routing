@@ -14,9 +14,7 @@
 #include "core/routines/operators/Destructor.hpp"
 #include "core/routines/operators/Diver.hpp"
 
-namespace routing {
-
-    namespace callback {
+namespace routing::callback {
         class HeuristicCallback
                 : public IloCplex::HeuristicCallbackI {
         public:
@@ -151,5 +149,4 @@ namespace routing {
             }
         };
     }
-}
 

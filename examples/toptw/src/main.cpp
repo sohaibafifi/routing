@@ -4,13 +4,13 @@
 
 
 #include <iostream>
-#include <cvrptw/Reader.hpp>
+#include <toptw/Reader.hpp>
 #include <core/solvers/MIPSolver.hpp>
 #include "../../libs/argparse/argparse.h"
 
 
 int main(int argc, const char *argv[]) {
-    argparse::ArgumentParser parser(argv[0], "VRPTW Solver");
+    argparse::ArgumentParser parser(argv[0], "TOP Solver");
     parser.add_argument("-i", "--input", "Instance File", true);
     parser.add_argument("-t", "--timeout", "Timeout in seconds", false);
     parser.enable_help();
@@ -27,12 +27,12 @@ int main(int argc, const char *argv[]) {
     }
 
 
-    std::string inputFile = parser.get<std::string>("input");
+    auto inputFile = parser.get<std::string>("input");
     double timeout = parser.exists("timeout") ? parser.get<double>("timeout") : 200;
 
 
     try {
-        routing::MIPSolver<cvrptw::Reader> mipSolver(inputFile);
+        routing::MIPSolver<toptw::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
