@@ -20,9 +20,7 @@ namespace top {
             }
 
             explicit Client(cvrp::models::Client *client) :
-                    vrp::models::Client(client->getID(),
-                                           client->getX(),
-                                           client->getY()),
+                    vrp::models::Client(*client),
                    routing::attributes::Profiter(client->getDemand()) {
             }
         };

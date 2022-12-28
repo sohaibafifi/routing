@@ -29,8 +29,7 @@ void cvrp::Problem::addCapacityConstraints() {
         for (auto i = 1; i <= clients.size(); ++i) {
             for (auto j = 1; j <= clients.size(); ++j) {
                 if (i == j) continue;
-                if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j -
-                                                                                                                  1]))
+                if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j - 1]))
                     model.add(consumption[i]
                               + client->getDemand()
                               <= consumption[j]
@@ -54,8 +53,8 @@ void cvrp::Problem::addVariables() {
             if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[
                     i - 1]))
                 consumption.emplace_back(model.getEnv(),
-                                                client->getDemand(),
-                                                stock->getCapacity(),
+                                                std::max(client->getDemand(), (routing::Demand) 0.0),
+                                                std::min(stock->getCapacity(), stock->getCapacity() + client->getDemand()),
                                                 std::string("q_" + Utilities::itos(i)).c_str());
         }
         model.add(consumption.back());

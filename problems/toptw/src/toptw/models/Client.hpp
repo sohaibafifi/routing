@@ -21,12 +21,7 @@ namespace toptw {
             }
 
             explicit Client(cvrptw::models::Client *client) :
-                    cvrptw::models::Client(client->getID(),
-                                           client->getX(),
-                                           client->getY(),
-                                           client->getDemand(),
-                                           client->getService(),
-                                           client->getTw()),
+                    cvrptw::models::Client(*client),
                    routing::attributes::Profiter(client->getDemand()) {
             }
         };

@@ -20,7 +20,7 @@ set_target_properties(routing PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(routing PUBLIC ../core/src)
 
-foreach (problem vrp cvrp cvrptw vrptwtd top toptw)
+foreach (problem vrp cvrp cvrptw vrptwtd top toptw pdvrp pdvrptw)
     add_subdirectory(../problems/${problem} ${problem})
     target_include_directories(routing PUBLIC ../problems/${problem}/src)
     target_link_libraries(routing PUBLIC ${problem})
