@@ -12,7 +12,6 @@ A library to solve vehicle routing problems
 git submodule update --init --recursive
 mkdir -p build && cd build && cmake ..
 make
-make test
 ```
 
 ## Contributing

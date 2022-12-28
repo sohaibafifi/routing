@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 project(solver_tests)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 include_directories(../lib/googletest/googletest/include ../lib/googletest/googletest)

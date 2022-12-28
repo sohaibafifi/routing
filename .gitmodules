@@ -1,10 +1,7 @@
 [submodule "lib/googletest"]
 	path = tests/lib/googletest
 	url = https://github.com/google/googletest.git
-[submodule "examples/cvrptw/libs/argparse"]
-	path = examples/cvrptw/libs/argparse
-	url = https://github.com/jamolnng/argparse.git
 
-[submodule "examples/vrptwtd/libs/argparse"]
-	path = examples/vrptwtd/libs/argparse
+[submodule "examples/libs/argparse"]
+	path = examples/libs/argparse
 	url = https://github.com/jamolnng/argparse.git

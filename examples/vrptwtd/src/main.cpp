@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vrptwtd/Reader.hpp>
 #include <core/solvers/MIPSolver.hpp>
-#include "../libs/argparse/argparse.h"
+#include "../../libs/argparse/argparse.h"
 
 
 int main(int argc, const char *argv[]) {
@@ -27,7 +27,7 @@ int main(int argc, const char *argv[]) {
     }
 
 
-    std::string inputFile = parser.get<std::string>("input");
+    auto inputFile = parser.get<std::string>("input");
     double timeout = parser.exists("timeout") ? parser.get<double>("timeout") : 200;
 
 
