@@ -7,19 +7,19 @@
 #include "core/data/attributes.hpp"
 
 namespace routing {
-    typedef double Profit;
+    typedef int PickupDemand;
     namespace attributes {
 
-
         /**
-         * @brief a node with a profit property
-         */
-        struct Profiter {
-            Profiter(const Profit &p_profit) : profit(p_profit) {}
+ * @brief a node with a pickup
+ *
+ */
+        struct Pickup {
+            explicit Pickup(const PickupDemand &p_pickup) : pickup(p_pickup) {}
 
-            EntityData<Profit> profit;
+            EntityData <PickupDemand> pickup;
 
-            double getProfit() const { return this->profit.getValue(); }
+            PickupDemand getPickup() const { return this->pickup.getValue(); }
         };
 
     }

@@ -24,12 +24,7 @@ namespace vrptwtd {
             }
 
             Client(cvrptw::models::Client *client) :
-                    cvrptw::models::Client(client->getID(),
-                                           client->getX(),
-                                           client->getY(),
-                                           client->getDemand(),
-                                           client->getService(),
-                                           client->getTw()),
+                    cvrptw::models::Client(*client),
                    attributes::Synced(std::vector<attributes::Synced*>(), std::vector<routing::Duration>()) {
                 attributes::Synced::setID(client->getID());
             }
