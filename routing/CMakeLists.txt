@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(routing)
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 set(CMAKE_VERBOSE_MAKEFILE on)
@@ -20,7 +20,7 @@ set_target_properties(routing PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(routing PUBLIC ../core/src)
 
-foreach (problem vrp cvrp cvrptw vrptwtd top toptw pdvrp pdvrptw)
+foreach (problem vrp cvrp cvrptw cvrpstw vrptwtd top toptw pdvrp pdvrptw)
     add_subdirectory(../problems/${problem} ${problem})
     target_include_directories(routing PUBLIC ../problems/${problem}/src)
     target_link_libraries(routing PUBLIC ${problem})

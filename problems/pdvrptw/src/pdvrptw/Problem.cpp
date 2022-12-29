@@ -9,7 +9,7 @@
 
 
 
-routing::callback::HeuristicCallback *pdvrptw::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *pdvrptw::Problem::setHeuristicCallback() {
     return nullptr;
 }
 

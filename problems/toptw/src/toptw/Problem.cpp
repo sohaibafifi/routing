@@ -39,7 +39,7 @@ void toptw::Problem::addRoutingConstraints() {
 
 }
 
-routing::callback::HeuristicCallback *toptw::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *toptw::Problem::setHeuristicCallback() {
     return nullptr;
 }
 

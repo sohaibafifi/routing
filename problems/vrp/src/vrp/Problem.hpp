@@ -27,15 +27,14 @@ namespace vrp {
     class Problem : public routing::Problem {
     public:
 
-        virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
+        virtual routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
-        virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) override;
+        virtual routing::callback::IncumbentCallback *setIncumbentCallback() override;
 
         std::vector<std::vector<IloNumVar> > arcs;
         std::vector<std::vector<IloNumVar> > affectation;
         std::vector<IloNumVar> order;
 
-        Problem() = default;
 
         routing::Duration
         getDistance(const routing::models::Client &c1, const routing::models::Client &c2) const override;
@@ -68,9 +67,6 @@ namespace vrp {
         virtual void addConstraints() override;
 
         virtual void addObjective() override;
-
-
-        virtual void addTotalDistanceObjective();
 
         virtual void addAffectationConstraints();
 

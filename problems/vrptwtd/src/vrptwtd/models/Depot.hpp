@@ -10,12 +10,10 @@
 #include <core/data/attributes/Rendezvous.hpp>
 #include <core/data/attributes.hpp>
 
-namespace vrptwtd {
-    namespace models {
+namespace vrptwtd::models {
         struct Depot : public cvrptw::models::Depot {
             Depot(unsigned id, const routing::Duration &x, const routing::Duration &y, const routing::TW &timewindow) :
                     cvrptw::models::Depot(id, x, y, timewindow){
             }
         };
     }
-}

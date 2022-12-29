@@ -17,7 +17,7 @@ void cvrp::Problem::addConstraints() {
 
 void cvrp::Problem::addCapacityConstraints() {
     for (auto k = 0; k < vehicles.size(); ++k) {
-        IloExpr expr(model.getEnv());
+        IloExpr expr(env);
         for (auto i = 1; i <= clients.size(); ++i) {
             if (routing::attributes::Consumer *client = dynamic_cast<routing::attributes::Consumer *>(clients[i - 1]))
                 expr += client->getDemand() * affectation[i][k];
@@ -42,20 +42,21 @@ void cvrp::Problem::addCapacityConstraints() {
 
 void cvrp::Problem::addVariables() {
     vrp::Problem::addVariables();
+    consumption = std::vector<IloNumVar>();
     for (unsigned i = 0; i <= clients.size(); ++i) {
         auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]);
         if (!stock) continue;
         if (i == 0) {
-            consumption.emplace_back(model.getEnv(),
-                                            0, 0,
-                                            std::string("q_" + Utilities::itos(i)).c_str());
+            consumption.push_back(IloNumVar(env,
+                                     0, 0,
+                                     std::string("q_" + Utilities::itos(i)).c_str()));
         } else {
             if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[
                     i - 1]))
-                consumption.emplace_back(model.getEnv(),
-                                                std::max(client->getDemand(), (routing::Demand) 0.0),
-                                                std::min(stock->getCapacity(), stock->getCapacity() + client->getDemand()),
-                                                std::string("q_" + Utilities::itos(i)).c_str());
+                consumption.push_back(IloNumVar( env,
+                                         std::max(client->getDemand(), (routing::Demand) 0.0),
+                                         std::min(stock->getCapacity(), stock->getCapacity() + client->getDemand()),
+                                         std::string("q_" + Utilities::itos(i)).c_str()));
         }
         model.add(consumption.back());
     }

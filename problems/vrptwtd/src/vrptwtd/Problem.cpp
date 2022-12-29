@@ -27,6 +27,6 @@ void vrptwtd::Problem::addSynchronisationConstraints() {
 
 }
 
-routing::callback::HeuristicCallback *vrptwtd::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *vrptwtd::Problem::setHeuristicCallback() {
     return nullptr;
 }

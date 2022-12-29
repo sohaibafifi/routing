@@ -9,28 +9,28 @@
 
 
 void top::Problem::addObjective() {
-    obj = IloExpr(model.getEnv());
+    obj = IloExpr(this->env);
     for (int i = 0; i < clients.size(); ++i) {
-        IloExpr presence(model.getEnv());
+        IloExpr presence(this->env);
         for (int j = 0; j < arcs[i + 1].size(); ++j) {
             presence +=  arcs[i + 1][j];
         }
         obj += presence * dynamic_cast<top::models::Client*>(clients[i])->getProfit();
 
     }
-    model.add(IloMaximize(model.getEnv(), obj));
+    model.add(IloMaximize(env, obj));
 }
 
 
 void top::Problem::addRoutingConstraints() {
-    IloExpr expr(model.getEnv());
+    IloExpr expr(env);
     for (unsigned i = 1; i <= clients.size(); ++i) {
         expr += arcs[0][i];
     }
     model.add(expr <= IloInt(vehicles.size()));
 
     for (unsigned i = 1; i <= clients.size(); ++i) {
-        IloExpr expr(model.getEnv());
+        IloExpr expr(env);
         for (unsigned j = 0; j <= clients.size(); ++j) {
             expr += arcs[i][j] - arcs[j][i];
         }
@@ -39,6 +39,6 @@ void top::Problem::addRoutingConstraints() {
 
 }
 
-routing::callback::HeuristicCallback *top::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *top::Problem::setHeuristicCallback() {
     return nullptr;
 }
