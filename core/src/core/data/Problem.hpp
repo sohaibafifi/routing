@@ -52,6 +52,7 @@ namespace routing {
     public :
         virtual Memory *getMemory() = 0;
 
+
         virtual ~Problem() {
             for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
             for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
@@ -65,15 +66,15 @@ namespace routing {
 
         virtual Initializer *initializer() = 0;
 
-        virtual routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) { return nullptr; }
+        virtual routing::callback::HeuristicCallback *setHeuristicCallback() { return nullptr; }
 
-        virtual routing::callback::IncumbentCallback *setIncumbentCallback(IloEnv &env) { return nullptr; }
+        virtual routing::callback::IncumbentCallback *setIncumbentCallback() { return nullptr; }
 
-        virtual routing::callback::UserCutCallback *setUserCutCallback(IloEnv &env) { return nullptr; }
+        virtual routing::callback::UserCutCallback *setUserCutCallback() { return nullptr; }
 
-        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback(IloEnv &env) { return nullptr; }
+        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback() { return nullptr; }
 
-        virtual routing::callback::InformationCallback *setInformationCallback(IloEnv &env) { return nullptr; }
+        virtual routing::callback::InformationCallback *setInformationCallback() { return nullptr; }
         std::string getName() const {
             return name;
         }
@@ -87,16 +88,25 @@ namespace routing {
         virtual routing::Duration getDistance(const models::Client &c1, const models::Depot &d) const = 0;
 
 
-        IloModel model;
+        IloCplex cplex;
         IloExpr obj;
-        virtual IloModel generateModel(IloEnv &env) {
+        IloModel model;
+        IloEnv env;
+        virtual IloCplex& generateModel() {
             this->model = IloModel(env);
             this->model.setName(this->getName().c_str());
             this->addVariables();
             this->addConstraints();
             this->addObjective();
-            IloCplex cplex(model); // FIXME : bug elsewhere
-            return this->model;
+            try{
+                this->cplex = IloCplex(this->model);
+            }catch(IloException &e){
+                std::cout << e.getMessage() << std::endl;
+
+                exit(EXIT_FAILURE);
+            }
+
+            return this->cplex;
         }
 
         std::vector<models::Vehicle *> vehicles;
@@ -115,6 +125,5 @@ namespace routing {
         virtual void addConstraints() = 0;
 
         virtual void addObjective() = 0;
-
     };
 }

@@ -11,11 +11,11 @@
 
 namespace cvrp {
     class Problem : public vrp::Problem {
+
     public:
-        Problem() : vrp::Problem() {  };
         std::vector<IloNumVar> consumption;
     protected :
-        routing::Initializer *initializer() override;
+        virtual routing::Initializer *initializer() override;
 
 
         virtual void addConstraints() override;

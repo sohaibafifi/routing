@@ -24,7 +24,7 @@ namespace vrptwtd {
         virtual void addSynchronisationConstraints();
 
     public:
-        routing::callback::HeuristicCallback *setHeuristicCallback(IloEnv &env) override;
+        routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
     protected :
 

@@ -12,21 +12,21 @@
 namespace cvrptw {
 
     class Problem : public cvrp::Problem {
-    public :
-        Problem() : cvrp::Problem(){  };
 
+    public :
 
         std::vector<IloNumVar> start;
     protected :
-        routing::Initializer *initializer() override;
+        virtual routing::Initializer *initializer() override;
 
-        void addVariables() override;
+        virtual void addVariables() override;
 
-        void addSequenceConstraints() override;
 
-        void addAffectationConstraints() override;
+        virtual void addSequenceConstraints() override;
 
-        void addCapacityConstraints() override;
+        virtual void addAffectationConstraints() override;
+
+        virtual void addCapacityConstraints() override;
 
     };
 

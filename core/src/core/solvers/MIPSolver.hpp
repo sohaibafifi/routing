@@ -12,9 +12,7 @@
 namespace routing {
     template<class Reader>
     class MIPSolver : public Solver<Reader> {
-        IloEnv env;
         IloCplex cplex;
-        IloModel model;
     public:
 
         MIPSolver(const std::string &p_inputFile, std::ostream &os = std::cout);
@@ -32,17 +30,15 @@ namespace routing {
 template<class Reader>
 routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostream &os):Solver<Reader>(
         p_inputFile) {
-    this->env.setOut(os);
-    this->model = this->problem->generateModel(this->env);
+    this->cplex = this->problem->generateModel();
 
-    this->cplex = IloCplex(this->model);
     this->setDefaultConfiguration();
     std::vector<IloCplex::CallbackI *> callbacks = std::vector<IloCplex::CallbackI *>();
-    callbacks.push_back(this->problem->setHeuristicCallback(this->env));
-    callbacks.push_back(this->problem->setUserCutCallback(this->env));
-    callbacks.push_back(this->problem->setIncumbentCallback(this->env));
-    callbacks.push_back(this->problem->setInformationCallback(this->env));
-    callbacks.push_back(this->problem->setLazyConstraintCallback(this->env));
+    callbacks.push_back(this->problem->setHeuristicCallback());
+    callbacks.push_back(this->problem->setUserCutCallback());
+    callbacks.push_back(this->problem->setIncumbentCallback());
+    callbacks.push_back(this->problem->setInformationCallback());
+    callbacks.push_back(this->problem->setLazyConstraintCallback());
     for (auto callback: callbacks) {
         if (callback != nullptr)
             this->cplex.use(callback);
@@ -55,7 +51,7 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
 
 template<class Reader>
 bool routing::MIPSolver<Reader>::solve(double timeout) {
-    cplex.exportModel("model.lp");
+    this->cplex.exportModel("model.lp");
     this->cplex.setParam(this->cplex.MIPEmphasis, this->cplex.MIPEmphasisHeuristic);
     this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.HeurFreq, 0); // Automatic: let CPLEX choose
@@ -78,6 +74,5 @@ template<class Reader>
 routing::MIPSolver<Reader>::~MIPSolver() {
     delete this->problem;
     this->cplex.end();
-    this->env.end();
 }
 

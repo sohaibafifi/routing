@@ -23,7 +23,7 @@ routing::Problem *vrptwtd::Reader::readFile(std::string filepath) {
                  solomon_name.end(),
                  solomon_name.begin(),
                  ::tolower);
-        std::string folder  = std::filesystem::path(filepath).parent_path().u8string();
+        std::string folder  = std::filesystem::path(filepath).parent_path();
 
         std::string solomon_file = folder + "/../Instances/"
                 + Utilities::itos(nbClients)

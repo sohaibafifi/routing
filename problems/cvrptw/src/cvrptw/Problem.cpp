@@ -15,12 +15,12 @@ void cvrptw::Problem::addVariables() {
     cvrp::Problem::addVariables();
     for (unsigned i = 0; i <= clients.size(); ++i) {
         if (i == 0)
-            start.push_back(IloNumVar(model.getEnv(),
+            start.push_back(IloNumVar(env,
                                       static_cast<models::Depot *>(getDepot())->getTwOpen(),
                                       static_cast<models::Depot *>(getDepot())->getTwClose(),
                                       std::string("t_" + Utilities::itos(i)).c_str()));
         else
-            start.push_back(IloNumVar(model.getEnv(),
+            start.push_back(IloNumVar(env,
                                       static_cast<models::Client *>(clients[i - 1])->getTwOpen(),
                                       static_cast<models::Client *>(clients[i - 1])->getTwClose(),
                                       std::string("t_" + Utilities::itos(i)).c_str()));
@@ -75,12 +75,12 @@ void cvrptw::Problem::addAffectationConstraints() {
 }
 
 void cvrptw::Problem::addCapacityConstraints() {
-if (auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]))
+    if (auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]))
         for (auto i = 1; i <= clients.size(); ++i) {
             for (auto j = 1; j <= clients.size(); ++j) {
                 if (i == j) continue;
                 if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j -
-                                                                                                                  1]))
+                                                                                         1]))
                     model.add(consumption[i]
                               + client->getDemand()
                               <= consumption[j]

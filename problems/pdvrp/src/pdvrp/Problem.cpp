@@ -7,7 +7,7 @@
 #include "Problem.hpp"
 #include "models/Client.hpp"
 
-routing::callback::HeuristicCallback *pdvrp::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *pdvrp::Problem::setHeuristicCallback() {
     return nullptr;
 }
 

@@ -14,7 +14,7 @@
 #include "routines/operators/Destructor.hpp"
 #include "models/Solution.hpp"
 
-routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv &env) {
+routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback() {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
     dummyNeighborhoods.push_back(new routing::IDCH(new vrp::routines::Constructor(), new vrp::routines::Destructor()));
     dummyNeighborhoods.push_back(new routing::TwoOpt());
@@ -23,12 +23,12 @@ routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback(IloEnv 
     return new routing::callback::HeuristicCallback(env,
                                                     this,
                                                     new routing::Generator(this, new vrp::routines::Constructor(),
-                                                                                 new vrp::routines::Destructor()),
+                                                                           new vrp::routines::Destructor()),
                                                     new routing::dummyDiver(),
                                                     dummyNeighborhoods);
 }
 
-routing::callback::IncumbentCallback *vrp::Problem::setIncumbentCallback(IloEnv &env) {
+routing::callback::IncumbentCallback *vrp::Problem::setIncumbentCallback() {
     return new routing::callback::IncumbentCallback(env, this);
 }
 
@@ -38,7 +38,7 @@ void vrp::Problem::addVariables() {
         arcs.push_back(std::vector<IloNumVar>());
         for (unsigned j = 0; j <= clients.size(); ++j) {
             std::string name = std::string("X_" + Utilities::itos(i) + "_" + Utilities::itos(j));
-            arcs.back().push_back(IloBoolVar(model.getEnv(), name.c_str()));
+            arcs.back().push_back(IloBoolVar(env, name.c_str()));
             if (i == j) model.add(arcs.back().back() == 0);
             else model.add(arcs.back().back());
         }
@@ -52,8 +52,16 @@ void vrp::Problem::addConstraints() {
 }
 
 void vrp::Problem::addObjective() {
-    addTotalDistanceObjective();
-
+    IloExpr obj(env);
+    for (int i = 0; i < clients.size(); ++i) {
+        obj += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
+        obj += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
+        for (int j = 0; j < clients.size(); ++j) {
+            obj += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
+        }
+    }
+    model.add(IloObjective(env, obj, IloObjective::Minimize, "Objective"));
+    obj.end();
 }
 
 void vrp::Problem::addAffectationConstraints() {
@@ -62,16 +70,16 @@ void vrp::Problem::addAffectationConstraints() {
         if (i == 0) continue;
         for (unsigned k = 0; k < vehicles.size(); ++k) {
             std::string name = std::string("A_" + Utilities::itos(i) + "_" + Utilities::itos(k));
-            affectation.back().push_back(IloBoolVar(model.getEnv(), name.c_str()));
+            affectation.back().push_back(IloBoolVar(env, name.c_str()));
             model.add(affectation.back().back());
         }
     }
     for (unsigned i = 1; i <= clients.size(); ++i) {
-        IloExpr expr(model.getEnv());
+        IloExpr expr(env);
         for (unsigned k = 0; k < vehicles.size(); ++k) {
             expr += affectation[i][k];
         }
-        model.add(expr == 1);
+        model.add(IloRange(env, 1,expr , 1, "affectation"));
     }
     for (unsigned i = 1; i <= clients.size(); ++i) {
         for (unsigned j = 1; j <= clients.size(); ++j) {
@@ -86,26 +94,31 @@ void vrp::Problem::addAffectationConstraints() {
 }
 
 void vrp::Problem::addRoutingConstraints() {
-    IloExpr expr(model.getEnv());
+    IloExpr expr(env);
     for (unsigned i = 1; i <= clients.size(); ++i) {
         expr += arcs[0][i];
     }
-    model.add(expr <= IloInt(vehicles.size()));
+
+    model.add(IloRange(env, 0,expr , IloInt(vehicles.size()), "routing-1"));
+    expr.end();
     for (unsigned i = 1; i <= clients.size(); ++i) {
-        IloExpr expr(model.getEnv());
+        IloExpr expr(env);
         for (unsigned j = 0; j <= clients.size(); ++j) {
             expr += arcs[i][j];
         }
-        model.add(expr == 1);
+        model.add(IloRange(env, 1,expr , 1, "routing-2"));
+
+        expr.end();
     }
 
 
     for (unsigned i = 1; i <= clients.size(); ++i) {
-        IloExpr expr(model.getEnv());
+        IloExpr expr(env);
         for (unsigned j = 0; j <= clients.size(); ++j) {
             expr += arcs[i][j] - arcs[j][i];
         }
-        model.add(expr == 0);
+        model.add(IloRange(env, 0,expr , 0, "routing-3"));
+        expr.end();
     }
 
 }
@@ -113,7 +126,7 @@ void vrp::Problem::addRoutingConstraints() {
 void vrp::Problem::addSequenceConstraints() {
 
     for (unsigned i = 0; i <= clients.size(); ++i) {
-        order.push_back(IloNumVar(model.getEnv(), 0, clients.size(), std::string("o_" + Utilities::itos(i)).c_str()));
+        order.push_back(IloNumVar(env, 0, clients.size(), std::string("o_" + Utilities::itos(i)).c_str()));
         model.add(order.back());
     }
     for (unsigned i = 1; i <= clients.size(); ++i) {
@@ -126,18 +139,6 @@ void vrp::Problem::addSequenceConstraints() {
         }
     }
 
-}
-
-void vrp::Problem::addTotalDistanceObjective() {
-    obj = IloExpr(model.getEnv());
-    for (int i = 0; i < clients.size(); ++i) {
-        obj += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
-        obj += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
-        for (int j = 0; j < clients.size(); ++j) {
-            obj += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
-        }
-    }
-    model.add(IloMinimize(model.getEnv(), obj));
 }
 
 
@@ -162,9 +163,11 @@ routing::Duration vrp::Problem::getDistance(const routing::models::Client &c1, c
 routing::Memory *vrp::Problem::getMemory() {
     return Memory::get();
 }
-routing::Memory * routing::Memory::singleton = nullptr;
+
+routing::Memory *routing::Memory::singleton = nullptr;
+
 routing::Memory *vrp::Memory::get() {
     if (!singleton)
-         singleton = new vrp::Memory;
-      return singleton;
+        singleton = new vrp::Memory;
+    return singleton;
 }
