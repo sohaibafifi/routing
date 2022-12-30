@@ -34,6 +34,7 @@ int main(int argc, const char *argv[]) {
     try {
         routing::MIPSolver<cvrpstw::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
+        mipSolver.save();
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
     }

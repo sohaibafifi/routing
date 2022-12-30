@@ -25,11 +25,12 @@ void cvrp::Problem::addCapacityConstraints() {
         if (routing::attributes::Stock *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[k]))
             model.add(expr <= stock->getCapacity());
     }
-    if (auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]))
+    
+    auto *stock = dynamic_cast<routing::attributes::Stock *>(vehicles[0]);
         for (auto i = 1; i <= clients.size(); ++i) {
             for (auto j = 1; j <= clients.size(); ++j) {
                 if (i == j) continue;
-                if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j - 1]))
+                auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[j - 1]);
                     model.add(consumption[i]
                               + client->getDemand()
                               <= consumption[j]

@@ -23,7 +23,11 @@ namespace routing {
 
         virtual bool solve(double timeout = 3600) override;
 
+        virtual void save() const override;
+
         virtual ~MIPSolver();
+
+        virtual IloCplex getCplex() const { return cplex; }
     };
 }
 
@@ -48,7 +52,6 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
 }
 
 
-
 template<class Reader>
 bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.exportModel("model.lp");
@@ -56,9 +59,11 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.HeurFreq, 0); // Automatic: let CPLEX choose
     this->cplex.setParam(this->cplex.MIPDisplay, 4);
+    this->cplex.setParam(IloCplex::Param::MultiObjective::Display, 2);
     this->cplex.setParam(this->cplex.TiLim, timeout);
 
     this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
+
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
              << "\t" << this->cplex.getStatus()
@@ -67,6 +72,9 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
              << "\t" << this->cplex.getMIPRelativeGap()
              << "\t" << this->cplex.getTime()
              << std::endl;
+    this->solution = this->problem->initializer()->initialSolution();
+    // this->solution.forceCost();
+
     return solved;
 }
 
@@ -76,3 +84,21 @@ routing::MIPSolver<Reader>::~MIPSolver() {
     this->cplex.end();
 }
 
+template<class Reader>
+void routing::MIPSolver<Reader>::save() const {
+    std::string output_folder = "output/" + std::filesystem::path(this->inputFile).parent_path().string();
+    system((std::string("mkdir -p ") + output_folder).c_str());
+    std::string output_file =
+            output_folder + "/" + std::filesystem::path(this->inputFile).filename().string() + ".result";
+
+    std::ofstream output(output_file);
+    output <<
+           this->getProblem()->getName()
+           << "\t" << getCplex().getStatus()
+           << "\t" << getCplex().getObjValue()
+           << "\t" << getCplex().getBestObjValue()
+           << "\t" << getCplex().getMIPRelativeGap()
+           << "\t" << getCplex().getTime()
+           << std::endl;
+    output.close();
+}

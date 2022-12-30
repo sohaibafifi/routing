@@ -89,7 +89,7 @@ namespace routing {
 
 
         IloCplex cplex;
-        IloExpr obj;
+        IloObjective obj;
         IloModel model;
         IloEnv env;
         virtual IloCplex& generateModel() {

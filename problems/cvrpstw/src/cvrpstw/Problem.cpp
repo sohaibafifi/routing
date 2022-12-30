@@ -9,31 +9,32 @@
 void cvrpstw::Problem::addVariables() {
     cvrp::Problem::addVariables();
     for (unsigned i = 0; i <= clients.size(); ++i) {
-        start.push_back(IloNumVar(model.getEnv(),
+        start.push_back(IloNumVar(env,
                                   0,
                                   IloInfinity,
                                   std::string("s_" + Utilities::itos(i)).c_str()));
 
 
-        wait.push_back(IloNumVar(model.getEnv(),
+        wait.push_back(IloNumVar(env,
                                  0,
                                  IloInfinity,
                                  std::string("w_" + Utilities::itos(i)).c_str()));
-        delay.push_back(IloNumVar(model.getEnv(),
+        delay.push_back(IloNumVar(env,
                                   0,
                                   IloInfinity,
                                   std::string("w_" + Utilities::itos(i)).c_str()));
 
 
+        model.add(start.back());
         model.add(wait.back());
         model.add(delay.back());
         if (i == 0) {
-            model.add(wait.back() >= start.back() - static_cast<cvrptw::models::Depot *>(getDepot())->getTwOpen());
-            model.add(delay.back() >=  static_cast<cvrptw::models::Depot *>(getDepot())->getTwClose() - start.back());
+            model.add(wait.back() >= static_cast<cvrptw::models::Depot *>(getDepot())->getTwOpen() - start.back());
+            model.add(delay.back() >= start.back() - static_cast<cvrptw::models::Depot *>(getDepot())->getTwClose());
         }
         else {
-            model.add(wait.back() >= start.back() - static_cast<cvrptw::models::Client *>(clients[i - 1])->getTwOpen());
-            model.add(wait.back() >= static_cast<cvrptw::models::Client *>(clients[i - 1])->getTwClose() - start.back());
+            model.add(wait.back() >= static_cast<cvrptw::models::Client *>(clients[i - 1])->getTwOpen() - start.back());
+            model.add(wait.back() >= start.back() - static_cast<cvrptw::models::Client *>(clients[i - 1])->getTwClose());
         }
 
 
@@ -42,20 +43,28 @@ void cvrpstw::Problem::addVariables() {
 }
 
 void cvrpstw::Problem::addObjective() {
-    obj = IloExpr(model.getEnv());
+    IloExpr obj_expr (model.getEnv());
     for (int i = 0; i < clients.size(); ++i) {
-        obj += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
-        obj += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
+        obj_expr += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
+        obj_expr += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
         for (int j = 0; j < clients.size(); ++j) {
-            obj += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
+            obj_expr += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
         }
     }
+    obj = IloMinimize(env, obj_expr);
+
+    IloExpr obj_penality_expr(model.getEnv());
 
     for (int i = 0; i < wait.size(); ++i) {
-        obj += wait[i] * getWaitPenalty();
-        obj += delay[i] * getDelayPenalty();
+        obj_penality_expr += wait[i] * getWaitPenalty();
+        obj_penality_expr += delay[i] * getDelayPenalty();
     }
-    model.add(IloMinimize(model.getEnv(), obj));
+
+    obj_penality = IloMinimize(env, obj_penality_expr);
+
+
+   model.add(IloMinimize(env, IloStaticLex(env,  obj_penality_expr, obj_expr)));
+   // model.add(IloMinimize(env,   obj_penality_expr));
 }
 
 double cvrpstw::Problem::getWaitPenalty() const {
@@ -72,4 +81,20 @@ double cvrpstw::Problem::getDelayPenalty() const {
 
 void cvrpstw::Problem::setDelayPenalty(double delayPenalty) {
     Problem::delayPenalty = delayPenalty;
+}
+
+routing::callback::HeuristicCallback *cvrpstw::Problem::setHeuristicCallback() {
+    return nullptr;
+}
+
+routing::callback::UserCutCallback *cvrpstw::Problem::setUserCutCallback() {
+    return nullptr;
+}
+
+routing::callback::LazyConstraintCallback *cvrpstw::Problem::setLazyConstraintCallback() {
+    return nullptr;
+}
+
+routing::callback::IncumbentCallback *cvrpstw::Problem::setIncumbentCallback() {
+    return nullptr;
 }
