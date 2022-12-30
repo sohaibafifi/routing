@@ -101,20 +101,22 @@ namespace vrp {
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
                 std::vector<std::vector<IloBool> > values(problem->arcs.size());
-                std::vector<std::vector<IloBool> > affectation(problem->affectation.size());
+                std::vector<std::vector<IloBool> > affectation(problem->arcs.size());
                 std::vector<unsigned> order(problem->arcs.size());
                 for (unsigned j = 0; j < problem->arcs.size(); ++j) {
                     values[j] = std::vector<IloBool>(problem->arcs.size(), IloFalse);
                 }
-                for (unsigned j = 0; j < problem->affectation.size(); ++j) {
-                    affectation[j] = std::vector<IloBool>(problem->affectation[j].size(), IloFalse);
+                for (unsigned j = 0; j < problem->arcs.size(); ++j) {
+                    affectation[j] = std::vector<IloBool>(problem->vehicles.size(), IloFalse);
                 }
                 for (unsigned k = 0; k < this->getNbTour(); ++k) {
                     unsigned last = 0;
                     for (unsigned i = 0; i < this->getTour(k)->getNbClient(); ++i) {
                         values[last][this->getTour(k)->getClient(i)->getID()] = IloTrue;
                         last = this->getTour(k)->getClient(i)->getID();
-                        affectation[last][k] = IloTrue;
+                            affectation[last][k] = IloTrue;
+
+
                         order[this->getTour(k)->getClient(i)->getID()] = i;
                     }
                     values[last][0] = IloTrue;
@@ -127,13 +129,15 @@ namespace vrp {
                         vals.add(values[i][j]);
 
                     }
-                    for (unsigned k = 0; k < problem->affectation[i].size(); ++k) {
+                    for (unsigned k = 0; k < affectation[i].size(); ++k) {
                         //vars.add(problem->affectation[i][k]);
                         //vals.add(affectation[i][k]);
                     }
                     if (i > 0) {
-                        vars.add(problem->order[i]);
-                        vals.add(order[i]);
+                        if(i < problem->order.size() && problem->order[i].getImpl() != nullptr) {
+                            vars.add(problem->order[i]);
+                            vals.add(order[i]);
+                        }
                     }
                 }
             }

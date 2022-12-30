@@ -34,8 +34,14 @@ int main(int argc, const char *argv[]) {
     try {
         routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
         mipSolver.solve(timeout);
+        mipSolver.save();
+
+
+
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
+    } catch (std::exception &exception) {
+        std::cout << exception.what() << std::endl;
     }
     return EXIT_SUCCESS;
 }

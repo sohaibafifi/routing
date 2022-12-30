@@ -18,6 +18,8 @@ namespace cvrpstw {
 
         std::vector<IloNumVar> wait;
         std::vector<IloNumVar> delay;
+        IloObjective obj_penality;
+
 
         double waitPenalty, delayPenalty;
 
@@ -28,6 +30,15 @@ namespace cvrpstw {
         double getDelayPenalty() const;
 
         void setDelayPenalty(double delayPenalty);
+
+        routing::callback::HeuristicCallback *setHeuristicCallback() override;
+
+        routing::callback::UserCutCallback *setUserCutCallback() override;
+
+        routing::callback::LazyConstraintCallback *setLazyConstraintCallback() override;
+
+
+        routing::callback::IncumbentCallback *setIncumbentCallback() override;
 
     protected :
 

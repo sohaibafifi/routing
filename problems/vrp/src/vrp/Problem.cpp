@@ -52,16 +52,16 @@ void vrp::Problem::addConstraints() {
 }
 
 void vrp::Problem::addObjective() {
-    IloExpr obj(env);
+    IloExpr obj_expr(env);
     for (int i = 0; i < clients.size(); ++i) {
-        obj += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
-        obj += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
+        obj_expr += getDistance(*clients[i], *getDepot()) * arcs[i + 1][0];
+        obj_expr += getDistance(*clients[i], *getDepot()) * arcs[0][i + 1];
         for (int j = 0; j < clients.size(); ++j) {
-            obj += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
+            obj_expr += getDistance(*clients[i], *clients[j]) * arcs[i + 1][j + 1];
         }
     }
-    model.add(IloObjective(env, obj, IloObjective::Minimize, "Objective"));
-    obj.end();
+    obj = IloMinimize(env, obj_expr);
+    model.add(obj);
 }
 
 void vrp::Problem::addAffectationConstraints() {

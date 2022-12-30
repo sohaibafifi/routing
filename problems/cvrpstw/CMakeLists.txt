@@ -24,5 +24,7 @@ target_include_directories(cvrpstw PUBLIC ../cvrptw/src/)
 
 
 target_link_libraries(cvrpstw PUBLIC cvrptw)
+target_link_libraries(cvrpstw PUBLIC cvrp)
+target_link_libraries(cvrpstw PUBLIC vrp)
 target_link_libraries(cvrpstw PUBLIC dl)
 target_link_libraries(cvrpstw PUBLIC ${CPLEX_LIBRARIES})

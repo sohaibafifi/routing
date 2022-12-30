@@ -35,9 +35,27 @@ public:
 
     routing::models::Solution *getSolution() const;
     routing::Problem *getProblem() const { return problem; }
+    virtual void save() const;
+
 };
 
 template<class Reader>
 routing::models::Solution *Solver<Reader>::getSolution() const {
     return solution;
+}
+
+
+template<class Reader>
+void Solver<Reader>::save() const {
+std::string output_folder = "output/" + std::filesystem::path(this->inputFile).parent_path().string();
+    system((std::string("mkdir -p ") + output_folder).c_str());
+    std::string output_file =
+            output_folder + "/" + std::filesystem::path(this->inputFile).filename().string() + ".result";
+
+    std::ofstream output(output_file);
+    output <<
+           this->getProblem()->getName()
+           << "\t" << getSolution()->getCost()
+           << std::endl;
+    output.close();
 }

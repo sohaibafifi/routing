@@ -9,16 +9,17 @@
 
 
 void toptw::Problem::addObjective() {
-    obj = IloExpr(model.getEnv());
+    IloExpr obj_expr(model.getEnv());
     for (int i = 0; i < clients.size(); ++i) {
         IloExpr presence(model.getEnv());
         for (int j = 0; j < arcs[i + 1].size(); ++j) {
             presence +=  arcs[i + 1][j];
         }
-        obj += presence * dynamic_cast<toptw::models::Client*>(clients[i])->getProfit();
+        obj_expr += presence * dynamic_cast<toptw::models::Client*>(clients[i])->getProfit();
 
     }
-    model.add(IloMaximize(model.getEnv(), obj));
+    obj = IloMinimize(env, obj_expr);
+    model.add(obj);
 }
 
 
