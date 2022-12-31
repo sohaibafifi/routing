@@ -8,6 +8,7 @@
 #include "models/Client.hpp"
 
 
+#ifdef CPLEX_FOUND
 
 routing::callback::HeuristicCallback *pdvrptw::Problem::setHeuristicCallback() {
     return nullptr;
@@ -17,3 +18,5 @@ void pdvrptw::Problem::addCapacityConstraints() {
     // TODO : Check theses constraints
     cvrptw::Problem::addCapacityConstraints();
 }
+
+#endif

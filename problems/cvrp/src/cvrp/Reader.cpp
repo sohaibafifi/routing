@@ -13,9 +13,9 @@
 #include <vrp/models/Depot.hpp>
 #include <fstream>
 
-routing::Problem *cvrp::Reader::readFile(std::string filePath) {
+routing::Problem *cvrp::Reader::readFile(const std::string & filepath) {
     cvrp::Problem *problem = new cvrp::Problem();
-    std::fstream fh(filePath.c_str(), std::ios_base::in);
+    std::fstream fh(filepath.c_str(), std::ios_base::in);
     try {
         if (!fh.good()) throw std::string("file open error");
         unsigned short edge_weight_type;

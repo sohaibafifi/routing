@@ -7,11 +7,12 @@
 
 #include <queue>
 #include <random>
+#include <fstream>
 #include "Problem.hpp"
 #include "models/Client.hpp"
 #include <filesystem>
 
-routing::Problem *vrptwtd::Reader::readFile(std::string filepath) {
+routing::Problem *vrptwtd::Reader::readFile(const std::string & filepath) {
     try {
 
         std::string file_name = Utilities::filename(filepath);

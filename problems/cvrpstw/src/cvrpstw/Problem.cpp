@@ -5,6 +5,7 @@
 
 #include <utilities/Utilities.hpp>
 #include "Problem.hpp"
+#ifdef CPLEX_FOUND
 
 void cvrpstw::Problem::addVariables() {
     cvrp::Problem::addVariables();
@@ -67,22 +68,6 @@ void cvrpstw::Problem::addObjective() {
    // model.add(IloMinimize(env,   obj_penality_expr));
 }
 
-double cvrpstw::Problem::getWaitPenalty() const {
-    return waitPenalty;
-}
-
-void cvrpstw::Problem::setWaitPenalty(double waitPenalty) {
-    Problem::waitPenalty = waitPenalty;
-}
-
-double cvrpstw::Problem::getDelayPenalty() const {
-    return delayPenalty;
-}
-
-void cvrpstw::Problem::setDelayPenalty(double delayPenalty) {
-    Problem::delayPenalty = delayPenalty;
-}
-
 routing::callback::HeuristicCallback *cvrpstw::Problem::setHeuristicCallback() {
     return nullptr;
 }
@@ -97,4 +82,22 @@ routing::callback::LazyConstraintCallback *cvrpstw::Problem::setLazyConstraintCa
 
 routing::callback::IncumbentCallback *cvrpstw::Problem::setIncumbentCallback() {
     return nullptr;
+}
+#endif
+
+double cvrpstw::Problem::getWaitPenalty() const {
+    return waitPenalty;
+}
+
+void cvrpstw::Problem::setWaitPenalty(double waitPenalty) {
+    Problem::waitPenalty = waitPenalty;
+}
+
+double cvrpstw::Problem::getDelayPenalty() const {
+    return delayPenalty;
+}
+
+
+void cvrpstw::Problem::setDelayPenalty(double delayPenalty) {
+    Problem::delayPenalty = delayPenalty;
 }

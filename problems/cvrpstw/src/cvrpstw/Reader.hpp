@@ -11,6 +11,6 @@
 namespace cvrpstw {
     class Reader : public cvrptw::Reader {
     public :
-        routing::Problem *readFile(std::string filepath) override;
+        routing::Problem *readFile(const std::string & filepath) override;
     };
 }

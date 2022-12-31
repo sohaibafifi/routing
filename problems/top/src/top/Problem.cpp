@@ -7,6 +7,7 @@
 #include "Problem.hpp"
 #include "models/Client.hpp"
 
+#ifdef CPLEX_FOUND
 
 void top::Problem::addObjective() {
     IloExpr obj_expr(this->env);
@@ -44,3 +45,4 @@ void top::Problem::addRoutingConstraints() {
 routing::callback::HeuristicCallback *top::Problem::setHeuristicCallback() {
     return nullptr;
 }
+#endif

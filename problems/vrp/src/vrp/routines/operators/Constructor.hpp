@@ -15,7 +15,7 @@ namespace vrp {
 
         public:
             bool bestInsertion(routing::models::Solution *solution,
-                               const std::vector<routing::models::Client *> p_clients) override {
+                               const std::vector<routing::models::Client *> &p_clients) override {
                 std::vector<routing::models::Client *> clients = p_clients;
 
                 bool insertion_found = true;

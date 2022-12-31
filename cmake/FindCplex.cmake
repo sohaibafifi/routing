@@ -72,8 +72,12 @@ if(NOT  CPLEX_ROOT_DIR)
     else ()
         set(CPLEX_ROOT_DIR /opt/ibm/ILOG/CPLEX_Studio221)
     endif ()
+    MESSAGE(WARNING "CPLEX_ROOT_DIR not set. Please set it to the root directory of your CPLEX installation.")
+    message(STATUS "Trying with CPLEX_ROOT_DIR : ${CPLEX_ROOT_DIR}")
+
+else()
+    message(STATUS "CPLEX_ROOT_DIR : ${CPLEX_ROOT_DIR}")
 endif()
-message(STATUS "CPLEX_ROOT_DIR : ${CPLEX_ROOT_DIR}")
 
 FIND_PATH(CPLEX_INCLUDE_DIR
         ilcplex/cplex.h

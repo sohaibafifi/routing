@@ -64,6 +64,7 @@ vrp::models::Solution::initFromSequence(routing::Problem *problem, std::vector<r
 
 }
 
+#ifdef CPLEX_FOUND
 
 void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCallback) {
     std::vector<bool> inserted(dynamic_cast<Problem *>(problem)->clients.size() + 1, false);
@@ -76,8 +77,8 @@ void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCa
                 if (pCallback->getIncumbentValue(dynamic_cast<Problem *>(problem)->arcs[departure][i]) > 0.5
                     && (
                             i == 0
-                            ||
-                            pCallback->getIncumbentValue(dynamic_cast<Problem *>(problem)->affectation[i][t]) > 0.5
+                            //||
+                            //pCallback->getIncumbentValue(dynamic_cast<Problem *>(problem)->affectation[i][t]) > 0.5
                     )
                         ) {
                     departure = i;
@@ -91,4 +92,4 @@ void vrp::models::Solution::constructFromModel(IloCplex::HeuristicCallbackI *pCa
     }
     this->update();
 }
-
+#endif

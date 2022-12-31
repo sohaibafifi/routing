@@ -13,6 +13,7 @@ namespace pdvrp {
         explicit Problem(const cvrp::Problem & p_problem) : cvrp::Problem(p_problem){  };
 
     protected:
+#ifdef CPLEX_FOUND
 
         virtual void addCapacityConstraints() override;
 
@@ -20,7 +21,7 @@ namespace pdvrp {
 
     public:
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
-
+#endif
     protected :
 
     };

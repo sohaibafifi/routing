@@ -14,12 +14,13 @@ namespace pdvrptw {
         explicit Problem(const cvrptw::Problem & p_problem) : cvrptw::Problem(p_problem){  };
 
     protected:
+#ifdef CPLEX_FOUND
 
         void addCapacityConstraints() override;
 
     public:
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
-
+#endif
     protected :
 
     };

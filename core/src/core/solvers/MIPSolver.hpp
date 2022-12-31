@@ -60,7 +60,7 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(this->cplex.MIPDisplay, 4);
     this->cplex.setParam(IloCplex::Param::MultiObjective::Display, 2);
     this->cplex.setParam(this->cplex.TiLim, timeout);
-    //this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
+    this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
 
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()

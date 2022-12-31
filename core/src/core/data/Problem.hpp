@@ -15,12 +15,15 @@
 #include <string>
 #include <vector>
 
+#ifdef CPLEX_FOUND
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <ilcplex/ilocplexi.h>
 #pragma GCC diagnostic pop
+#endif
 
 namespace routing {
+#ifdef CPLEX_FOUND
     namespace callback {
         class UserCutCallback;
         class HeuristicCallback;
@@ -28,7 +31,7 @@ namespace routing {
         class LazyConstraintCallback;
         class InformationCallback;
     }
-
+#endif
     namespace models {
         class Solution;
 
@@ -65,6 +68,7 @@ namespace routing {
         }
 
         virtual Initializer *initializer() = 0;
+#ifdef CPLEX_FOUND
 
         virtual routing::callback::HeuristicCallback *setHeuristicCallback() { return nullptr; }
 
@@ -75,6 +79,8 @@ namespace routing {
         virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback() { return nullptr; }
 
         virtual routing::callback::InformationCallback *setInformationCallback() { return nullptr; }
+
+#endif
         std::string getName() const {
             return name;
         }
@@ -87,6 +93,7 @@ namespace routing {
 
         virtual routing::Duration getDistance(const models::Client &c1, const models::Depot &d) const = 0;
 
+#ifdef CPLEX_FOUND
 
         IloCplex cplex;
         IloObjective obj;
@@ -109,21 +116,24 @@ namespace routing {
             return this->cplex;
         }
 
+
+#endif
+        std::string name;
         std::vector<models::Vehicle *> vehicles;
         std::vector<models::Depot *> depots;
         std::vector<models::Client *> clients;
-
-        std::string name;
 
         std::vector<models::Client *> getClients() {
             return this->clients;
         }
 
+#ifdef CPLEX_FOUND
 
         virtual void addVariables() = 0;
 
         virtual void addConstraints() = 0;
 
         virtual void addObjective() = 0;
+#endif
     };
 }

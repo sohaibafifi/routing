@@ -9,6 +9,7 @@
 routing::Initializer *cvrp::Problem::initializer() {
     return new cvrp::Initializer(this);
 }
+#ifdef CPLEX_FOUND
 
 void cvrp::Problem::addConstraints() {
     vrp::Problem::addConstraints();
@@ -62,3 +63,4 @@ void cvrp::Problem::addVariables() {
         model.add(consumption.back());
     }
 }
+#endif

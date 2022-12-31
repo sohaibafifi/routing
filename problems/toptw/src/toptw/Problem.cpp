@@ -7,6 +7,7 @@
 #include "Problem.hpp"
 #include "models/Client.hpp"
 
+#ifdef CPLEX_FOUND
 
 void toptw::Problem::addObjective() {
     IloExpr obj_expr(model.getEnv());
@@ -47,3 +48,4 @@ routing::callback::HeuristicCallback *toptw::Problem::setHeuristicCallback() {
 void toptw::Problem::addCapacityConstraints() {
 
 }
+#endif

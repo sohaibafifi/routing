@@ -127,7 +127,7 @@ namespace routing::callback {
             }
 
             IloCplex::CallbackI *duplicateCallback() const override {
-                throw new std::logic_error("Not implemented");
+                return new (getEnv()) HeuristicCallback(*this);
             }
 
             models::Solution *solution{};

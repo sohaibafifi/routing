@@ -11,7 +11,7 @@
 #include <random>
 #include "Problem.hpp"
 
-vrp::Problem *vrp::Reader::readFile(std::string filepath) {
+vrp::Problem *vrp::Reader::readFile(const std::string & filepath) {
     auto *problem = new vrp::Problem();
     problem->setName("dummy");
     problem->vehicles = std::vector<routing::models::Vehicle *>();

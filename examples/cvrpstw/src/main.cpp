@@ -5,7 +5,9 @@
 
 #include <iostream>
 #include <cvrpstw/Reader.hpp>
+#ifdef CPLEX_FOUND
 #include <core/solvers/MIPSolver.hpp>
+#endif
 #include "../../libs/argparse/argparse.h"
 
 
@@ -30,6 +32,7 @@ int main(int argc, const char *argv[]) {
     auto inputFile = parser.get<std::string>("input");
     double timeout = parser.exists("timeout") ? parser.get<double>("timeout") : 200;
 
+#ifdef CPLEX_FOUND
 
     try {
         routing::MIPSolver<cvrpstw::Reader> mipSolver(inputFile);
@@ -37,5 +40,6 @@ int main(int argc, const char *argv[]) {
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
     }
+#endif
     return EXIT_SUCCESS;
 }

@@ -13,13 +13,14 @@ namespace top {
         explicit Problem(const cvrp::Problem & p_problem) : cvrp::Problem(p_problem){  };
 
     protected:
+#ifdef CPLEX_FOUND
         void addObjective() override;
         void addRoutingConstraints() override;
 
     public:
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
-    protected :
+#endif
 
     };
 }

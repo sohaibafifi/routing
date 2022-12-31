@@ -49,11 +49,12 @@ namespace routing {
             virtual void overrideTour(Tour *tour, unsigned long position) = 0;
 
             virtual unsigned long getNbTour() const = 0;
+#ifdef CPLEX_FOUND
 
             virtual void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) = 0;
 
             virtual void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) = 0;
-
+#endif
             virtual void print(std::ostream &out) = 0;
 
             virtual models::Solution *clone() const {

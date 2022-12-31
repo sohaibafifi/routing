@@ -30,7 +30,7 @@ namespace routing {
             void main() {}
 
             IloCplex::CallbackI *duplicateCallback() const {
-                throw new std::logic_error("Not implemented");
+                return new (getEnv()) LazyConstraintCallback(*this);
             }
         };
     }

@@ -50,7 +50,7 @@ namespace routing {
     public :
 
         virtual bool look(models::Solution *solution) {
-            assert(solution->notserved.size() == 0);
+            // assert(solution->notserved.size() == 0);
 
             routing::models::Solution *best = solution->clone();
             bool improved = false;

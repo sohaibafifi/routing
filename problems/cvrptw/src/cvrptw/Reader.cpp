@@ -14,7 +14,7 @@
 #include <fstream>
 #include "Problem.hpp"
 
-routing::Problem *cvrptw::Reader::readFile(std::string filepath) {
+routing::Problem *cvrptw::Reader::readFile(const std::string & filepath) {
     cvrptw::Problem *problem = new cvrptw::Problem();
     std::fstream fh(filepath.c_str(), std::ios_base::in);
     try {

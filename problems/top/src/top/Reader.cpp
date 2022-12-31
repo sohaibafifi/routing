@@ -10,9 +10,9 @@
 #include <queue>
 #include <fstream>
 
-routing::Problem *top::Reader::readFile(std::string filePath) {
+routing::Problem *top::Reader::readFile(const std::string & filepath) {
     try {
-        auto *problem = new top::Problem(*dynamic_cast<cvrp::Problem *>(cvrp::Reader::readFile(filePath)));
+        auto *problem = new top::Problem(*dynamic_cast<cvrp::Problem *>(cvrp::Reader::readFile(filepath)));
 
         // convert the cvp clients to top clients
         for (auto &client: problem->clients) {
