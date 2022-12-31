@@ -8,6 +8,7 @@
 #include "Tour.hpp"
 #include "core/data/Problem.hpp"
 #include <algorithm>
+#include <cassert>
 
 namespace routing {
 
