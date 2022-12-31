@@ -9,5 +9,11 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 
 add_subdirectory(examples examples)
-add_subdirectory(grb grb)
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(GUROBI)
+if(GUROBI_LIBRARY)
+    message(STATUS "GUROBI_LIBRARY: ${GUROBI_LIBRARY}")
+    add_subdirectory(grb grb)
+endif()
 add_subdirectory(tests tests)
