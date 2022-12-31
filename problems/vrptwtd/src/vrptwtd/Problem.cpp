@@ -7,6 +7,7 @@
 #include "Problem.hpp"
 #include "attributes/Synced.hpp"
 
+#ifdef CPLEX_FOUND
 
 void vrptwtd::Problem::addSynchronisationConstraints() {
 
@@ -46,3 +47,4 @@ routing::callback::InformationCallback *vrptwtd::Problem::setInformationCallback
 routing::callback::IncumbentCallback *vrptwtd::Problem::setIncumbentCallback() {
     return nullptr;
 }
+#endif

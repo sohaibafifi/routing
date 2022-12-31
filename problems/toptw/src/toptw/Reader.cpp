@@ -10,7 +10,7 @@
 #include <queue>
 #include <fstream>
 
-routing::Problem *toptw::Reader::readFile(std::string filePath) {
+routing::Problem *toptw::Reader::readFile(const std::string & filePath) {
     try {
         auto *problem = new toptw::Problem(*dynamic_cast<cvrptw::Problem *>(cvrptw::Reader::readFile(filePath)));
 

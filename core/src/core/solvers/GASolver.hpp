@@ -15,7 +15,9 @@
 #include <cassert>
 #include <algorithm>
 #include <set>
-#include <utilities/Utilities.hpp>
+#include <utility>
+#include "../data/attributes/GeoNode.hpp"
+#include "../../utilities/Utilities.hpp"
 
 namespace routing {
     class Sequence {
@@ -30,15 +32,15 @@ namespace routing {
         Problem *problem;
         std::vector<models::Client *> sequence;
 
-        Sequence(models::Solution *p_solution) : problem(p_solution->getProblem()) {
-            sequence = p_solution->getSequence();
+        Sequence(models::Solution *p_solution) : problem(p_solution->getProblem()),
+                                                sequence(p_solution->getSequence()){
             hash = getHash();
             cost = p_solution->getCost();
             problem->getMemory()->add(hash, cost);
         }
 
-        Sequence(Problem *p_problem, std::vector<models::Client *> p_sequence) : problem(p_problem) {
-            sequence = p_sequence;
+        Sequence(Problem *p_problem, const std::vector<models::Client *> & p_sequence) : problem(p_problem),
+                                                                                         sequence(p_sequence) {
             hash = getHash();
             cost = decode()->getCost();
             problem->getMemory()->add(hash, cost);
@@ -85,7 +87,7 @@ namespace routing {
                     return hash;
                 }
                 std::string sequence_str;
-                for (auto &client : sequence) {
+                for (models::Client * client : sequence) {
                     sequence_str.append(Utilities::itos(client->getID()));
                     sequence_str.push_back('-');
                 }

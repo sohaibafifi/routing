@@ -14,6 +14,7 @@ namespace vrptwtd {
         Problem() : cvrptw::Problem(){  };
 
         explicit Problem(const cvrptw::Problem & p_problem) : cvrptw::Problem(p_problem){  };
+#ifdef CPLEX_FOUND
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
         routing::callback::UserCutCallback *setUserCutCallback() override;
@@ -30,7 +31,7 @@ namespace vrptwtd {
             cvrptw::Problem::addConstraints();
             addSynchronisationConstraints();
         }
-
+#endif
     };
 
 

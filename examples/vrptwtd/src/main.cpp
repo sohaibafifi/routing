@@ -3,9 +3,13 @@
 // a non-commercial and academic institution.
 
 
+#include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <vrptwtd/Reader.hpp>
+#ifdef CPLEX_FOUND
 #include <core/solvers/MIPSolver.hpp>
+#endif
 #include "../../libs/argparse/argparse.h"
 
 
@@ -46,6 +50,8 @@ int main(int argc, const char *argv[]) {
     }
 
     std::ofstream output(output_file);
+    #ifdef CPLEX_FOUND
+
     try {
         routing::MIPSolver<vrptwtd::Reader> mipSolver(inputFile);
         mipSolver.getCplex().exportModel(lp_file.c_str());
@@ -54,5 +60,6 @@ int main(int argc, const char *argv[]) {
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
     }
+    #endif
     return EXIT_SUCCESS;
 }

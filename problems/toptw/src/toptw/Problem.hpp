@@ -14,6 +14,8 @@ namespace toptw {
         explicit Problem(const cvrptw::Problem & p_problem) : cvrptw::Problem(p_problem){  };
 
     protected:
+        #ifdef CPLEX_FOUND
+
         void addObjective() override;
         void addRoutingConstraints() override;
 
@@ -21,7 +23,7 @@ namespace toptw {
 
     public:
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
-
+        #endif
     protected :
 
     };

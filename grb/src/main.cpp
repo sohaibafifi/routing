@@ -100,7 +100,7 @@ int main(int argc, const char *argv[]) {
             output.close();
         }
 
-    } catch (GRBException e) {
+    } catch (GRBException &e) {
         cout << "Error code = " << e.getErrorCode() << endl;
         cout << e.getMessage() << endl;
     } catch (...) {

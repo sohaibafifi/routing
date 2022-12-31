@@ -10,7 +10,7 @@
 namespace vrp {
     class Reader : public routing::Reader {
     public :
-        vrp::Problem *readFile(std::string filepath) override;
+        vrp::Problem *readFile(const std::string &filepath) override;
     };
 
 }

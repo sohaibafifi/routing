@@ -10,6 +10,7 @@
 routing::Initializer *cvrptw::Problem::initializer() {
     return new cvrptw::Initializer(this);
 }
+#ifdef CPLEX_FOUND
 
 void cvrptw::Problem::addVariables() {
     cvrp::Problem::addVariables();
@@ -89,3 +90,4 @@ void cvrptw::Problem::addCapacityConstraints() {
             }
         }
 }
+#endif

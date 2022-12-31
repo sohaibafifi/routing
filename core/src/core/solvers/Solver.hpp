@@ -12,6 +12,9 @@
 #include "../data/models/Solution.hpp"
 #include "../data/Problem.hpp"
 #include "../data/Configuration.hpp"
+#include <filesystem>
+#include <fstream>
+
 
 template<class Reader>
 class Solver {

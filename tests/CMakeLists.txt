@@ -5,6 +5,6 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64")
 set(GOOGLETEST_VERSION 1.10.0)
 enable_testing()
 add_subdirectory(lib/googletest/googletest)
-add_subdirectory(solver_tests)
+add_subdirectory(problem_tests)
 
 

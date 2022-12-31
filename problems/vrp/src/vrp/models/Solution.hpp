@@ -97,6 +97,7 @@ namespace vrp {
                 return tours.size();
             }
 
+#ifdef CPLEX_FOUND
 
             void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
                 vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
@@ -143,7 +144,7 @@ namespace vrp {
             }
 
             void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) override;
-
+#endif
 
             void print(std::ostream &out) override {
                 out << "solution cost " << getCost() << std::endl;

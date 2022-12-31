@@ -15,11 +15,12 @@ namespace cvrpstw {
         Problem() : cvrptw::Problem(), waitPenalty(1), delayPenalty(1){  };
         explicit Problem(const cvrptw::Problem & p_problem) : cvrptw::Problem(p_problem){  };
 
+#ifdef CPLEX_FOUND
 
         std::vector<IloNumVar> wait;
         std::vector<IloNumVar> delay;
         IloObjective obj_penality;
-
+#endif
 
         double waitPenalty, delayPenalty;
 
@@ -30,6 +31,7 @@ namespace cvrpstw {
         double getDelayPenalty() const;
 
         void setDelayPenalty(double delayPenalty);
+#ifdef CPLEX_FOUND
 
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
@@ -39,14 +41,15 @@ namespace cvrpstw {
 
 
         routing::callback::IncumbentCallback *setIncumbentCallback() override;
-
+#endif
     protected :
 
+#ifdef CPLEX_FOUND
 
         virtual void addVariables() override;
 
         virtual void addObjective() override;
-
+#endif
 
     };
 

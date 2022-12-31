@@ -5,14 +5,17 @@
 
 #include "Problem.hpp"
 #include "models/Tour.hpp"
-
+#ifdef CPLEX_FOUND
 #include <core/routines/callbacks.hpp>
+#endif
 #include <core/routines/neighborhoods/IDCH.hpp>
 #include <core/routines/neighborhoods/Move.hpp>
 #include <core/routines/neighborhoods/TwoOpt.hpp>
 #include "routines/operators/Constructor.hpp"
 #include "routines/operators/Destructor.hpp"
 #include "models/Solution.hpp"
+
+#ifdef CPLEX_FOUND
 
 routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback() {
     std::vector<routing::Neighborhood *> dummyNeighborhoods;
@@ -141,7 +144,7 @@ void vrp::Problem::addSequenceConstraints() {
 
 }
 
-
+#endif
 
 routing::models::Solution *vrp::Initializer::initialSolution() {
     return new models::Solution(this->getProblem());

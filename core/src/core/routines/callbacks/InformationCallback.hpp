@@ -40,7 +40,7 @@ namespace routing {
             }
 
             IloCplex::CallbackI *duplicateCallback() const {
-                throw new std::logic_error("Not implemented");
+                return new (getEnv()) InformationCallback(*this);
             }
 
             virtual models::Solution *getIncumbentSolution() { return nullptr; }

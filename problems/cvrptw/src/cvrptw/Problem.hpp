@@ -14,10 +14,12 @@ namespace cvrptw {
     class Problem : public cvrp::Problem {
 
     public :
-
+#ifdef CPLEX_FOUND
         std::vector<IloNumVar> start;
+#endif
     protected :
         virtual routing::Initializer *initializer() override;
+#ifdef CPLEX_FOUND
 
         virtual void addVariables() override;
 
@@ -27,7 +29,7 @@ namespace cvrptw {
         virtual void addAffectationConstraints() override;
 
         virtual void addCapacityConstraints() override;
-
+#endif
     };
 
     class Initializer : public routing::Initializer {
