@@ -12,6 +12,7 @@
 int main(int argc, const char *argv[]) {
     argparse::ArgumentParser parser(argv[0], "VRPTW Solver");
     parser.add_argument("-i", "--input", "Instance File", true);
+    parser.add_argument("-o", "--output", "Output File", false);
     parser.add_argument("-t", "--timeout", "Timeout in seconds", false);
     parser.enable_help();
     auto err = parser.parse(argc, argv);
@@ -27,13 +28,29 @@ int main(int argc, const char *argv[]) {
     }
 
 
-    auto inputFile = parser.get<std::string>("input");
+
+    std::string inputFile = parser.get<std::string>("input");
     double timeout = parser.exists("timeout") ? parser.get<double>("timeout") : 200;
 
 
+    std::string output_file;
+    std::string lp_file;
+    if (! parser.exists("output")) {
+        std::string output_folder = "output/" + std::filesystem::path(inputFile).parent_path().string();
+        system((std::string("mkdir -p ") + output_folder).c_str());
+        output_file = output_folder + "/" + std::filesystem::path(inputFile).replace_extension("").filename().string() + ".result";
+        lp_file = output_folder + "/" + std::filesystem::path(inputFile).replace_extension("").filename().string() + ".lp";
+    }else{
+        output_file = parser.get<std::string>("output");
+        lp_file = parser.get<std::string>("output") + ".lp";
+    }
+
+    std::ofstream output(output_file);
     try {
         routing::MIPSolver<vrptwtd::Reader> mipSolver(inputFile);
+        mipSolver.getCplex().exportModel(lp_file.c_str());
         mipSolver.solve(timeout);
+        mipSolver.save(output);
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
     }

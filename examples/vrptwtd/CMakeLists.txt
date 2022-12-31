@@ -26,7 +26,7 @@ target_include_directories(example_vrptwtd PUBLIC ../../problems/cvrptw/src)
 target_include_directories(example_vrptwtd PUBLIC ../../problems/vrptwtd/src)
 
 
-target_link_libraries(example_vrptwtd PUBLIC routing)
+target_link_libraries(example_vrptwtd PUBLIC vrptwtd)
 
 target_link_libraries(example_vrptwtd PUBLIC dl)
 target_link_libraries(example_vrptwtd PUBLIC ${CPLEX_LIBRARIES})

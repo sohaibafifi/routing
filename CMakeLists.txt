@@ -9,3 +9,4 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 
 add_subdirectory(examples examples)
+add_subdirectory(grb grb)
