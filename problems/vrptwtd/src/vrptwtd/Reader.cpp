@@ -30,7 +30,7 @@ routing::Problem *vrptwtd::Reader::readFile(const std::string & filepath) {
                 + "/" + solomon_name + ".txt";
 
         auto * problem = new vrptwtd::Problem(*dynamic_cast<cvrptw::Problem*>(cvrptw::Reader::readFile(solomon_file)));
-
+        problem->setName(std::filesystem::path(file_name).replace_extension("").filename().string());
         // convert the clients to vrptwtd clients
         for (auto & client : problem->clients) {
             client = new vrptwtd::models::Client(
