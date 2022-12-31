@@ -23,11 +23,12 @@ namespace routing {
 
         virtual bool solve(double timeout = 3600) override;
 
-        virtual void save() const override;
 
         virtual ~MIPSolver();
 
         virtual IloCplex getCplex() const { return cplex; }
+
+        virtual void save(std::ofstream &output) const override;
     };
 }
 
@@ -54,15 +55,12 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
 
 template<class Reader>
 bool routing::MIPSolver<Reader>::solve(double timeout) {
-    this->cplex.exportModel("model.lp");
-    this->cplex.setParam(this->cplex.MIPEmphasis, this->cplex.MIPEmphasisHeuristic);
-    this->cplex.setParam(this->cplex.Threads, 1);
-    this->cplex.setParam(this->cplex.HeurFreq, 0); // Automatic: let CPLEX choose
+
+    // this->cplex.setParam(this->cplex.Threads, 1);
     this->cplex.setParam(this->cplex.MIPDisplay, 4);
     this->cplex.setParam(IloCplex::Param::MultiObjective::Display, 2);
     this->cplex.setParam(this->cplex.TiLim, timeout);
-
-    this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
+    //this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
 
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
@@ -85,13 +83,7 @@ routing::MIPSolver<Reader>::~MIPSolver() {
 }
 
 template<class Reader>
-void routing::MIPSolver<Reader>::save() const {
-    std::string output_folder = "output/" + std::filesystem::path(this->inputFile).parent_path().string();
-    system((std::string("mkdir -p ") + output_folder).c_str());
-    std::string output_file =
-            output_folder + "/" + std::filesystem::path(this->inputFile).filename().string() + ".result";
-
-    std::ofstream output(output_file);
+void routing::MIPSolver<Reader>::save(std::ofstream &output) const {
     output <<
            this->getProblem()->getName()
            << "\t" << getCplex().getStatus()

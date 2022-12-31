@@ -26,6 +26,8 @@ target_include_directories(vrptwtd PUBLIC ../cvrptw/src/)
 
 
 target_link_libraries(vrptwtd PUBLIC cvrptw)
+target_link_libraries(vrptwtd PUBLIC cvrp)
+target_link_libraries(vrptwtd PUBLIC vrp)
 
 
 target_link_libraries(vrptwtd PUBLIC dl)

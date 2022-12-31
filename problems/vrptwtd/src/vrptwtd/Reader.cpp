@@ -5,7 +5,6 @@
 
 #include "Reader.hpp"
 
-#include "models/Depot.hpp"
 #include <queue>
 #include <random>
 #include "Problem.hpp"

@@ -30,3 +30,19 @@ void vrptwtd::Problem::addSynchronisationConstraints() {
 routing::callback::HeuristicCallback *vrptwtd::Problem::setHeuristicCallback() {
     return nullptr;
 }
+
+routing::callback::UserCutCallback *vrptwtd::Problem::setUserCutCallback() {
+    return nullptr;
+}
+
+routing::callback::LazyConstraintCallback *vrptwtd::Problem::setLazyConstraintCallback() {
+    return nullptr;
+}
+
+routing::callback::InformationCallback *vrptwtd::Problem::setInformationCallback() {
+    return nullptr;
+}
+
+routing::callback::IncumbentCallback *vrptwtd::Problem::setIncumbentCallback() {
+    return nullptr;
+}

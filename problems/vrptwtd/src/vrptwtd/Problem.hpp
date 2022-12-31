@@ -14,21 +14,22 @@ namespace vrptwtd {
         Problem() : cvrptw::Problem(){  };
 
         explicit Problem(const cvrptw::Problem & p_problem) : cvrptw::Problem(p_problem){  };
-
-    protected:
-        void addConstraints() override {
-            cvrptw::Problem::addConstraints();
-            this->addSynchronisationConstraints();
-        }
-
-        virtual void addSynchronisationConstraints();
-
-    public:
         routing::callback::HeuristicCallback *setHeuristicCallback() override;
 
-    protected :
+        routing::callback::UserCutCallback *setUserCutCallback() override;
 
+        routing::callback::LazyConstraintCallback *setLazyConstraintCallback() override;
 
+        routing::callback::InformationCallback *setInformationCallback() override;
+
+        routing::callback::IncumbentCallback *setIncumbentCallback() override;
+
+    protected:
+        virtual void addSynchronisationConstraints();
+        virtual void addConstraints() override{
+            cvrptw::Problem::addConstraints();
+            addSynchronisationConstraints();
+        }
 
     };
 

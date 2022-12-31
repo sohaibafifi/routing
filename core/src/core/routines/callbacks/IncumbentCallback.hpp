@@ -50,7 +50,7 @@ namespace routing {
             models::Solution *solution = nullptr;
 
             IloCplex::CallbackI *duplicateCallback() const {
-                throw new std::logic_error("Not implemented");
+                return new (getEnv()) IncumbentCallback(*this);
             }
 
             virtual void extractIncumbentSolution() {}
