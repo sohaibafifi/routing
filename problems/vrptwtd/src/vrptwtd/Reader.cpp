@@ -15,9 +15,9 @@
 routing::Problem *vrptwtd::Reader::readFile(const std::string & filepath) {
     try {
 
-        std::string file_name = Utilities::filename(filepath);
-        auto parts = Utilities::splitString(file_name, '_');
-        int nbClients = std::stoi(Utilities::splitString(parts[1], '-')[0]);
+        std::string file_name = std::filesystem::path(filepath).filename();
+        auto parts = this->splitString(file_name, '_');
+        int nbClients = std::stoi(this->splitString(parts[1], '-')[0]);
         std::string solomon_name = parts[0];
         std::transform(solomon_name.begin(),
                  solomon_name.end(),
@@ -26,7 +26,7 @@ routing::Problem *vrptwtd::Reader::readFile(const std::string & filepath) {
         std::string folder  = std::filesystem::path(filepath).parent_path();
 
         std::string solomon_file = folder + "/../Instances/"
-                + Utilities::itos(nbClients)
+                + std::to_string(nbClients)
                 + "/" + solomon_name + ".txt";
 
         auto * problem = new vrptwtd::Problem(*dynamic_cast<cvrptw::Problem*>(cvrptw::Reader::readFile(solomon_file)));

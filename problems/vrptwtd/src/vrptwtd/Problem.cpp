@@ -3,7 +3,6 @@
 // a non-commercial and academic institution.
 
 
-#include <utilities/Utilities.hpp>
 #include "Problem.hpp"
 #include "attributes/Synced.hpp"
 
@@ -17,7 +16,7 @@ void vrptwtd::Problem::addSynchronisationConstraints() {
                 auto brother = dynamic_cast<routing::Model * >(client->getBrother(j));
                 IloConstraint constraint = start[client->getID()]  + client->getDelta(j) <=  start[brother->getID()];
 
-                constraint.setName(std::string("sync_" + Utilities::itos(client->getID()) + "_" + Utilities::itos(brother->getID())).c_str());
+                constraint.setName(std::string("sync_" + std::to_string(client->getID()) + "_" + std::to_string(brother->getID())).c_str());
                 model.add(constraint);
 
                 model.add(arcs[client->getID()][brother->getID()] == 0);

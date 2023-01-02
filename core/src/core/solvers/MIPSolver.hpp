@@ -8,6 +8,7 @@
 
 #include "Solver.hpp"
 #include "../routines/callbacks.hpp"
+#include <ilcplex/ilocplex.h>
 
 namespace routing {
     template<class Reader>
@@ -22,6 +23,7 @@ namespace routing {
         };
 
         virtual bool solve(double timeout = 3600) override;
+        virtual void tune(double timeout = 3600) ;
 
 
         virtual ~MIPSolver();
@@ -53,6 +55,8 @@ routing::MIPSolver<Reader>::MIPSolver(const std::string &p_inputFile, std::ostre
 }
 
 
+
+
 template<class Reader>
 bool routing::MIPSolver<Reader>::solve(double timeout) {
 
@@ -61,7 +65,8 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(IloCplex::Param::MultiObjective::Display, 2);
     this->cplex.setParam(IloCplex::Param::TimeLimit, timeout);
     //this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
-
+    cplex.resetTime();
+    cplex.writeParam("cplex.parms");
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
              << "\t" << this->cplex.getStatus()
@@ -74,6 +79,30 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     // this->solution.forceCost();
 
     return solved;
+}
+
+
+template<class Reader>
+void routing::MIPSolver<Reader>::tune(double timeout) {
+    IloCplex::ParameterSet paramSet = cplex.getParameterSet();
+
+    // this->cplex.setParam(this->cplex.Threads, 1);
+    paramSet.setParam(IloCplex::Param::MIP::Display, 4);
+    paramSet.setParam(IloCplex::Param::MultiObjective::Display, 2);
+    paramSet.setParam(IloCplex::Param::TimeLimit, timeout);
+    paramSet.setParam(IloCplex::Param::Tune::TimeLimit, timeout / 5.0);
+    cplex.setParameterSet(paramSet);
+
+    IloInt  tunestat = this->cplex.tuneParam(paramSet) ;
+      if ( tunestat == IloCplex::TuningComplete)
+         std::cout << "Tuning complete." << std::endl;
+      else if ( tunestat == IloCplex::TuningAbort)
+         std::cout << "Tuning abort." << std::endl;
+      else if ( tunestat == IloCplex::TuningTimeLim)
+         std::cout << "Tuning time limit." << std::endl;
+      else
+         std::cout << "Tuning status unknown." << std::endl;
+
 }
 
 template<class Reader>

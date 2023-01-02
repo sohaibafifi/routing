@@ -40,7 +40,7 @@ void vrp::Problem::addVariables() {
     for (unsigned i = 0; i <= clients.size(); ++i) {
         arcs.push_back(std::vector<IloNumVar>());
         for (unsigned j = 0; j <= clients.size(); ++j) {
-            std::string name = std::string("X_" + Utilities::itos(i) + "_" + Utilities::itos(j));
+            std::string name = std::string("X_" + std::to_string(i) + "_" + std::to_string(j));
             arcs.back().push_back(IloBoolVar(env, name.c_str()));
             if (i == j) model.add(arcs.back().back() == 0);
             else model.add(arcs.back().back());
@@ -72,7 +72,7 @@ void vrp::Problem::addAffectationConstraints() {
         affectation.push_back(std::vector<IloNumVar>());
         if (i == 0) continue;
         for (unsigned k = 0; k < vehicles.size(); ++k) {
-            std::string name = std::string("A_" + Utilities::itos(i) + "_" + Utilities::itos(k));
+            std::string name = std::string("A_" + std::to_string(i) + "_" + std::to_string(k));
             affectation.back().push_back(IloBoolVar(env, name.c_str()));
             model.add(affectation.back().back());
         }
@@ -129,7 +129,7 @@ void vrp::Problem::addRoutingConstraints() {
 void vrp::Problem::addSequenceConstraints() {
 
     for (unsigned i = 0; i <= clients.size(); ++i) {
-        order.push_back(IloNumVar(env, 0, clients.size(), std::string("o_" + Utilities::itos(i)).c_str()));
+        order.push_back(IloNumVar(env, 0, clients.size(), std::string("o_" + std::to_string(i)).c_str()));
         model.add(order.back());
     }
     for (unsigned i = 1; i <= clients.size(); ++i) {

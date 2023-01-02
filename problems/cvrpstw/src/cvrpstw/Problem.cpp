@@ -13,17 +13,17 @@ void cvrpstw::Problem::addVariables() {
         start.push_back(IloNumVar(env,
                                   0,
                                   IloInfinity,
-                                  std::string("s_" + Utilities::itos(i)).c_str()));
+                                  std::string("s_" + std::to_string(i)).c_str()));
 
 
         wait.push_back(IloNumVar(env,
                                  0,
                                  IloInfinity,
-                                 std::string("w_" + Utilities::itos(i)).c_str()));
+                                 std::string("w_" + std::to_string(i)).c_str()));
         delay.push_back(IloNumVar(env,
                                   0,
                                   IloInfinity,
-                                  std::string("w_" + Utilities::itos(i)).c_str()));
+                                  std::string("w_" + std::to_string(i)).c_str()));
 
 
         model.add(start.back());

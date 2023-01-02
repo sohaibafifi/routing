@@ -3,7 +3,6 @@
 // a non-commercial and academic institution.
 
 
-#include <utilities/Utilities.hpp>
 #include "Problem.hpp"
 #include "models/Depot.hpp"
 
@@ -19,12 +18,12 @@ void cvrptw::Problem::addVariables() {
             start.push_back(IloNumVar(env,
                                       static_cast<models::Depot *>(getDepot())->getTwOpen(),
                                       static_cast<models::Depot *>(getDepot())->getTwClose(),
-                                      std::string("t_" + Utilities::itos(i)).c_str()));
+                                      std::string("t_" + std::to_string(i)).c_str()));
         else
             start.push_back(IloNumVar(env,
                                       static_cast<models::Client *>(clients[i - 1])->getTwOpen(),
                                       static_cast<models::Client *>(clients[i - 1])->getTwClose(),
-                                      std::string("t_" + Utilities::itos(i)).c_str()));
+                                      std::string("t_" + std::to_string(i)).c_str()));
 
         model.add(start.back());
     }
