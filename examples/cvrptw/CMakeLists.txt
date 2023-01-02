@@ -28,4 +28,10 @@ target_include_directories(example_cvrptw PUBLIC ../../problems/cvrptw/src)
 target_include_directories(example_cvrptw PUBLIC ../../core/src)
 
 
-target_link_libraries(example_cvrptw PUBLIC routing)
+
+target_link_libraries(example_cvrptw PUBLIC vrp)
+target_link_libraries(example_cvrptw PUBLIC cvrp)
+target_link_libraries(example_cvrptw PUBLIC cvrptw)
+
+target_link_libraries(example_cvrptw PUBLIC dl)
+target_link_libraries(example_cvrptw PUBLIC ${CPLEX_LIBRARIES})
