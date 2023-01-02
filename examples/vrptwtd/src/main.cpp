@@ -55,6 +55,7 @@ int main(int argc, const char *argv[]) {
     try {
         routing::MIPSolver<vrptwtd::Reader> mipSolver(inputFile);
         mipSolver.getCplex().exportModel(lp_file.c_str());
+        mipSolver.tune(timeout);
         mipSolver.solve(timeout);
         mipSolver.save(output);
     } catch (IloCplex::Exception &exception) {

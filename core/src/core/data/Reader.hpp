@@ -10,8 +10,17 @@ namespace routing {
 
     class Reader {
     public :
-        virtual Problem *readFile(const std::string & filepath) = 0;
+        virtual Problem *readFile(const std::string &filepath) = 0;
 
+        inline static std::vector<std::string> splitString(std::string line, char sep) {
+            std::istringstream ss(line);
+            std::string token;
+            std::vector<std::string> split;
+            while (std::getline(ss, token, ',')) {
+                split.push_back(token);
+            }
+            return split;
+        }
     };
 
 }

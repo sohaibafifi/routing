@@ -3,7 +3,6 @@
 // a non-commercial and academic institution.
 
 
-#include <utilities/Utilities.hpp>
 #include "Problem.hpp"
 
 routing::Initializer *cvrp::Problem::initializer() {
@@ -51,14 +50,14 @@ void cvrp::Problem::addVariables() {
         if (i == 0) {
             consumption.push_back(IloNumVar(env,
                                      0, 0,
-                                     std::string("q_" + Utilities::itos(i)).c_str()));
+                                     std::string("q_" + std::to_string(i)).c_str()));
         } else {
             if (auto *client = dynamic_cast<routing::attributes::Consumer *>(clients[
                     i - 1]))
                 consumption.push_back(IloNumVar( env,
                                          std::max(client->getDemand(), (routing::Demand) 0.0),
                                          std::min(stock->getCapacity(), stock->getCapacity() + client->getDemand()),
-                                         std::string("q_" + Utilities::itos(i)).c_str()));
+                                         std::string("q_" + std::to_string(i)).c_str()));
         }
         model.add(consumption.back());
     }

@@ -88,7 +88,7 @@ namespace routing {
                 }
                 std::string sequence_str;
                 for (models::Client * client : sequence) {
-                    sequence_str.append(Utilities::itos(client->getID()));
+                    sequence_str.append(std::to_string(client->getID()));
                     sequence_str.push_back('-');
                 }
                 std::hash<std::string> hash_fn_sequence;

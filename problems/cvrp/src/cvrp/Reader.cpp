@@ -9,8 +9,6 @@
 #include "Problem.hpp"
 #include <cmath>
 #include <queue>
-#include <utilities/Utilities.hpp>
-#include <vrp/models/Depot.hpp>
 #include <fstream>
 
 routing::Problem *cvrp::Reader::readFile(const std::string & filepath) {
@@ -63,7 +61,7 @@ routing::Problem *cvrp::Reader::readFile(const std::string & filepath) {
             if (line.find("NAME") != std::string::npos) {
                 std::stringstream(line) >> dummy >> dummy >> problem->name;
                 std::cout << "problem name : " << problem->name << std::endl;
-                std::vector<std::string> parts = Utilities::splitString(problem->name, '-');
+                std::vector<std::string> parts = this->splitString(problem->name, '-');
                 parts[2][0] = '0';
                 std::stringstream(parts[2]) >> nbVehicles;
             }
@@ -172,7 +170,7 @@ routing::Problem *cvrp::Reader::readFile(const std::string & filepath) {
                     std::queue<routing::Duration> distances;
                     while (nbValues != 0 && !stop) {
                         getline(fh, line);
-                        std::vector<std::string> values = Utilities::splitString(line, ' ');
+                        std::vector<std::string> values = this->splitString(line, ' ');
 
                         for (int i = 0; i < values.size(); ++i) {
                             if (values[i].empty()) stop = true;

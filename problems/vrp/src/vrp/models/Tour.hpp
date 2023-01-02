@@ -7,7 +7,6 @@
 
 #include <core/data/models/Tour.hpp>
 #include <core/data/attributes/Stock.hpp>
-#include <utilities/Utilities.hpp>
 #include "Client.hpp"
 
 namespace vrp {
@@ -171,7 +170,7 @@ namespace vrp {
                     std::string sequence;
                     for (auto & client : clients) {
                         bit_sequence[client->getID()] = true;
-                        sequence.append(Utilities::itos(client->getID()));
+                        sequence.append(std::to_string(client->getID()));
                         sequence.push_back('-');
                     }
                     std::hash<std::string> hash_fn_sequence;
