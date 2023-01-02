@@ -25,7 +25,8 @@ target_include_directories(example_cvrp PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_cvrp PUBLIC ../../core/src)
 
 
-target_link_libraries(example_cvrp PUBLIC routing)
+target_link_libraries(example_cvrp PUBLIC vrp)
+target_link_libraries(example_cvrp PUBLIC cvrp)
 
 target_link_libraries(example_cvrp PUBLIC dl)
 target_link_libraries(example_cvrp PUBLIC ${CPLEX_LIBRARIES})
