@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Problem.hpp"
+#include <sstream>
 
 namespace routing {
 
@@ -16,7 +17,7 @@ namespace routing {
             std::istringstream ss(line);
             std::string token;
             std::vector<std::string> split;
-            while (std::getline(ss, token, ',')) {
+            while (std::getline(ss, token, sep)) {
                 split.push_back(token);
             }
             return split;
