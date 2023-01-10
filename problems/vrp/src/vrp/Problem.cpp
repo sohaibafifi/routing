@@ -13,6 +13,7 @@
 #include <core/routines/neighborhoods/TwoOpt.hpp>
 #include "routines/operators/Constructor.hpp"
 #include "routines/operators/Destructor.hpp"
+#include "routines/operators/Diver.hpp"
 #include "models/Solution.hpp"
 
 #ifdef CPLEX_FOUND
@@ -27,7 +28,7 @@ routing::callback::HeuristicCallback *vrp::Problem::setHeuristicCallback() {
                                                     this,
                                                     new routing::Generator(this, new vrp::routines::Constructor(),
                                                                            new vrp::routines::Destructor()),
-                                                    new routing::dummyDiver(),
+                                                    new vrp::routines::Diver(),
                                                     dummyNeighborhoods);
 }
 

@@ -66,7 +66,6 @@ bool routing::MIPSolver<Reader>::solve(double timeout) {
     this->cplex.setParam(IloCplex::Param::TimeLimit, timeout);
     //this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
     cplex.resetTime();
-    cplex.writeParam("cplex.parms");
     bool solved = this->cplex.solve() != 0;
     this->os << this->problem->getName()
              << "\t" << this->cplex.getStatus()

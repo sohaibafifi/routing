@@ -54,7 +54,8 @@ namespace routing {
 
             virtual void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) = 0;
 
-            virtual void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) = 0;
+            virtual void constructFromIncumbent(IloCplex::HeuristicCallbackI *pCallback) = 0;
+            virtual void constructFromNode(IloCplex::HeuristicCallbackI *pCallback) = 0;
 #endif
             virtual void print(std::ostream &out) = 0;
 

@@ -19,6 +19,8 @@ namespace routing {
         struct Rendezvous {
             Rendezvous(const TW &timewindow) : tw(timewindow) {}
 
+            Rendezvous(const Duration &twOpen, const Duration &twClose) : tw(std::make_pair(twOpen, twClose)) {}
+
             EntityData<TW> tw;
 
             TW getTw() const { return tw.getValue(); }

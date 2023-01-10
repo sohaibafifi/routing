@@ -31,67 +31,27 @@ namespace vrp {
             }
 
 
-            void update() override {
-                travelTime = 0;
-                for (int t = 0; t < getNbTour(); ++t) {
-                    getTour(t)->update();
-                    travelTime += getTour(t)->getTravelTime();
-                }
-            }
+            void update() override;
 
-            void copy(const routing::models::Solution *p_solution) override {
-                this->travelTime = dynamic_cast<const Solution *>(p_solution)->travelTime;
-                this->notserved.clear();
-                for (auto i: p_solution->notserved) {
-                    this->notserved.push_back(i);
-                }
-                this->tours.clear();
-                for (unsigned int j = 0; j < dynamic_cast<const Solution *>(p_solution)->tours.size(); ++j) {
-                    this->tours.push_back(dynamic_cast<const Solution *>(p_solution)->getTour(j)->clone());
-                }
-            }
+            void copy(const routing::models::Solution *p_solution) override;
 
             double getCost() override {
                 return travelTime;
             }
 
 
-            void pushTour(routing::models::Tour *tour) override {
-                addTour(tour, getNbTour());
-            }
+            void pushTour(routing::models::Tour *tour) override;
 
-            void addTour(routing::models::Tour *tour, unsigned long position) override {
-                tours.insert(tours.begin() + position, dynamic_cast<Tour *>(tour));
-                travelTime += dynamic_cast<Tour *>( tour )->getTravelTime();
-            }
+            void addTour(routing::models::Tour *tour, unsigned long position) override;
 
-            void overrideTour(routing::models::Tour *tour, unsigned long position) override {
-                travelTime -= dynamic_cast<Tour *>( tours.at(position))->getTravelTime();
-                tours.at(position) = dynamic_cast<Tour *>(tour);
-                travelTime += dynamic_cast<Tour *>( tour )->getTravelTime();
-            }
+            void overrideTour(routing::models::Tour *tour, unsigned long position) override;
 
-            void removeClient(unsigned long index_tour, unsigned long position) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
-                routing::models::Solution::removeClient(index_tour, position);
-                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->travelTime += delta;
-            }
+            void removeClient(unsigned long index_tour, unsigned long position) override;
 
-            void pushClient(unsigned long index_tour, routing::models::Client *client) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
-                routing::models::Solution::pushClient(index_tour, client);
-                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->travelTime += delta;
-            }
+            void pushClient(unsigned long index_tour, routing::models::Client *client) override;
 
             void addClient(unsigned long index_tour, routing::models::Client *client, unsigned long position,
-                           routing::InsertionCost *cost) override {
-                routing::Duration oldCost = this->getTour(index_tour)->getTravelTime();
-                routing::models::Solution::addClient(index_tour, client, position, cost);
-                routing::Duration delta = this->getTour(index_tour)->getTravelTime() - oldCost;
-                this->travelTime += delta;
-            }
+                           routing::InsertionCost *cost) override;
 
             unsigned long getNbTour() const override {
                 return tours.size();
@@ -99,77 +59,19 @@ namespace vrp {
 
 #ifdef CPLEX_FOUND
 
-            void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override {
-                vrp::Problem *problem = dynamic_cast<vrp::Problem * >(this->problem);
-                std::vector<std::vector<IloBool> > values(problem->arcs.size());
-                std::vector<std::vector<IloBool> > affectation(problem->arcs.size());
-                std::vector<unsigned> order(problem->arcs.size());
-                for (unsigned j = 0; j < problem->arcs.size(); ++j) {
-                    values[j] = std::vector<IloBool>(problem->arcs.size(), IloFalse);
-                }
-                for (unsigned j = 0; j < problem->arcs.size(); ++j) {
-                    affectation[j] = std::vector<IloBool>(problem->vehicles.size(), IloFalse);
-                }
-                for (unsigned k = 0; k < this->getNbTour(); ++k) {
-                    unsigned last = 0;
-                    for (unsigned i = 0; i < this->getTour(k)->getNbClient(); ++i) {
-                        values[last][this->getTour(k)->getClient(i)->getID()] = IloTrue;
-                        last = this->getTour(k)->getClient(i)->getID();
-                            affectation[last][k] = IloTrue;
+            void getVarsVals(IloNumVarArray &vars, IloNumArray &vals) override;
 
-
-                        order[this->getTour(k)->getClient(i)->getID()] = i;
-                    }
-                    values[last][0] = IloTrue;
-                }
-
-                for (unsigned i = 0; i < problem->arcs.size(); ++i) {
-                    for (unsigned j = 0; j < problem->arcs.size(); ++j) {
-                        if (i == j) continue;
-                        vars.add(problem->arcs[i][j]);
-                        vals.add(values[i][j]);
-
-                    }
-                    for (unsigned k = 0; k < affectation[i].size(); ++k) {
-                        //vars.add(problem->affectation[i][k]);
-                        //vals.add(affectation[i][k]);
-                    }
-                    if (i > 0) {
-                        if(i < problem->order.size() && problem->order[i].getImpl() != nullptr) {
-                            vars.add(problem->order[i]);
-                            vals.add(order[i]);
-                        }
-                    }
-                }
-            }
-
-            void constructFromModel(IloCplex::HeuristicCallbackI *pCallback) override;
+            void constructFromIncumbent(IloCplex::HeuristicCallbackI *pCallback) override;
+            void constructFromNode(IloCplex::HeuristicCallbackI *pCallback) override;
 #endif
 
-            void print(std::ostream &out) override {
-                out << "solution cost " << getCost() << std::endl;
-                for (unsigned t = 0; t < getNbTour(); t++) {
-                    out << "tour " << t << " : ";
-                    for (unsigned i = 0; i < this->getTour(t)->getNbClient(); ++i) {
-                        out << this->getTour(t)->getClient(i)->getID() << " ";
-                    }
-                    out << "[" << this->getTour(t)->getHash() << "]" << std::endl;
-                }
-            }
+            void print(std::ostream &out) override;
 
             Tour *getTour(unsigned t) const override {
                 return tours.at(t);
             }
 
-            std::vector<routing::models::Client *> getSequence() override {
-                std::vector<routing::models::Client *> sequence;
-                for (int t = 0; t < tours.size(); ++t) {
-                    for (int i = 0; i < getTour(t)->getNbClient(); ++i) {
-                        sequence.push_back(getTour(t)->getClient(i));
-                    }
-                }
-                return sequence;
-            }
+            std::vector<routing::models::Client *> getSequence() override;
 
             routing::Duration travelTime;
 

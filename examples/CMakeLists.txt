@@ -14,7 +14,7 @@ include_directories(SYSTEM ${CPLEX_INCLUDE_DIRS})
 
 
 add_subdirectory(../routing routing)
-set(problems vrp cvrp top toptw cvrptw cvrpstw vrptwtd)
+set(problems vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw)
 foreach (problem ${problems})
     add_subdirectory(${problem} examples/${problem})
 endforeach ()

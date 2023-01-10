@@ -68,7 +68,7 @@ int main(int argc, const char *argv[]) {
             cout << "Optimal objective: " << objval << endl;
             output <<
                    name
-                   << "\t" << "optimal"
+                   << "\t" << "Optimal"
                    << "\t" << objval
                    << "\t" << objBound
                    << "\t" << objGap
@@ -91,7 +91,7 @@ int main(int argc, const char *argv[]) {
             cout << "Optimal objective: " << objval << endl;
             output <<
                    name
-                   << "\t" << "feasible"
+                   << "\t" << "Feasible"
                    << "\t" << objval
                    << "\t" << objBound
                    << "\t" << objGap

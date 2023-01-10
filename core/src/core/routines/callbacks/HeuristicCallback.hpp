@@ -45,11 +45,8 @@ namespace routing::callback {
                 if (shouldDive()) {
                     solution = this->extractPartialSolution(problem);
                     if (solution == nullptr) return;
-                    if (diver->dive(solution))
-                        getEnv().out() << solution->getCost() << " [Incumbent = " << getIncumbentObjValue() << "]"
-                                       << std::endl;
-                    else {
-                        getEnv().out() << "Not found [Incumbent = " << getIncumbentObjValue() << "]" << std::endl;
+                    if (! diver->dive(solution))
+                         {
                         return;
                     }
                 } else {
@@ -69,7 +66,8 @@ namespace routing::callback {
                         } else {
                             run[i] = true;
                         }
-                        break; // FIXME : add a param to choose between two modes :
+                        break;
+                        // TODO : add a param to choose between two modes :
                         // One to execute only one LS at once
                         // and the other uses the loop
                     }
@@ -144,16 +142,18 @@ namespace routing::callback {
         virtual void extractSolution() {
             this->solution = this->generator->initialSolution();
             // TODO : transfer information about arc feasibility using pre-solve
-            this->solution->constructFromModel(this);
+            this->solution->constructFromIncumbent(this);
         }
 
         virtual bool shouldDive() {
-            // extract solution should work
-            return false;
+            // extractPartialSolution solution should work
+            return true;
         }
 
         virtual routing::models::Solution *extractPartialSolution(routing::Problem *problem) {
-            return nullptr;
+            auto solution = this->generator->initialSolution();
+            solution->constructFromIncumbent(this);
+            return solution;
         }
     };
 }

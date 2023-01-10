@@ -1,0 +1,5 @@
+CPLEX Parameter File Version 22.1.0.0
+CPXPARAM_MultiObjective_Display                  2
+CPXPARAM_MIP_Display                             4
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_Tune_TimeLimit                          720

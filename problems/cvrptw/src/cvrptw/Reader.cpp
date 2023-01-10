@@ -20,7 +20,7 @@ routing::Problem *cvrptw::Reader::readFile(const std::string & filepath) {
     try {
 
         if (!fh.good()) throw std::string("file open error");
-        unsigned nbClients = 100; // FIXME : retrieve the information
+        unsigned nbClients;
         std::string line;
         getline(fh, line);
         problem->name = line;
@@ -39,7 +39,7 @@ routing::Problem *cvrptw::Reader::readFile(const std::string & filepath) {
         getline(fh, line);
         getline(fh, line);
         getline(fh, line);
-        std::vector<routing::Duration> x(nbClients), y(nbClients);
+        std::vector<routing::Duration> x, y; //(nbClients), y(nbClients);
         while (getline(fh, line)) {
             unsigned i;
             routing::Duration _x, _y, service;
@@ -54,8 +54,8 @@ routing::Problem *cvrptw::Reader::readFile(const std::string & filepath) {
                 problem->setDepot(new models::Depot(1, _x, _y, tw));
             else {
                 problem->clients.push_back(new models::Client(i, _x, _y, demand, service, tw));
-                x[i - 1] = _x;
-                y[i - 1] = _y;
+                x.push_back(_x);//[i - 1] = _x;
+                y.push_back(_y); //y[i - 1] = _y;
             }
         }
         nbClients = problem->clients.size();

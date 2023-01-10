@@ -38,26 +38,29 @@ int main(int argc, const char *argv[]) {
 
 
     std::string output_file;
+    std::string lp_file;
     if (! parser.exists("output")) {
         std::string output_folder = "output/" + std::filesystem::path(inputFile).parent_path().string();
         system((std::string("mkdir -p ") + output_folder).c_str());
-        output_file = output_folder + "/" + std::filesystem::path(inputFile).filename().string() + ".result";
+        output_file = output_folder + "/" + std::filesystem::path(inputFile).replace_extension("").filename().string() + ".result";
+        lp_file = output_folder + "/" + std::filesystem::path(inputFile).replace_extension("").filename().string() + ".lp";
     }else{
         output_file = parser.get<std::string>("output");
+        lp_file = parser.get<std::string>("output") + ".lp";
     }
 
     std::ofstream output(output_file);
-
-#ifdef CPLEX_FOUND
+    #ifdef CPLEX_FOUND
 
     try {
         routing::MIPSolver<cvrptw::Reader> mipSolver(inputFile);
+        mipSolver.getCplex().exportModel(lp_file.c_str());
         mipSolver.solve(timeout);
         mipSolver.save(output);
-
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;
     }
+
 #endif
     return EXIT_SUCCESS;
 }

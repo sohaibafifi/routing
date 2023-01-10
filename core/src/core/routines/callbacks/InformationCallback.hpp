@@ -30,9 +30,11 @@ namespace routing {
             Problem *problem;
 
             void main()  {
-                if (hasIncumbent())
+                if (hasIncumbent()) {
                     getEnv().out() << "I : " << getIncumbentObjValue() << "\t" << getBestObjValue() << "\t"
                                    << getMIPRelativeGap() << "\t" << getDetTime() << std::endl;
+                    problem->getMemory()->add(getDetTime(),  getIncumbentObjValue() );
+                }
                 else
                     getEnv().out() << "I : " << '-' << "\t" << getBestObjValue() << "\t" << getMIPRelativeGap() << "\t"
                                    << getDetTime() << std::endl;
