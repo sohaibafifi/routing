@@ -218,9 +218,20 @@ namespace routing {
         // ========== Distance Calculations ==========
 
         Duration getDistance(const models::Client& c1, const models::Client& c2) const override {
-            // Try to use GeoNode for distance calculation
-            auto* geo1 = dynamic_cast<const attributes::GeoNode*>(&c1);
-            auto* geo2 = dynamic_cast<const attributes::GeoNode*>(&c2);
+            const auto* geo1 = [&]() -> const attributes::GeoNode* {
+                if (auto* e1 = dynamic_cast<const ComposableEntity*>(&c1)) {
+                    return e1->tryGetAttribute<attributes::GeoNode>();
+                }
+                return dynamic_cast<const attributes::GeoNode*>(&c1);
+            }();
+
+            const auto* geo2 = [&]() -> const attributes::GeoNode* {
+                if (auto* e2 = dynamic_cast<const ComposableEntity*>(&c2)) {
+                    return e2->tryGetAttribute<attributes::GeoNode>();
+                }
+                return dynamic_cast<const attributes::GeoNode*>(&c2);
+            }();
+
             if (geo1 && geo2) {
                 return geo1->distanceTo(*geo2);
             }
@@ -228,8 +239,20 @@ namespace routing {
         }
 
         Duration getDistance(const models::Client& c1, const models::Depot& d) const override {
-            auto* geo1 = dynamic_cast<const attributes::GeoNode*>(&c1);
-            auto* geo2 = dynamic_cast<const attributes::GeoNode*>(&d);
+            const auto* geo1 = [&]() -> const attributes::GeoNode* {
+                if (auto* e1 = dynamic_cast<const ComposableEntity*>(&c1)) {
+                    return e1->tryGetAttribute<attributes::GeoNode>();
+                }
+                return dynamic_cast<const attributes::GeoNode*>(&c1);
+            }();
+
+            const auto* geo2 = [&]() -> const attributes::GeoNode* {
+                if (auto* e2 = dynamic_cast<const ComposableEntity*>(&d)) {
+                    return e2->tryGetAttribute<attributes::GeoNode>();
+                }
+                return dynamic_cast<const attributes::GeoNode*>(&d);
+            }();
+
             if (geo1 && geo2) {
                 return geo1->distanceTo(*geo2);
             }
