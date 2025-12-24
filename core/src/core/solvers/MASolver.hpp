@@ -20,21 +20,19 @@
 
 namespace routing {
 
-
-    template<class Reader>
-    class MASolver : public GASolver<Reader> {
+    class MASolver : public GASolver {
 
     public:
-        MASolver(const std::string &p_inputFile,
+        MASolver(routing::Problem *p_problem,
                  Generator *p_generator,
                  const std::vector<Neighborhood *> &p_neighbors,
                  std::ostream &os = std::cout)
-                 : GASolver<Reader>(p_inputFile, p_generator, p_neighbors, os) {
+            : GASolver(p_problem, p_generator, p_neighbors, os) {
         }
 
-        MASolver(const std::string &p_inputFile,
+        MASolver(routing::Problem *p_problem,
                  std::ostream &os = std::cout)
-                 : GASolver<Reader>(p_inputFile, os) {
+            : GASolver(p_problem, os) {
         }
 
         void mutate(Sequence *sequence) override {

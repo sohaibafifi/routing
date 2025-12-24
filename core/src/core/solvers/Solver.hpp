@@ -15,45 +15,36 @@
 #include <filesystem>
 #include <fstream>
 
+namespace routing {
 
-template<class Reader>
 class Solver {
 
-protected :
+protected:
     routing::Problem *problem{};
     routing::models::Solution *solution{};
 
 public:
-    std::string inputFile;
     std::ostream &os;
-    routing::Configuration* configuration{};
+    routing::Configuration *configuration{};
 
-    explicit Solver(const std::string &p_inputFile, std::ostream &os = std::cout) : inputFile(p_inputFile), os(os) {
-        this->problem = Reader().readFile(p_inputFile);
+    explicit Solver(routing::Problem *p_problem, std::ostream &os = std::cout)
+        : problem(p_problem), os(os) {}
 
-    }
+    virtual ~Solver() = default;
 
     virtual bool solve(double timeout = 3600) = 0;
     virtual void setDefaultConfiguration() = 0;
 
-    routing::models::Solution *getSolution() const;
+    routing::models::Solution *getSolution() const { return solution; }
     routing::Problem *getProblem() const { return problem; }
     virtual void save(std::ofstream &output) const;
-
 };
 
-template<class Reader>
-routing::models::Solution *Solver<Reader>::getSolution() const {
-    return solution;
-}
-
-
-template<class Reader>
-void Solver<Reader>::save(std::ofstream& output) const {
-std::string output_folder = "output/" + std::filesystem::path(this->inputFile).parent_path().string();
-    output <<
-           this->getProblem()->getName()
+inline void Solver::save(std::ofstream &output) const {
+    output << this->getProblem()->getName()
            << "\t" << getSolution()->getCost()
            << std::endl;
     output.close();
 }
+
+} // namespace routing

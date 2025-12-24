@@ -12,7 +12,7 @@
 
 
 int main(int argc, const char *argv[]) {
-    argparse::ArgumentParser parser(argv[0], "TOP Solver");
+    argparse::ArgumentParser parser(argv[0], "TOPTW Solver");
     parser.add_argument("-i", "--input", "Instance File", true);
     parser.add_argument("-t", "--timeout", "Timeout in seconds", false);
     parser.enable_help();
@@ -34,7 +34,8 @@ int main(int argc, const char *argv[]) {
 
 #ifdef CPLEX_FOUND
     try {
-        routing::MIPSolver<toptw::Reader> mipSolver(inputFile);
+        auto problem = toptw::Reader().readFile(inputFile);
+        routing::MIPSolver mipSolver(problem);
         mipSolver.solve(timeout);
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;

@@ -25,5 +25,5 @@ target_include_directories(cvrptw PUBLIC ../cvrp/src/)
 # the order of the libraries is important
 target_link_libraries(cvrptw PUBLIC cvrp)
 target_link_libraries(cvrptw PUBLIC vrp)
-target_link_libraries(cvrptw PUBLIC dl)
+routing_target_link_dl(cvrptw)
 target_link_libraries(cvrptw PUBLIC ${CPLEX_LIBRARIES})

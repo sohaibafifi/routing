@@ -19,5 +19,5 @@ target_include_directories(pdvrptw PUBLIC ../cvrp/src/)
 target_include_directories(pdvrptw PUBLIC ../cvrptw/src/)
 
 target_link_libraries(pdvrptw PUBLIC cvrptw)
-target_link_libraries(pdvrptw PUBLIC dl)
+routing_target_link_dl(pdvrptw)
 target_link_libraries(pdvrptw PUBLIC ${CPLEX_LIBRARIES})

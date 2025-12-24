@@ -17,5 +17,5 @@ add_library(vrp SHARED ${vrp_SRC})
 
 target_include_directories(vrp PUBLIC ../../core/src/)
 
-target_link_libraries(vrp PUBLIC dl)
+routing_target_link_dl(vrp)
 target_link_libraries(vrp PUBLIC ${CPLEX_LIBRARIES})

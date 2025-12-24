@@ -30,5 +30,5 @@ target_link_libraries(vrptwtd PUBLIC cvrp)
 target_link_libraries(vrptwtd PUBLIC vrp)
 
 
-target_link_libraries(vrptwtd PUBLIC dl)
+routing_target_link_dl(vrptwtd)
 target_link_libraries(vrptwtd PUBLIC ${CPLEX_LIBRARIES})

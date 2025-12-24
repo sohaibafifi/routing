@@ -179,24 +179,24 @@ namespace routing {
 
     };
 
-    template<class Reader>
-    class GASolver : public Solver<Reader> {
+    class GASolver : public Solver {
     protected:
         std::vector<routing::Neighborhood *> neighbors;
         routing::Generator *generator = nullptr;
     public:
-        GASolver(const std::string &p_inputFile,
+        GASolver(routing::Problem *p_problem,
                  Generator *p_generator,
                  const std::vector<Neighborhood *> &p_neighbors,
-                 std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os),
-                                                 generator(p_generator),
-                                                 neighbors(p_neighbors) {
+                 std::ostream &os = std::cout)
+            : Solver(p_problem, os),
+              generator(p_generator),
+              neighbors(p_neighbors) {
             this->setDefaultConfiguration();
-
         }
 
-        GASolver(const std::string &p_inputFile,
-                 std::ostream &os = std::cout) : Solver<Reader>(p_inputFile, os) {
+        GASolver(routing::Problem *p_problem,
+                 std::ostream &os = std::cout)
+            : Solver(p_problem, os) {
             this->setDefaultConfiguration();
         }
 

@@ -30,5 +30,5 @@ target_link_libraries(tsptw PUBLIC cvrp)
 target_link_libraries(tsptw PUBLIC vrp)
 
 
-target_link_libraries(tsptw PUBLIC dl)
+routing_target_link_dl(tsptw)
 target_link_libraries(tsptw PUBLIC ${CPLEX_LIBRARIES})

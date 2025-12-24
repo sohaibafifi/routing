@@ -14,7 +14,7 @@
 
 
 int main(int argc, const char *argv[]) {
-   argparse::ArgumentParser parser(argv[0], "VRPTW Solver");
+   argparse::ArgumentParser parser(argv[0], "CVRP Solver");
     parser.add_argument("-i", "--input", "Instance File", true);
     parser.add_argument("-o", "--output", "Output File", false);
     parser.add_argument("-t", "--timeout", "Timeout in seconds", false);
@@ -51,7 +51,8 @@ int main(int argc, const char *argv[]) {
     std::ofstream output(output_file);
 #ifdef CPLEX_FOUND
     try {
-        routing::MIPSolver<cvrp::Reader> mipSolver(inputFile);
+        auto problem = cvrp::Reader().readFile(inputFile);
+        routing::MIPSolver mipSolver(problem);
         mipSolver.getCplex().exportModel(lp_file.c_str());
 
         mipSolver.solve(timeout);

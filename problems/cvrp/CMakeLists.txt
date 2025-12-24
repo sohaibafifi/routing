@@ -19,5 +19,5 @@ target_include_directories(cvrp PUBLIC ../vrp/src/)
 
 target_link_libraries(cvrp PUBLIC vrp)
 
-target_link_libraries(cvrp PUBLIC dl)
+routing_target_link_dl(cvrp)
 target_link_libraries(cvrp PUBLIC ${CPLEX_LIBRARIES})

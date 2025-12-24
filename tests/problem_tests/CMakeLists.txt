@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.12)
-
-project(problem_tests)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_OSX_ARCHITECTURES "x86_64")
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
-
-find_package(Cplex)
-include_directories(SYSTEM ${CPLEX_INCLUDE_DIRS})
 include_directories(../lib/googletest/googletest/include ../lib/googletest/googletest)
 
 foreach (problem cvrptw cvrpstw)

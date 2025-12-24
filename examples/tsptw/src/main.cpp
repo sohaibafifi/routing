@@ -50,7 +50,8 @@ int main(int argc, const char *argv[]) {
     #ifdef CPLEX_FOUND
 
     try {
-        routing::MIPSolver<tsptw::Reader> mipSolver(inputFile);
+        auto problem = tsptw::Reader().readFile(inputFile);
+        routing::MIPSolver mipSolver(problem);
         mipSolver.solve(timeout);
         mipSolver.save(output);
     } catch (IloCplex::Exception &exception) {

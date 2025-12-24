@@ -34,7 +34,8 @@ int main(int argc, const char *argv[]) {
 
 #ifdef CPLEX_FOUND
     try {
-        routing::MIPSolver<top::Reader> mipSolver(inputFile);
+        auto problem = top::Reader().readFile(inputFile);
+        routing::MIPSolver mipSolver(problem);
         mipSolver.solve(timeout);
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;

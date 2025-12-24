@@ -14,7 +14,8 @@
 
 TEST_F(ProblemTest, solve) {
     int nbClients = 10;
-    routing::MIPSolver<cvrptw::Reader> mipSolver("../../../data/CVRPTW/Solomon/" + std::to_string(nbClients) + "/c101.txt");
+    auto problem = cvrptw::Reader().readFile("../../../data/CVRPTW/Solomon/" + std::to_string(nbClients) + "/c101.txt");
+    routing::MIPSolver mipSolver(problem);
     EXPECT_FALSE(dynamic_cast<cvrptw::Problem *>(mipSolver.getProblem())->clients.empty());
     EXPECT_EQ(dynamic_cast<cvrptw::Problem *>(mipSolver.getProblem())->clients.size(), nbClients);
     bool solution_found = mipSolver.solve();

@@ -1,24 +1,17 @@
-cmake_minimum_required(VERSION 3.12)
-project(examples)
-enable_testing()
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_OSX_ARCHITECTURES "x86_64")
-
-set(CMAKE_VERBOSE_MAKEFILE on)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake")
-
-find_package(Cplex)
-include_directories(SYSTEM ${CPLEX_INCLUDE_DIRS})
-
-
-
-add_subdirectory(../routing routing)
-set(problems vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw)
-foreach (problem ${problems})
-    add_subdirectory(${problem} examples/${problem})
+set(examples
+    example_vrp
+    example_cvrp
+    example_top
+    example_toptw
+    example_cvrptw
+    example_cvrpstw
+    example_vrptwtd
+    example_tsptw
+)
+set(problem_examples vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw)
+foreach (problem ${problem_examples})
+    add_subdirectory(${problem})
 endforeach ()
 
-
-add_custom_target(examples)
-add_dependencies(examples ${problems})
+add_custom_target(build_examples)
+add_dependencies(build_examples ${examples})

@@ -94,8 +94,7 @@ namespace routing {
     };
 
 
-    template<class Reader>
-    class PSOSolver : public MASolver<Reader> {
+    class PSOSolver : public MASolver {
     protected:
         std::vector<Particle> swarm;
         std::map<PSOKey, unsigned int> sorted_swarm;
@@ -107,18 +106,16 @@ namespace routing {
         virtual bool updateLocalBestSwarm(unsigned int i);
 
     public:
-        PSOSolver(const std::string &p_inputFile,
+        PSOSolver(routing::Problem *p_problem,
                   Generator *p_generator,
                   const std::vector<Neighborhood *> &p_neighbors,
-                  std::ostream &os = std::cout) : MASolver<Reader>(p_inputFile, p_generator, p_neighbors, os) {
-
+                  std::ostream &os = std::cout)
+            : MASolver(p_problem, p_generator, p_neighbors, os) {
         }
 
-        PSOSolver(const std::string &p_inputFile,
-                  std::ostream &os = std::cout) : MASolver<Reader>(p_inputFile, os) {
-
+        PSOSolver(routing::Problem *p_problem,
+                  std::ostream &os = std::cout)
+            : MASolver(p_problem, os) {
         }
-
-
     };
 }

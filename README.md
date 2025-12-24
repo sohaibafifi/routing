@@ -10,9 +10,18 @@ A library to solve vehicle routing problems
 ```bash
 
 git submodule update --init --recursive
-mkdir -p build && cd build && cmake ..
-make
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+ctest --test-dir build --output-on-failure
 ```
+
+Useful CMake options:
+- `-DROUTING_BUILD_EXAMPLES=OFF` (skip examples)
+- `-DBUILD_TESTING=OFF` (skip tests)
+- `-DROUTING_BUILD_CPOPTIMIZER=OFF` (skip `cpoptimizer`)
+- `-DROUTING_BUILD_GRB=ON` (build `grb` if GUROBI is found)
+
+On macOS, the build defaults to your host architecture (e.g. `arm64`). Override with `-DCMAKE_OSX_ARCHITECTURES=...` if needed.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
