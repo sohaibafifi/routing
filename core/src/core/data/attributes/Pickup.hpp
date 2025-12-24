@@ -5,21 +5,33 @@
 #pragma once
 
 #include "core/data/attributes.hpp"
+#include <memory>
 
 namespace routing {
     typedef int PickupDemand;
     namespace attributes {
 
         /**
- * @brief a node with a pickup
- *
- */
-        struct Pickup {
+         * @brief Pickup demand at a node
+         *
+         * Pickup models goods to be collected from this node,
+         * adding to the vehicle's current load.
+         */
+        struct Pickup : public Attribute<Pickup> {
             explicit Pickup(const PickupDemand &p_pickup) : pickup(p_pickup) {}
 
-            EntityData <PickupDemand> pickup;
+            EntityData<PickupDemand> pickup;
 
             PickupDemand getPickup() const { return this->pickup.getValue(); }
+
+            // IAttribute implementation
+            std::unique_ptr<IAttribute> clone() const override {
+                return std::make_unique<Pickup>(getPickup());
+            }
+
+            std::string name() const override {
+                return "Pickup";
+            }
         };
 
     }

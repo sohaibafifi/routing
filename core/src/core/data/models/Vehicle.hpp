@@ -10,7 +10,7 @@ namespace routing {
 
     namespace models {
 
-        struct Vehicle : public Model {
+        struct Vehicle : public virtual Model {
             explicit Vehicle(unsigned id) {
                 Model::setID(id);
             }

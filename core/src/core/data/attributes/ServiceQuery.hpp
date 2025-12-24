@@ -6,18 +6,31 @@
 
 #include "core/data/attributes.hpp"
 #include "GeoNode.hpp"
+#include <memory>
 
 namespace routing {
     namespace attributes {
         /**
-         * @brief a node requiring a service
+         * @brief Service time required at a node
+         *
+         * ServiceQuery models the time duration required to perform
+         * service at this node (loading, unloading, etc.).
          */
-        struct ServiceQuery {
+        struct ServiceQuery : public Attribute<ServiceQuery> {
             ServiceQuery(const Duration &p_service) : service(p_service) {}
 
-            EntityData <Duration> service;
+            EntityData<Duration> service;
 
             Duration getService() const { return this->service.getValue(); }
+
+            // IAttribute implementation
+            std::unique_ptr<IAttribute> clone() const override {
+                return std::make_unique<ServiceQuery>(getService());
+            }
+
+            std::string name() const override {
+                return "ServiceQuery";
+            }
         };
     }
 }

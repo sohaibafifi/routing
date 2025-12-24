@@ -6,20 +6,34 @@
 
 #include "core/data/attributes.hpp"
 #include "ServiceQuery.hpp"
+#include <memory>
 
 namespace routing {
 
     namespace attributes {
 
-
-        struct Service {
+        /**
+         * @brief Service start time (solution value)
+         *
+         * Service stores the actual start time of service at a node
+         * in the current solution. This is a mutable solution value.
+         */
+        struct Service : public Attribute<Service> {
             Service(const Duration &p_start) : start(p_start) {}
 
             SolutionValue<Duration> start;
 
             Duration getStart() const { return this->start.getValue(); }
-
             void setStart(Duration start) { this->start.setValue(start); }
+
+            // IAttribute implementation
+            std::unique_ptr<IAttribute> clone() const override {
+                return std::make_unique<Service>(getStart());
+            }
+
+            std::string name() const override {
+                return "Service";
+            }
         };
 
     }

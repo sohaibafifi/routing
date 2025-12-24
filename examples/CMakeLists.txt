@@ -7,8 +7,9 @@ set(examples
     example_cvrpstw
     example_vrptwtd
     example_tsptw
+    example_composable
 )
-set(problem_examples vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw)
+set(problem_examples vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw composable)
 foreach (problem ${problem_examples})
     add_subdirectory(${problem})
 endforeach ()

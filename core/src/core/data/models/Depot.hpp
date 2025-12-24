@@ -10,7 +10,7 @@ namespace routing {
 
     namespace models {
 
-        struct Depot : public Model {
+        struct Depot : public virtual Model {
             explicit Depot(unsigned id) {
                 Model::setID(id);
             }
