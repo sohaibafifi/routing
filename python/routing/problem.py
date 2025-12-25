@@ -26,6 +26,11 @@ class ProblemBuilder:
         self._client_id = 1
         self._vehicle_id = 0
         self._depot_added = False
+        self._needs_geo = False
+        self._needs_consumer = False
+        self._needs_stock = False
+        self._needs_rendezvous = False
+        self._needs_service = False
 
     def with_depot(
         self,
@@ -37,8 +42,10 @@ class ProblemBuilder:
         """Add depot with location and optional time window."""
         depot = self._problem.add_depot(0)
         _core.set_depot_location(depot, x, y)
+        self._needs_geo = True
         if tw_open is not None and tw_close is not None:
             _core.set_depot_time_window(depot, tw_open, tw_close)
+            self._needs_rendezvous = True
         self._depot_added = True
         return self
 
@@ -59,15 +66,19 @@ class ProblemBuilder:
 
         client = self._problem.add_client(client_id)
         _core.set_client_location(client, x, y)
+        self._needs_geo = True
 
         if demand > 0:
             _core.set_client_demand(client, demand)
+            self._needs_consumer = True
 
         if tw_open is not None and tw_close is not None:
             _core.set_client_time_window(client, tw_open, tw_close)
+            self._needs_rendezvous = True
 
-        if service_time > 0:
+        if service_time > 0 or (tw_open is not None and tw_close is not None):
             _core.set_client_service_time(client, service_time)
+            self._needs_service = True
 
         return self
 
@@ -104,6 +115,7 @@ class ProblemBuilder:
 
         vehicle = self._problem.add_vehicle(vehicle_id)
         _core.set_vehicle_capacity(vehicle, capacity)
+        self._needs_stock = True
         return self
 
     def add_vehicles(
@@ -122,6 +134,22 @@ class ProblemBuilder:
             # Add default depot at origin
             depot = self._problem.add_depot(0)
             _core.set_depot_location(depot, 0, 0)
+            self._needs_geo = True
+
+        attributes = []
+        if self._needs_geo:
+            attributes.append("GeoNode")
+        if self._needs_consumer:
+            attributes.append("Consumer")
+        if self._needs_stock:
+            attributes.append("Stock")
+        if self._needs_rendezvous:
+            attributes.append("Rendezvous")
+        if self._needs_service:
+            attributes.append("ServiceQuery")
+
+        if attributes:
+            self._problem.enable_attributes(attributes)
 
         return self._problem
 

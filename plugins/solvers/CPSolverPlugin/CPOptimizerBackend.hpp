@@ -34,7 +34,7 @@ public:
         , solved_(false)
     {
         // Set default parameters
-        cp_.setParameter(IloCP::LogVerbosity, IloCP::Quiet);
+        // cp_.setParameter(IloCP::LogVerbosity, IloCP::Quiet);
     }
 
     ~CPOptimizerBackend() override {
@@ -137,6 +137,13 @@ public:
         }
     }
 
+    void addReification(IntVar indicator, IntVar var, int value) override {
+        // Create equivalence: indicator == 1 iff var == value
+        IloIntVar ind = getIloIntVar(indicator);
+        IloIntVar v = getIloIntVar(var);
+        model_.add((v == value) == (ind == 1));
+    }
+
     // ========== Global Constraints ==========
 
     void addAllDifferent(const std::vector<IntVar>& vars) override {
@@ -196,9 +203,41 @@ public:
     }
 
     void addSubCircuit(const std::vector<IntVar>& next) override {
-        // Allow nodes to point to themselves (self-loops)
-        // This is similar to circuit but with relaxed constraints
-        addAllDifferent(next);
+        // SubCircuit allows self-loops (next[i] = i means node i is not used)
+        // Nodes that are not self-loops must form valid cycles
+        //
+        // Unlike circuit (which requires all nodes form a single Hamiltonian cycle),
+        // subcircuit allows:
+        // 1. Self-loops (node points to itself - not used in any tour)
+        // 2. Multiple disjoint cycles (each vehicle has its own tour)
+        //
+        // CP Optimizer doesn't have native subcircuit support.
+        // We implement the "no two nodes point to same target" constraint,
+        // excluding self-loops.
+
+        int n = static_cast<int>(next.size());
+
+        // For each pair of nodes, they cannot both point to the same non-self target
+        // Use element constraint approach: create inverse variables
+        // prev[j] = i means node i points to j (next[i] = j)
+        // Each non-self-loop target can have at most one predecessor
+
+        // Simpler approach: for each possible target k,
+        // at most one node i (where i != k) can have next[i] = k
+        for (int k = 0; k < n; ++k) {
+            IloIntVarArray pointsToK(env_);
+            for (int i = 0; i < n; ++i) {
+                if (i != k) {  // Exclude self-loop case
+                    IloIntVar indicator = IloBoolVar(env_);
+                    model_.add((getIloIntVar(next[i]) == k) == (indicator == 1));
+                    pointsToK.add(indicator);
+                }
+            }
+            // At most one node can point to k (excluding self-loop)
+            if (pointsToK.getSize() > 0) {
+                model_.add(IloSum(pointsToK) <= 1);
+            }
+        }
     }
 
     void addInverse(const std::vector<IntVar>& next,

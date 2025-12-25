@@ -12,6 +12,11 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Solution.hpp"
 #include "plugins/PluginBundle.hpp"
+#include "plugins/constraints/cp/CPCapacityGenerator.hpp"
+#include "plugins/constraints/cp/CPRoutingGenerator.hpp"
+#include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
+#include "plugins/solvers/CPSolverPlugin/CPSolver.hpp"
+#include "plugins/solvers/XCSP3SolverPlugin/XCSP3Solver.hpp"
 
 namespace nb = nanobind;
 using namespace routing;
@@ -40,7 +45,44 @@ void bind_solver(nb::module_& m) {
         .def("is_optimal", &ISolver::isOptimal,
              "Check if the solution is proven optimal")
         .def("get_stats", &ISolver::getStats,
-             "Get solver statistics as string");
+             "Get solver statistics as string")
+        .def("set_verbose", [](ISolver& solver, bool verbose) {
+            if (auto* cpSolver = dynamic_cast<cp::CPSolver*>(&solver)) {
+                cpSolver->setVerbose(verbose);
+                return;
+            }
+            if (auto* xcspSolver = dynamic_cast<cp::XCSP3Solver*>(&solver)) {
+                xcspSolver->setVerbose(verbose);
+                return;
+            }
+            throw std::runtime_error("Verbose flag is not supported for solver: " + solver.name());
+        }, nb::arg("verbose"), "Enable verbose logging (CP/XCSP3 only)")
+        .def("add_cp_generators", [](ISolver& solver) {
+            auto add_all = [](auto& target) {
+                auto routing = std::make_unique<cp::generators::CPRoutingGenerator>();
+                auto* routingPtr = routing.get();
+
+                auto capacity = std::make_unique<cp::generators::CPCapacityGenerator>();
+                capacity->setRoutingGenerator(routingPtr);
+
+                auto timeWindow = std::make_unique<cp::generators::CPTimeWindowGenerator>();
+                timeWindow->setRoutingGenerator(routingPtr);
+
+                target.addGenerator(std::move(routing));
+                target.addGenerator(std::move(capacity));
+                target.addGenerator(std::move(timeWindow));
+            };
+
+            if (auto* cpSolver = dynamic_cast<cp::CPSolver*>(&solver)) {
+                add_all(*cpSolver);
+                return;
+            }
+            if (auto* xcspSolver = dynamic_cast<cp::XCSP3Solver*>(&solver)) {
+                add_all(*xcspSolver);
+                return;
+            }
+            throw std::runtime_error("CP generators are not supported for solver: " + solver.name());
+        }, "Add default CP generators (routing, capacity, time windows)");
 
     // Solver factory function
     m.def("create_solver", [](const std::string& solver_type, Problem* problem) -> ISolver* {
@@ -81,7 +123,7 @@ void bind_solver(nb::module_& m) {
     }, "List available solver types");
 
     // Convenience solve function
-    m.def("solve", [](Problem* problem, const std::string& solver_type, double timeout) {
+    m.def("solve", [](Problem* problem, const std::string& solver_type, double timeout, bool verbose) {
         ensure_plugins();
         auto& registry = PluginRegistry::instance();
 
@@ -94,6 +136,13 @@ void bind_solver(nb::module_& m) {
         }
 
         solver->setDefaultConfiguration();
+
+        if (auto* cpSolver = dynamic_cast<cp::CPSolver*>(solver.get())) {
+            cpSolver->setVerbose(verbose);
+        } else if (auto* xcspSolver = dynamic_cast<cp::XCSP3Solver*>(solver.get())) {
+            xcspSolver->setVerbose(verbose);
+        }
+
         bool success = solver->solve(timeout);
 
         if (success) {
@@ -105,7 +154,7 @@ void bind_solver(nb::module_& m) {
 
         return static_cast<Solution*>(nullptr);
     }, nb::rv_policy::take_ownership,
-       nb::arg("problem"), nb::arg("solver_type") = "ga", nb::arg("timeout") = 60.0,
+       nb::arg("problem"), nb::arg("solver_type") = "ga", nb::arg("timeout") = 60.0, nb::arg("verbose") = false,
        R"doc(
            Solve a problem with the specified solver.
 

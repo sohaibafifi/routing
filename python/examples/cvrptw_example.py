@@ -26,7 +26,7 @@ def create_simple_cvrptw():
         (2, 30, 40, 15, 10, 80, 10),
         (3, 50, 30, 20, 20, 90, 10),
         (4, 40, 60, 10, 30, 100, 10),
-        (5, 60, 50, 25, 0, 70, 10),
+        (5, 60, 50, 25, 0, 90, 10),
         (6, 70, 20, 15, 40, 120, 10),
         (7, 35, 35, 10, 0, 100, 10),
         (8, 25, 55, 20, 50, 110, 10),
@@ -55,13 +55,16 @@ def create_simple_cvrptw():
     # Add 3 vehicles with capacity 50
     builder.add_vehicles(3, capacity=50)
 
-    return builder.build()
+    problem = builder.build()
+    problem.enable_attributes(["GeoNode", "Consumer", "Stock", "Rendezvous", "ServiceQuery"])
+    return problem
 
 
 def create_cvrptw_manual():
     """Create the same problem using the low-level API."""
 
     problem = routing.Problem()
+    problem.enable_attributes(["GeoNode", "Consumer", "Stock", "Rendezvous", "ServiceQuery"])
 
     # Add depot
     depot = problem.add_depot(0)
@@ -74,7 +77,7 @@ def create_cvrptw_manual():
         (2, 30, 40, 15, 10, 80, 10),
         (3, 50, 30, 20, 20, 90, 10),
         (4, 40, 60, 10, 30, 100, 10),
-        (5, 60, 50, 25, 0, 70, 10),
+        (5, 60, 50, 25, 0, 90, 10),
         (6, 70, 20, 15, 40, 120, 10),
         (7, 35, 35, 10, 0, 100, 10),
         (8, 25, 55, 20, 50, 110, 10),
@@ -148,10 +151,40 @@ def main():
 
 
 
+    results = []
+
     # Solve with MIP
     print("3. Solving with mip")
-    solution_mip = routing.solve(problem, "mip", timeout=30)
+    solution_mip = routing.solve(problem, "mip", timeout=30, verbose=True)
     print_solution(solution_mip)
+    results.append(("MIP", solution_mip.cost if solution_mip else float('inf')))
+
+    # Solve with Genetic Algorithm
+    print("4. Solving with ga")
+    solution_ga = routing.solve(problem, "ga", timeout=30, verbose=True)
+    print_solution(solution_ga)
+    results.append(("Genetic Algorithm", solution_ga.cost if solution_ga else float('inf')))
+
+    # Solve using CP Solver
+    print("5. Solving with cp")
+    solution_cp = routing.solve(problem, "cp", timeout=30, verbose=True)
+    print_solution(solution_cp)
+    results.append(("Constraint Programming", solution_cp.cost if solution_cp else float('inf')))
+
+    # Solve using xcsp Solver
+    print("6. Solving with xcsp3")
+    solution_xcsp = routing.solve(problem, "xcsp3", timeout=30, verbose=True)
+    print_solution(solution_xcsp)
+    results.append(("XCSP3", solution_xcsp.cost if solution_xcsp else float('inf')))
+
+    # Print summary table
+    print("\n" + "="*40)
+    print(f"{'Solver':<25} | {'Cost':>10}")
+    print("-" * 40)
+    for solver, cost in results:
+        cost_str = f"{cost:.2f}" if cost != float('inf') else "No Solution"
+        print(f"{solver:<25} | {cost_str:>10}")
+    print("="*40 + "\n")
 
 
 

@@ -342,10 +342,10 @@ namespace routing {
 #ifdef CPLEX_FOUND
         // ========== CPLEX Variables (public for generators) ==========
 
-        IloCplex cplex;
-        IloObjective obj;
-        IloModel model;
         IloEnv env;
+        IloModel model;
+        IloObjective obj;
+        IloCplex cplex;
 
         /// Arc variables: arcs[i][j] = 1 if arc from i to j is used
         std::vector<std::vector<IloNumVar>> arcs;
@@ -443,6 +443,9 @@ namespace routing {
 
         // Memory singleton
         std::unique_ptr<Memory> memory_;
+
+        // Cached initializer to avoid repeated allocations.
+        std::unique_ptr<Initializer> initializer_;
     };
 
     // Backward compatibility alias (deprecated)
@@ -472,12 +475,33 @@ namespace routing {
     };
 
     inline Initializer* Problem::initializer() {
-        return new DefaultInitializer(this);
+        if (!initializer_) {
+            initializer_ = std::make_unique<DefaultInitializer>(this);
+        }
+        return initializer_.get();
     }
 
     // Tour implementations that need Problem definition
     inline Tour::Tour(Problem* p_problem, unsigned vehicleID)
         : models::Tour(p_problem, vehicleID), cost_(0) {}
+
+    inline void Tour::update() {
+        cost_ = 0;
+        if (clients_.empty()) {
+            return;
+        }
+
+        auto* depot = problem ? problem->getDepot() : nullptr;
+        if (!depot) {
+            return;
+        }
+
+        cost_ += problem->getDistance(*clients_.front(), *depot);
+        for (size_t i = 1; i < clients_.size(); ++i) {
+            cost_ += problem->getDistance(*clients_[i - 1], *clients_[i]);
+        }
+        cost_ += problem->getDistance(*clients_.back(), *depot);
+    }
 
     inline models::Tour* Tour::clone() const {
         auto* copy = new Tour(problem, getID());
@@ -488,13 +512,21 @@ namespace routing {
 
     // Solution implementations that need Problem definition
     inline Solution* Solution::initFromSequence(Problem* problem, std::vector<models::Client*> sequence) {
-        auto* sol = new Solution(problem);
+        for (auto* tour : tours_) {
+            delete tour;
+        }
+        tours_.clear();
+        notserved.clear();
+        totalCost_ = 0;
+        problem_ = problem;
+
         auto* tour = new Tour(problem, 0);
         for (auto* client : sequence) {
             tour->_pushClient(client);
         }
-        sol->pushTour(tour);
-        return sol;
+        pushTour(tour);
+        update();
+        return this;
     }
 
 } // namespace routing

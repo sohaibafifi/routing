@@ -94,3 +94,5 @@ __pycache__
 venv
 .idea
 *.so
+python/.skbuild/**
+ACE.jar

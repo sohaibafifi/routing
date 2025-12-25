@@ -33,10 +33,7 @@ namespace routing {
     public:
         Tour(Problem* p_problem, unsigned vehicleID);
 
-        void update() override {
-            // Recalculate cost based on route
-            cost_ = 0;
-        }
+        void update() override;
 
         void pushClient(models::Client* client, InsertionCost* cost) override {
             clients_.push_back(client);

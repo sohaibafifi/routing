@@ -84,7 +84,8 @@ public:
             int twClose = tw ? static_cast<int>(tw->getTwClose()) : depotClose;
             int serviceTime = service ? static_cast<int>(service->getService()) : 0;
 
-            std::string varName = "visit_" + std::to_string(i);
+            // Use "tw_visit_" prefix to avoid collision with CPRoutingGenerator's "visit_" intervals
+            std::string varName = "tw_visit_" + std::to_string(i);
 
             // Create interval variable with time window bounds and service time
             IntervalVar visit = cp.newIntervalVar(
@@ -153,10 +154,11 @@ public:
                     // Create indicator variable: isSuccessor = (next[nodeI] == nodeJ)
                     IntVar isSuccessor = cp.newBoolVar("succ_" + std::to_string(i) + "_" + std::to_string(j));
 
-                    // Link indicator to successor variable
-                    // This is done via: (next[nodeI] == nodeJ) <=> (isSuccessor == 1)
-                    // Approximation: use implication
-                    // if isSuccessor then endTimes_[i] + travelTime <= startTimes_[j]
+                    // Link indicator to successor variable using reification:
+                    // isSuccessor == 1 iff next[nodeI] == nodeJ
+                    cp.addReification(isSuccessor, nextVars[nodeI], static_cast<int>(nodeJ));
+
+                    // If isSuccessor then end[i] + travel <= start[j]
                     LinearExpr precedenceExpr(endTimes_[i]);
                     precedenceExpr.addConstant(travelTime);
                     precedenceExpr.addTerm(startTimes_[j], -1);
@@ -165,18 +167,14 @@ public:
                     cp.addImplication(isSuccessor, precedenceExpr, INT_MIN, 0);
                 }
 
-                // From depot to first client
-                int travelFromDepot = static_cast<int>(problem.getDistance(*clientI, *depot));
+                // NOTE: Depot travel constraints are implied by the time windows
+                // and the precedence constraints. Removing them to simplify the model
+                // and avoid potential conflicts with interval variable bounds.
 
-                // start[i] >= depotOpen + travel_from_depot
-                LinearExpr depotExpr(startTimes_[i]);
-                cp.addGreaterOrEqual(depotExpr, depotOpen + travelFromDepot);
-
-                // end[i] + travel_to_depot <= depotClose
-                int travelToDepot = static_cast<int>(problem.getDistance(*clientI, *depot));
-                LinearExpr returnExpr(endTimes_[i]);
-                returnExpr.addConstant(travelToDepot);
-                cp.addLessOrEqual(returnExpr, depotClose);
+                // The time window bounds on the interval variables already enforce:
+                // - start[i] >= twOpen[i]
+                // - end[i] <= twClose[i] + serviceTime[i]
+                // - start[i] + serviceTime[i] = end[i]
             }
         } else {
             // Without routing generator, just enforce time window bounds

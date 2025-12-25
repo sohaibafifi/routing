@@ -139,6 +139,12 @@ public:
      */
     virtual void addImplication(IntVar condition, const LinearExpr& expr, int lb, int ub) = 0;
 
+    /**
+     * @brief Add reification: indicator == 1 iff var == value
+     * This creates a channeling constraint linking a boolean indicator to a condition
+     */
+    virtual void addReification(IntVar indicator, IntVar var, int value) = 0;
+
     // ========== Global Constraints ==========
 
     /**

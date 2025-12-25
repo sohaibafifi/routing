@@ -14,6 +14,8 @@
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
 #include <cassert>
 #include <algorithm>
+#include <chrono>
+#include <functional>
 #include <set>
 #include <utility>
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
@@ -46,7 +48,13 @@ namespace routing {
         }
 
         friend bool operator<(const Sequence &lhs, const Sequence &rhs) {
-            return rhs.cost > lhs.cost;
+            if (lhs.cost != rhs.cost) {
+                return lhs.cost < rhs.cost;
+            }
+            if (lhs.hash != rhs.hash) {
+                return lhs.hash < rhs.hash;
+            }
+            return std::less<const Sequence*>{}(&lhs, &rhs);
         }
 
         Sequence(Problem *p_problem) : problem(p_problem) {
@@ -59,6 +67,10 @@ namespace routing {
             hash = getHash();
             cost = decode()->getCost();
             problem->getMemory()->add(hash, cost);
+        }
+
+        ~Sequence() {
+            delete solution;
         }
 
         Solution *decode() {
@@ -112,7 +124,10 @@ namespace routing {
         Population(Problem *p_problem) : problem(p_problem) {
             sequences = std::set<Sequence *, ChromosomeCmp>();
             while (sequences.size() < problem->clients.size()) {
-                sequences.insert(new Sequence(problem));
+                auto* sequence = new Sequence(problem);
+                if (!sequences.insert(sequence).second) {
+                    delete sequence;
+                }
             }
         }
 
@@ -159,21 +174,31 @@ namespace routing {
         }
 
         bool insert(Sequence *sequence) {
-            if (*sequence < **sequences.rbegin()) {
-                if (sequences.insert(sequence).second) {
-                    sequences.erase(prev(sequences.end()));
-                    return true;
-                } else return false;
+            if (sequences.empty()) {
+                return sequences.insert(sequence).second;
             }
-            return false;
+
+            auto worst_it = std::prev(sequences.end());
+            if (!(*sequence < **worst_it)) {
+                return false;
+            }
+
+            if (!sequences.insert(sequence).second) {
+                return false;
+            }
+
+            worst_it = std::prev(sequences.end());
+            Sequence* to_remove = *worst_it;
+            sequences.erase(worst_it);
+            delete to_remove;
+            return true;
         }
 
         ~Population() {
-            while (std::begin(sequences) != std::end(sequences)) {
-                std::set<Sequence *>::iterator to_delete = sequences.begin();
-                sequences.erase(to_delete);
-                delete *to_delete;
+            for (auto* seq : sequences) {
+                delete seq;
             }
+            sequences.clear();
         }
 
     };
@@ -221,12 +246,25 @@ namespace routing {
             int iter = 1;
             double bestCost = population->best()->getCost();
             std::random_device rd;
+            const auto start = std::chrono::steady_clock::now();
             while (iter++ < itermax) {
+                if (timeout > 0) {
+                    const auto elapsed = std::chrono::duration<double>(
+                        std::chrono::steady_clock::now() - start).count();
+                    if (elapsed >= timeout) {
+                        break;
+                    }
+                }
+
                 Sequence *child = population->evolve();
                 // TODO : investigate mutation probability
                 if( (rd() * 1.0 / rd.max() * 1.0) < (iter * 1.0 / itermax * 1.0)   )
                      mutate(child);
-                if (population->insert(child)) iter = 1;
+                if (population->insert(child)) {
+                    iter = 1;
+                } else {
+                    delete child;
+                }
                 if (population->best()->getCost() < bestCost - 1e-9) {
                     this->os << bestCost << std::endl;
                     bestCost = population->best()->getCost();

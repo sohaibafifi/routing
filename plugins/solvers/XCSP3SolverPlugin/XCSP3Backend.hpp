@@ -42,6 +42,7 @@ public:
     void addLinearConstraint(const LinearExpr& expr, int lb, int ub) override;
     void addLessOrEqual(IntVar var1, IntVar var2, int offset = 0) override;
     void addImplication(IntVar condition, const LinearExpr& expr, int lb, int ub) override;
+    void addReification(IntVar indicator, IntVar var, int value) override;
 
     // Global Constraints
     void addAllDifferent(const std::vector<IntVar>& vars) override;

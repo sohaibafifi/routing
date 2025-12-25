@@ -106,15 +106,12 @@ public:
 
                 for (size_t i = 0; i < n; ++i) {
                     // If vehicleOf[i] == k, add demand[i] to the sum
-                    // We need to create indicator variables and use conditional expressions
-
                     IntVar onVehicle = cp.newBoolVar("on_v" + std::to_string(k) + "_" + std::to_string(i));
 
-                    // Link: onVehicle <=> (vehicleOf[i] == k)
-                    // This is approximated by implications
+                    // Link: onVehicle == 1 iff vehicleOf[i] == k
+                    cp.addReification(onVehicle, vehicleOfVars[i], static_cast<int>(k));
 
                     // demand contribution = demand[i] * onVehicle
-                    // We add: demand[i] to the expression when onVehicle is true
                     loadExpr.addTerm(onVehicle, demands_[i]);
                 }
 
@@ -122,10 +119,8 @@ public:
                 cp.addLessOrEqual(loadExpr, capacities_[k]);
             }
 
-            // Alternative: MTZ-style load propagation
-            // If next[i] == j and both are clients, then load[j] >= load[i] + demand[j]
-            size_t numVeh = routingGen_->getNumVehicles();
-
+            // MTZ-style load propagation
+            // If next[nodeI] == nodeJ, then load[j] >= load[i] + demand[j]
             for (size_t i = 0; i < n; ++i) {
                 size_t nodeI = routingGen_->clientNodeIndex(i);
 
@@ -136,16 +131,15 @@ public:
                     // If next[nodeI] == nodeJ, then load[j] >= load[i] + demand[j]
                     IntVar isSucc = cp.newBoolVar("load_succ_" + std::to_string(i) + "_" + std::to_string(j));
 
+                    // Link: isSucc == 1 iff next[nodeI] == nodeJ
+                    cp.addReification(isSucc, nextVars[nodeI], static_cast<int>(nodeJ));
+
                     // Load propagation: if isSucc then load[j] >= load[i] + demand[j]
-                    // Equivalently: load[j] - load[i] >= demand[j] when isSucc
                     LinearExpr propExpr(loadVars_[j]);
                     propExpr.addTerm(loadVars_[i], -1);
 
                     cp.addImplication(isSucc, propExpr, demands_[j], INT_MAX);
                 }
-
-                // First client from depot: load[i] = demand[i]
-                // This is handled implicitly as load starts at demand
             }
         } else {
             // Without routing generator, just enforce basic capacity constraint

@@ -39,6 +39,7 @@ class Solver:
         self._solver = None
         self._solution = None
         self.timeout = 60.0
+        self._verbose = False
 
         if problem is not None:
             self._create_solver()
@@ -48,6 +49,10 @@ class Solver:
         if self._problem is None:
             raise ValueError("Problem must be set before creating solver")
         self._solver = _core.create_solver(self.solver_type, self._problem)
+        try:
+            self._solver.set_verbose(self._verbose)
+        except AttributeError:
+            pass
 
     @property
     def problem(self) -> Optional[_core.Problem]:
@@ -82,6 +87,16 @@ class Solver:
 
         return None
 
+    def add_cp_generators(self) -> None:
+        """
+        Add default CP generators (routing, capacity, time windows).
+
+        Only applies to CP/XCSP3 solvers.
+        """
+        if self._solver is None:
+            self._create_solver()
+        self._solver.add_cp_generators()
+
     @property
     def solution(self) -> Optional[_core.Solution]:
         """Get the solution (after solving)."""
@@ -107,6 +122,22 @@ class Solver:
         if self._solver is None:
             return ""
         return self._solver.get_stats()
+
+    @property
+    def verbose(self) -> bool:
+        """Get verbose flag."""
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value: bool):
+        """Set verbose flag (CP/XCSP3 only)."""
+        self._verbose = bool(value)
+        if self._solver is None:
+            return
+        try:
+            self._solver.set_verbose(self._verbose)
+        except AttributeError:
+            pass
 
     def __enter__(self):
         """Context manager entry."""

@@ -9,6 +9,9 @@
 #include "core/interfaces/ICPConstraintGenerator.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "CPOptimizerBackend.hpp"
+#include "plugins/constraints/cp/CPCapacityGenerator.hpp"
+#include "plugins/constraints/cp/CPRoutingGenerator.hpp"
+#include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
 
 #include <memory>
 #include <vector>
@@ -97,7 +100,6 @@ public:
 
         // Solve
         CPStatus status = backend_->solve(timeout_);
-
         if (verbose_) {
             std::cout << "[CPSolver] Status: " << toString(status)
                       << ", Time: " << backend_->getSolveTime() << "s" << std::endl;
@@ -160,17 +162,62 @@ private:
 
     std::unique_ptr<ICPBackend> backend_;
     std::vector<std::unique_ptr<ICPConstraintGenerator>> customGenerators_;
+    std::vector<std::unique_ptr<ICPConstraintGenerator>> autoGenerators_;
+    generators::CPRoutingGenerator* routingGen_ = nullptr;
 
     void buildModel() {
         backend_->clear();
 
         // Collect all active generators
         std::vector<ICPConstraintGenerator*> generators;
+        autoGenerators_.clear();
+
+        const auto& enabled = problem_->getEnabledAttributes();
+        bool hasGeo = enabled.count(std::type_index(typeid(attributes::GeoNode))) > 0;
+        bool hasCapacity = enabled.count(std::type_index(typeid(attributes::Consumer))) > 0
+            && enabled.count(std::type_index(typeid(attributes::Stock))) > 0;
+        bool hasTimeWindow = enabled.count(std::type_index(typeid(attributes::Rendezvous))) > 0
+            && enabled.count(std::type_index(typeid(attributes::ServiceQuery))) > 0;
+
+        generators::CPRoutingGenerator* routing = nullptr;
+        if (hasGeo) {
+            auto gen = std::make_unique<generators::CPRoutingGenerator>();
+            routing = gen.get();
+            autoGenerators_.push_back(std::move(gen));
+        }
+
+        // Test: Enable capacity only
+        if (hasCapacity) {
+            auto gen = std::make_unique<generators::CPCapacityGenerator>();
+            if (routing) {
+                gen->setRoutingGenerator(routing);
+            }
+            autoGenerators_.push_back(std::move(gen));
+        }
+
+        // Time window generator - causes infeasibility
+        if (hasTimeWindow) {
+            auto gen = std::make_unique<generators::CPTimeWindowGenerator>();
+            if (routing) {
+                gen->setRoutingGenerator(routing);
+            }
+            autoGenerators_.push_back(std::move(gen));
+        }
+
+        routingGen_ = nullptr;
+        for (auto& gen : autoGenerators_) {
+            if (auto* routingPtr = dynamic_cast<generators::CPRoutingGenerator*>(gen.get())) {
+                routingGen_ = routingPtr;
+                break;
+            }
+        }
+
+        for (auto& gen : autoGenerators_) {
+            generators.push_back(gen.get());
+        }
         for (auto& gen : customGenerators_) {
             generators.push_back(gen.get());
         }
-
-        // TODO: Also get generators from PluginRegistry based on problem attributes
 
         // Sort by priority
         std::sort(generators.begin(), generators.end(),
@@ -218,11 +265,27 @@ private:
         solution_ = new Solution(problem_);
 
         // Let generators extract their solution data
+        for (auto& gen : autoGenerators_) {
+            gen->extractSolution(*backend_, *problem_);
+        }
         for (auto& gen : customGenerators_) {
             gen->extractSolution(*backend_, *problem_);
         }
 
-        // TODO: Extract tour information from CP variables
+        if (routingGen_) {
+            const auto& routes = routingGen_->getRoutes();
+            const auto clients = problem_->getComposableClients();
+            for (size_t k = 0; k < routes.size(); ++k) {
+                auto* tour = new Tour(problem_, static_cast<unsigned>(k));
+                for (int clientIdx : routes[k]) {
+                    if (clientIdx >= 0 && static_cast<size_t>(clientIdx) < clients.size()) {
+                        tour->_pushClient(clients[static_cast<size_t>(clientIdx)]);
+                    }
+                }
+                solution_->pushTour(tour);
+            }
+            solution_->update();
+        }
     }
 };
 

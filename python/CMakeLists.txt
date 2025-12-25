@@ -46,6 +46,13 @@ target_include_directories(_routing_core PRIVATE
 
 target_link_libraries(_routing_core PRIVATE routing routing_plugins ${CPLEX_LIBRARIES})
 
+# Ensure the extension can locate librouting when installed.
+if(APPLE)
+    set_target_properties(_routing_core PROPERTIES INSTALL_RPATH "@loader_path")
+elseif(UNIX)
+    set_target_properties(_routing_core PROPERTIES INSTALL_RPATH "$ORIGIN")
+endif()
+
 # Propagate CPLEX compile definitions
 if(CPLEX_FOUND)
     target_compile_definitions(_routing_core PRIVATE CPLEX_FOUND)
@@ -58,4 +65,5 @@ configure_file(routing/solver.py ${CMAKE_CURRENT_BINARY_DIR}/routing/solver.py C
 
 # Install the module
 install(TARGETS _routing_core LIBRARY DESTINATION routing)
+install(TARGETS routing LIBRARY DESTINATION routing)
 install(DIRECTORY routing/ DESTINATION routing FILES_MATCHING PATTERN "*.py")

@@ -199,6 +199,15 @@ void XCSP3Backend::addImplication(IntVar condition, const LinearExpr& expr, int 
     constraints_.push_back(xml.str());
 }
 
+void XCSP3Backend::addReification(IntVar indicator, IntVar var, int value) {
+    // indicator == 1 iff var == value
+    // In XCSP3: iff(eq(indicator,1),eq(var,value))
+    std::stringstream xml;
+    xml << "<intension> iff(eq(" << getVarName(indicator.id()) << ",1),eq("
+        << getVarName(var.id()) << "," << value << ")) </intension>";
+    constraints_.push_back(xml.str());
+}
+
 // Global Constraints
 
 void XCSP3Backend::addAllDifferent(const std::vector<IntVar>& vars) {
@@ -429,11 +438,13 @@ CPStatus XCSP3Backend::solve(double timeout) {
     // Using environment variable or default
     const char* solverCmd = std::getenv("XCSP3_SOLVER_CMD");
     std::string cmd;
+    std::string timeoutArg = " -t=" + std::to_string(static_cast<int>(timeout)) + "s";
+
     if (solverCmd) {
-        cmd = std::string(solverCmd) + " " + modelFile;
+        cmd = std::string(solverCmd) + " " + modelFile + timeoutArg;
     } else {
         // Fallback: assume ACE.jar in current dir or PATH
-        cmd = "java -jar ACE.jar " + modelFile; 
+        cmd = "java -jar ACE.jar " + modelFile + timeoutArg; 
     }
 
     // Redirect output to file

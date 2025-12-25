@@ -7,6 +7,8 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/optional.h>
 
+#include <stdexcept>
+
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Entity.hpp"
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
@@ -17,6 +19,35 @@
 
 namespace nb = nanobind;
 using namespace routing;
+
+namespace {
+
+void enable_attribute_by_name(Problem& p, const std::string& name) {
+    if (name == "GeoNode") {
+        p.enableAttribute<attributes::GeoNode>();
+        return;
+    }
+    if (name == "Consumer") {
+        p.enableAttribute<attributes::Consumer>();
+        return;
+    }
+    if (name == "Stock") {
+        p.enableAttribute<attributes::Stock>();
+        return;
+    }
+    if (name == "Rendezvous") {
+        p.enableAttribute<attributes::Rendezvous>();
+        return;
+    }
+    if (name == "ServiceQuery") {
+        p.enableAttribute<attributes::ServiceQuery>();
+        return;
+    }
+
+    throw std::runtime_error("Unknown attribute: " + name);
+}
+
+} // namespace
 
 void bind_problem(nb::module_& m) {
     // Entity base class (exposed for type hints)
@@ -143,6 +174,13 @@ void bind_problem(nb::module_& m) {
             }
             return 0.0;
         }, "Get distance between two nodes by ID")
+        .def("enable_attribute", &enable_attribute_by_name, nb::arg("name"),
+             "Enable an attribute by name")
+        .def("enable_attributes", [](Problem& p, const std::vector<std::string>& names) {
+            for (const auto& name : names) {
+                enable_attribute_by_name(p, name);
+            }
+        }, nb::arg("names"), "Enable multiple attributes by name")
         .def("__repr__", [](Problem& p) {
             return "<Problem clients=" + std::to_string(p.getComposableClients().size()) +
                    " vehicles=" + std::to_string(p.getComposableVehicles().size()) + ">";
