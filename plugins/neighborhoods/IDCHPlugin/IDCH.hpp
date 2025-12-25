@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Destructor.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Constructor.hpp"
@@ -19,12 +19,12 @@ namespace routing {
 
         }
 
-        virtual bool look(models::Solution *solution) {
+        virtual bool look(Solution *solution) {
             solution->update();
             // assert(solution->notserved.size() == 0);
             int itermax =  10;
             int iter = 0;
-            routing::models::Solution *best = solution->clone();
+            routing::Solution *best = solution->clone();
             bool improved = false;
             double bestCost = solution->getCost();
 

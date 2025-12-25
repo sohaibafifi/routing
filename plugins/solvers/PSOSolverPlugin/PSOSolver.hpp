@@ -48,7 +48,7 @@ namespace routing {
             best_cost = 0.0;
         }
 
-        void initializePositionFromSolutions(models::Solution *solution_1, models::Solution *solution_2) {
+        void initializePositionFromSolutions(Solution *solution_1, Solution *solution_2) {
              Sequence *sequence_1 = new Sequence(solution_1);
              Sequence *sequence_2 = new Sequence(solution_2);
              double cost_1 = sequence_1->decode()->getCost();
@@ -69,7 +69,7 @@ namespace routing {
 
         }
 
-        void initializeBestPositionFromSolution(models::Solution *solution) {
+        void initializeBestPositionFromSolution(Solution *solution) {
             Sequence *sequence = new Sequence(solution);
             this->local_best_position = sequence;
             this->best_cost = sequence->decode()->getCost();

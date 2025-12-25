@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "Neighborhood.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Constructor.hpp"
 #include <cassert>
@@ -18,11 +18,11 @@ namespace routing {
 
         }
 
-        virtual bool look(models::Solution *solution) {
+        virtual bool look(Solution *solution) {
             solution->update();
             // assert(solution->notserved.size() == 0);
 
-            routing::models::Solution *best = solution->clone();
+            routing::Solution *best = solution->clone();
             bool improved = false;
             double bestCost = solution->getCost();
             // in each tour we look for the best remove and try to insert it into the best position

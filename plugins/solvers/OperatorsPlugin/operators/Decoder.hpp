@@ -5,17 +5,17 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
 
     class Decoder {
     public:
-        virtual bool decode(const std::vector<models::Client *> &sequence, models::Solution *solution) = 0;
+        virtual bool decode(const std::vector<models::Client *> &sequence, Solution *solution) = 0;
     };
 
     class dummyDecoder : public Decoder {
     public:
-        virtual bool decode(const std::vector<models::Client *> &sequence, models::Solution *solution) { return false; }
+        virtual bool decode(const std::vector<models::Client *> &sequence, Solution *solution) { return false; }
     };
 }

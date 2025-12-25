@@ -7,14 +7,20 @@
 #include "core/IPlugin.hpp"
 #include "core/PluginRegistry.hpp"
 #include "core/interfaces/IReader.hpp"
-#include "plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp"
-
-#include <cvrptw/Reader.hpp>
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
+#include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
+#include "plugins/attributes/CapacityPlugin/Consumer.hpp"
+#include "plugins/attributes/CapacityPlugin/Stock.hpp"
+#include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
+#include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
 
 #include <algorithm>
 #include <cctype>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace routing {
 namespace plugins {
@@ -40,6 +46,17 @@ namespace solomon_detail {
     }
 }
 
+/**
+ * @brief Standalone Solomon format reader using composable API
+ *
+ * Reads standard Solomon CVRPTW benchmark instances.
+ * Format:
+ *   Line 1: Instance name
+ *   Lines 2-4: Empty/header
+ *   Line 5: Number of vehicles, vehicle capacity
+ *   Lines 6-9: Empty/header
+ *   Line 10+: CUST NO. XCOORD. YCOORD. DEMAND READY TIME DUE DATE SERVICE TIME
+ */
 class SolomonReader : public IReader {
 public:
     std::string formatName() const override { return "solomon"; }
@@ -54,7 +71,87 @@ public:
 
     Problem* readFile(const std::string& filepath) override {
         detectedType_ = "cvrptw";
-        return reader_.readFile(filepath);
+
+        std::ifstream file(filepath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Cannot open file: " + filepath);
+        }
+
+        auto* problem = new Problem();
+
+        // Enable CVRPTW attributes
+        problem->enableAttributes<
+            attributes::GeoNode,
+            attributes::Consumer,
+            attributes::Stock,
+            attributes::Rendezvous,
+            attributes::ServiceQuery
+        >();
+
+        std::string line;
+
+        // Line 1: Instance name
+        std::getline(file, line);
+        problem->setName(line);
+
+        // Lines 2-4: Skip empty/header lines
+        for (int i = 0; i < 3; ++i) {
+            std::getline(file, line);
+        }
+
+        // Line 5: Number of vehicles, vehicle capacity
+        int numVehicles = 0;
+        double capacity = 0;
+        std::getline(file, line);
+        std::istringstream vehicleLine(line);
+        vehicleLine >> numVehicles >> capacity;
+
+        // Create vehicles
+        for (int k = 0; k < numVehicles; ++k) {
+            auto* vehicle = problem->addVehicle(k);
+            vehicle->addAttribute<attributes::Stock>(capacity);
+        }
+
+        // Lines 6-9: Skip empty/header lines
+        for (int i = 0; i < 4; ++i) {
+            std::getline(file, line);
+        }
+
+        // Read customer data
+        bool firstNode = true;
+        while (std::getline(file, line)) {
+            if (line.empty() || line.find_first_not_of(" \t\r\n") == std::string::npos) {
+                continue;  // Skip empty lines
+            }
+
+            std::istringstream iss(line);
+            int id;
+            double x, y, demand, readyTime, dueDate, serviceTime;
+
+            if (!(iss >> id >> x >> y >> demand >> readyTime >> dueDate >> serviceTime)) {
+                continue;  // Skip malformed lines
+            }
+
+            if (firstNode) {
+                // First node is the depot
+                auto* depot = problem->addDepot(id);
+                depot->addAttribute<attributes::GeoNode>(x, y);
+                depot->addAttribute<attributes::Rendezvous>(readyTime, dueDate);
+                firstNode = false;
+            } else {
+                // Subsequent nodes are customers
+                auto* client = problem->addClient(id);
+                client->addAttribute<attributes::GeoNode>(x, y);
+                client->addAttribute<attributes::Consumer>(demand);
+                client->addAttribute<attributes::Rendezvous>(readyTime, dueDate);
+                client->addAttribute<attributes::ServiceQuery>(serviceTime);
+            }
+        }
+
+        // Sync legacy pointer arrays for compatibility
+        problem->syncLegacyPointers();
+
+        return problem;
     }
 
     std::string detectedProblemType() const override {
@@ -62,7 +159,6 @@ public:
     }
 
 private:
-    cvrptw::Reader reader_;
     std::string detectedType_ = "unknown";
 };
 

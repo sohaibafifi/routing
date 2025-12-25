@@ -6,7 +6,7 @@
 #define HYBRID_DIVER_HPP
 
 #include <map>
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/solvers/MIPSolverPlugin/callbacks.hpp"
 
 namespace routing {
@@ -14,13 +14,13 @@ namespace routing {
     class Diver {
 
     public:
-        virtual bool dive(routing::models::Solution *solution) = 0;
+        virtual bool dive(routing::Solution *solution) = 0;
 
     };
 
     class dummyDiver : public Diver {
     public:
-        virtual bool dive(routing::models::Solution *solution) { return false; }
+        virtual bool dive(routing::Solution *solution) { return false; }
     };
 }
 

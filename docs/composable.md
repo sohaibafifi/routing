@@ -420,8 +420,9 @@ solver->solve(60.0);
 
 ## Example: Complete CVRPTW Program
 
-See `examples/composable/src/main.cpp` for a complete working example.
+See `examples/cvrptw.cpp` and `examples/top.cpp` for CLI examples using composable readers.
 
 ```bash
-./build/examples/composable/example_composable
+./build/examples/example_cvrptw -i data/CVRPTW/Solomon/10/c101.txt
+./build/examples/example_top -i data/CVRP/A/A-n32-k5.vrp
 ```

@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     class ConstructionParameters {
@@ -28,17 +28,17 @@ namespace routing {
             return this;
         }
 
-        virtual bool bestInsertion(models::Solution *solution) {
+        virtual bool bestInsertion(Solution *solution) {
             if (this->params == nullptr) this->params = ConstructionParameters::getDefault();
             return this->bestInsertion(solution, solution->notserved);
         }
 
-        virtual bool insertClient(models::Solution *solution, models::Client *client) {
+        virtual bool insertClient(Solution *solution, models::Client *client) {
             std::vector<models::Client *> clients = std::vector<models::Client *>();
             clients.push_back(client);
             return this->bestInsertion(solution, clients);
         }
 
-        virtual bool bestInsertion(models::Solution *solution, const std::vector<models::Client *> &clients) = 0;
+        virtual bool bestInsertion(Solution *solution, const std::vector<models::Client *> &clients) = 0;
     };
 }

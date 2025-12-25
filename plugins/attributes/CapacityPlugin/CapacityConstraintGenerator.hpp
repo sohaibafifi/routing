@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/interfaces/IConstraintGenerator.hpp"
-#include "plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/CapacityPlugin/Consumer.hpp"
 #include "plugins/attributes/CapacityPlugin/Stock.hpp"
 

@@ -1,22 +1,28 @@
-# Composable examples (recommended for new development)
-add_subdirectory(composable)
-add_subdirectory(plugin_demo)
+add_executable(example_cvrptw cvrptw.cpp)
+target_include_directories(example_cvrptw PUBLIC
+        problems/cvrp/src
+        problems/cvrptw/src
+    ${PROJECT_SOURCE_DIR}/core/src
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/examples
+)
+target_link_libraries(example_cvrptw PUBLIC routing_plugins ${CPLEX_LIBRARIES})
+routing_target_link_dl(example_cvrptw)
 
-# Legacy examples (using inheritance-based modeling)
-add_subdirectory(legacy)
+add_executable(example_top top.cpp)
+target_include_directories(example_top PUBLIC
+        problems/cvrp/src
+        problems/top/src
+    ${PROJECT_SOURCE_DIR}/core/src
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/examples
+)
+target_link_libraries(example_top PUBLIC routing_plugins ${CPLEX_LIBRARIES})
+routing_target_link_dl(example_top)
 
-# Build target for all examples
 set(examples
-    example_composable
-    example_plugin_demo
-    example_vrp
-    example_cvrp
-    example_top
-    example_toptw
     example_cvrptw
-    example_cvrpstw
-    example_vrptwtd
-    example_tsptw
+    example_top
 )
 
 add_custom_target(build_examples)

@@ -10,9 +10,8 @@
 
 namespace routing {
 
-namespace models {
-    class Solution;
-}
+// Forward declaration
+class Solution;
 
 /**
  * @brief Represents a move in a neighborhood
@@ -39,13 +38,13 @@ public:
     virtual std::string description() const { return ""; }
 
     /// Explore the neighborhood and find the best move
-    virtual std::optional<NeighborhoodMove> explore(models::Solution& solution) = 0;
+    virtual std::optional<NeighborhoodMove> explore(Solution& solution) = 0;
 
     /// Apply a move to the solution
-    virtual void apply(models::Solution& solution, const NeighborhoodMove& move) = 0;
+    virtual void apply(Solution& solution, const NeighborhoodMove& move) = 0;
 
     /// Convenience method: explore and apply best move
-    virtual bool improve(models::Solution& solution) {
+    virtual bool improve(Solution& solution) {
         auto move = explore(solution);
         if (move && move->isImproving()) {
             apply(solution, *move);

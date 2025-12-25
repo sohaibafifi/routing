@@ -36,7 +36,7 @@ namespace routing {
         }
 
         void mutate(Sequence *sequence) override {
-            models::Solution * solution = sequence->decode();
+            Solution * solution = sequence->decode();
             assert(solution->notserved.empty());
             std::vector<bool> run(this->neighbors.size(), false);
             std::random_device rd;

@@ -19,7 +19,10 @@
 namespace routing {
 
     // Forward declarations
-    class ComposableProblem;
+    class Problem;
+
+    // Backward compatibility alias
+    using ComposableProblem = Problem;
 
     /**
      * @brief Interface for constraint generators
@@ -51,13 +54,13 @@ namespace routing {
 
 #ifdef CPLEX_FOUND
         /// Add CPLEX decision variables for this constraint type
-        virtual void addVariables(ComposableProblem& problem) = 0;
+        virtual void addVariables(Problem& problem) = 0;
 
         /// Add CPLEX constraints
-        virtual void addConstraints(ComposableProblem& problem) = 0;
+        virtual void addConstraints(Problem& problem) = 0;
 
         /// Optional: contribute terms to the objective function
-        virtual void addObjectiveTerms(ComposableProblem& problem, IloExpr& objectiveExpr) {}
+        virtual void addObjectiveTerms(Problem& problem, IloExpr& objectiveExpr) {}
 #endif
 
         /// Check if this generator should be active given the enabled attributes

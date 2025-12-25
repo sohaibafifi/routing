@@ -41,8 +41,8 @@ namespace routing {
 
         virtual void setNeighbors(std::vector<routing::Neighborhood *> p_neighbors) { this->neighbors = p_neighbors; }
 
-        virtual void shake(models::Solution *solution) {
-            routing::models::Solution *save = solution->clone();
+        virtual void shake(Solution *solution) {
+            routing::Solution *save = solution->clone();
             generator->getDestructor()->destruct(solution);
             bool solutionFound = generator->getConstructor()->bestInsertion(solution);
             if (!solutionFound) solution->copy(save);
@@ -60,7 +60,7 @@ namespace routing {
             std::random_device rd;
             int itermax = this->configuration->getIntParam(this->configuration->iterMax);
             int iter = 1;
-            routing::models::Solution *best = this->solution->clone();
+            routing::Solution *best = this->solution->clone();
             double bestCost = this->solution->getCost();
             while (iter++ < itermax) {
                 shake(this->solution);

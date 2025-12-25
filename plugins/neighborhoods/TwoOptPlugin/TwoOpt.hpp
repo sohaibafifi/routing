@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
 #include <cassert>
 
@@ -49,10 +49,10 @@ namespace routing {
     class TwoOpt : public Neighborhood {
     public :
 
-        virtual bool look(models::Solution *solution) {
+        virtual bool look(Solution *solution) {
             // assert(solution->notserved.size() == 0);
 
-            routing::models::Solution *best = solution->clone();
+            routing::Solution *best = solution->clone();
             bool improved = false;
             TwoOptMovement bestMovement(0, 0, 0, std::numeric_limits<routing::Duration>::max(), false);
             double bestCost = solution->getCost();
@@ -89,7 +89,7 @@ namespace routing {
                 }
             }
             if (bestMovement.isPossible()) {
-                routing::models::Tour *tour = solution->getTour(bestMovement.t)->clone();
+                routing::Tour *tour = dynamic_cast<routing::Tour*>(solution->getTour(bestMovement.t)->clone());
                 tour->clear();
                 unsigned first = std::min(bestMovement.i, bestMovement.j), second = std::max(bestMovement.i,
                                                                                              bestMovement.j);

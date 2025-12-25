@@ -25,13 +25,13 @@ namespace routing {
         bool decoded = false;
         long hash = 0;
         routing::Duration cost = 0;
-        models::Solution *solution = nullptr;
+        Solution *solution = nullptr;
 
     public :
         Problem *problem;
         std::vector<models::Client *> sequence;
 
-        Sequence(models::Solution *p_solution) : problem(p_solution->getProblem()),
+        Sequence(Solution *p_solution) : problem(p_solution->getProblem()),
                                                 sequence(p_solution->getSequence()){
             hash = getHash();
             cost = p_solution->getCost();
@@ -61,9 +61,9 @@ namespace routing {
             problem->getMemory()->add(hash, cost);
         }
 
-        models::Solution *decode() {
+        Solution *decode() {
             if (decoded && solution != nullptr) return solution;
-            models::Solution *solution = problem->initializer()->initialSolution();
+            Solution *solution = problem->initializer()->initialSolution();
             this->solution = solution->initFromSequence(problem, this->sequence);
             this->cost = this->solution->getCost();
             decoded = true;

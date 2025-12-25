@@ -29,14 +29,14 @@ public:
     std::string name() const override { return "idch"; }
     std::string description() const override { return "Iterated Destruction-Construction"; }
 
-    std::optional<NeighborhoodMove> explore(models::Solution& /*solution*/) override {
+    std::optional<NeighborhoodMove> explore(Solution& /*solution*/) override {
         return std::nullopt;
     }
 
-    void apply(models::Solution& /*solution*/, const NeighborhoodMove& /*move*/) override {
+    void apply(Solution& /*solution*/, const NeighborhoodMove& /*move*/) override {
     }
 
-    bool improve(models::Solution& solution) override {
+    bool improve(Solution& solution) override {
         if (!idch_) {
             return false;
         }

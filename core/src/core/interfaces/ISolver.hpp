@@ -8,12 +8,10 @@
 
 namespace routing {
 
+// Forward declarations
 class Problem;
 class Configuration;
-
-namespace models {
-    class Solution;
-}
+class Solution;
 
 /**
  * @brief Interface for all solver implementations
@@ -44,7 +42,7 @@ public:
     virtual bool solve(double timeout = 3600) = 0;
 
     /// Get the best solution found
-    virtual models::Solution* getSolution() const = 0;
+    virtual Solution* getSolution() const = 0;
 
     /// Get the objective value of the best solution
     virtual double getObjectiveValue() const = 0;

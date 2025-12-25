@@ -6,11 +6,13 @@
 
 #include "plugins/attributes/ComposableCorePlugin/Model.hpp"
 #include "Client.hpp"
-#include "core/Problem.hpp"
 #include "plugins/attributes/ComposableCorePlugin/attributes/InsertionCost.hpp"
 #include "plugins/attributes/ComposableCorePlugin/attributes/RemoveCost.hpp"
 
 namespace routing {
+
+    // Forward declaration
+    class Problem;
 
     namespace models {
 

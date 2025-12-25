@@ -6,7 +6,7 @@
 
 
 #include <random>
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
 #include "Destructor.hpp"
 #include "Constructor.hpp"
@@ -20,12 +20,12 @@ namespace routing {
 
         }
 
-        virtual models::Solution *initialSolution() {
+        virtual Solution *initialSolution() {
             return this->problem->initializer()->initialSolution();
         };
 
-        virtual models::Solution *generate() {
-            models::Solution *solution = this->initialSolution();
+        virtual Solution *generate() {
+            Solution *solution = this->initialSolution();
             solution->notserved.clear();
             for (unsigned long c = 0; c < problem->clients.size(); ++c) {
                 solution->notserved.push_back(problem->clients[c]);

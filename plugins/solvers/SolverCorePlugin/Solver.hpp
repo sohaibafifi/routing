@@ -9,8 +9,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
-#include "core/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "Configuration.hpp"
 #include <filesystem>
 #include <fstream>
@@ -21,14 +20,14 @@ namespace routing {
 class Solver {
 
 protected:
-    routing::Problem *problem{};
-    routing::models::Solution *solution{};
+    Problem *problem{};
+    Solution *solution{};
 
 public:
     std::ostream &os;
-    routing::Configuration *configuration{};
+    Configuration *configuration{};
 
-    explicit Solver(routing::Problem *p_problem, std::ostream &os = std::cout)
+    explicit Solver(Problem *p_problem, std::ostream &os = std::cout)
         : problem(p_problem), os(os) {}
 
     virtual ~Solver() = default;
@@ -36,8 +35,8 @@ public:
     virtual bool solve(double timeout = 3600) = 0;
     virtual void setDefaultConfiguration() = 0;
 
-    routing::models::Solution *getSolution() const { return solution; }
-    routing::Problem *getProblem() const { return problem; }
+    Solution *getSolution() const { return solution; }
+    Problem *getProblem() const { return problem; }
     virtual void save(std::ofstream &output) const;
 };
 

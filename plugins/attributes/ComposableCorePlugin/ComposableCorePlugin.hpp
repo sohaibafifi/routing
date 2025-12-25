@@ -7,6 +7,11 @@
 #include "core/IPlugin.hpp"
 #include "core/PluginRegistry.hpp"
 
+// Include the renamed core classes
+#include "Entity.hpp"
+#include "Problem.hpp"
+#include "Solution.hpp"
+
 namespace routing::plugins {
 
 class ComposableCorePlugin : public IPlugin {

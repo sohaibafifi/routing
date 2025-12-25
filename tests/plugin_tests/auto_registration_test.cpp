@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <core/PluginRegistry.hpp>
-#include <plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp>
+#include <plugins/attributes/ComposableCorePlugin/Problem.hpp>
 #include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
 #include <plugins/attributes/CapacityPlugin/Consumer.hpp>
 #include <plugins/attributes/CapacityPlugin/Stock.hpp>

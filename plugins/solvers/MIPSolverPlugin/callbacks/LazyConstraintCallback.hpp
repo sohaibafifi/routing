@@ -10,7 +10,7 @@
 
 #pragma GCC diagnostic pop
 
-#include "core/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     namespace callback {

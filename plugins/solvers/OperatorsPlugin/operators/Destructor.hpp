@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     class DestructionParameters {
@@ -26,7 +26,7 @@ namespace routing {
         }
         Destructor()  {}
 
-        virtual void destruct(models::Solution *solution) = 0;
+        virtual void destruct(Solution *solution) = 0;
 
 
     };

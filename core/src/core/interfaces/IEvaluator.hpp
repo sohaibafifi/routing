@@ -12,9 +12,14 @@
 namespace routing {
 
     // Forward declarations
-    class ComposableProblem;
-    class ComposableTour;
-    class ComposableEntity;
+    class Problem;
+    class Tour;
+    class Entity;
+
+    // Backward compatibility aliases
+    using ComposableProblem = Problem;
+    using ComposableTour = Tour;
+    using ComposableEntity = Entity;
 
     /**
      * @brief Context for insertion operations
@@ -23,10 +28,10 @@ namespace routing {
      * an insertion of a client into a tour.
      */
     struct InsertionContext {
-        ComposableEntity* client;    // Client to insert
+        Entity* client;              // Client to insert
         int position;                // Position in route (0 = after depot)
-        ComposableEntity* predecessor;  // Node before insertion point (may be depot)
-        ComposableEntity* successor;    // Node after insertion point (may be depot)
+        Entity* predecessor;         // Node before insertion point (may be depot)
+        Entity* successor;           // Node after insertion point (may be depot)
     };
 
     /**
@@ -59,7 +64,7 @@ namespace routing {
          * @param ctx The insertion context
          * @return true if the insertion maintains feasibility for this evaluator's constraints
          */
-        virtual bool checkFeasibility(const ComposableTour& tour,
+        virtual bool checkFeasibility(const Tour& tour,
                                       const InsertionContext& ctx) const = 0;
 
         /**
@@ -69,7 +74,7 @@ namespace routing {
          * @param ctx The insertion context
          * @return The change in cost (positive = worse, negative = better)
          */
-        virtual double evaluateInsertionDelta(const ComposableTour& tour,
+        virtual double evaluateInsertionDelta(const Tour& tour,
                                               const InsertionContext& ctx) const = 0;
 
         /**
@@ -81,7 +86,7 @@ namespace routing {
          * @param tour The tour being modified
          * @param ctx The insertion context
          */
-        virtual void applyInsertion(ComposableTour& tour,
+        virtual void applyInsertion(Tour& tour,
                                     const InsertionContext& ctx) = 0;
 
         /**

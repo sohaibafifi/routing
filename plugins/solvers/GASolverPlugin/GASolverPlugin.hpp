@@ -40,7 +40,7 @@ public:
         return solver_.solve(timeout);
     }
 
-    models::Solution* getSolution() const override {
+    Solution* getSolution() const override {
         return solver_.getSolution();
     }
 

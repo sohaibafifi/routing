@@ -19,14 +19,14 @@ public:
     std::string name() const override { return "two_opt"; }
     std::string description() const override { return "2-opt edge exchange"; }
 
-    std::optional<NeighborhoodMove> explore(models::Solution& /*solution*/) override {
+    std::optional<NeighborhoodMove> explore(Solution& /*solution*/) override {
         return std::nullopt;
     }
 
-    void apply(models::Solution& /*solution*/, const NeighborhoodMove& /*move*/) override {
+    void apply(Solution& /*solution*/, const NeighborhoodMove& /*move*/) override {
     }
 
-    bool improve(models::Solution& solution) override {
+    bool improve(Solution& solution) override {
         return neighborhood_.look(&solution);
     }
 

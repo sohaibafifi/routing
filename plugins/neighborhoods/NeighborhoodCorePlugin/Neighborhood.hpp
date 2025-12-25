@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     class Neighborhood {
@@ -16,7 +16,7 @@ namespace routing {
          *                  it returns the best neighbor
          * @return true if solution improved
          */
-        virtual bool look(models::Solution *solution) = 0;
+        virtual bool look(Solution *solution) = 0;
     };
 
 }

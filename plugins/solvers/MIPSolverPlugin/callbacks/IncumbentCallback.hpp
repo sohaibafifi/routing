@@ -9,8 +9,8 @@
 #include <ilcplex/ilocplexi.h>
 #pragma GCC diagnostic pop
 
-#include "core/Problem.hpp"
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     namespace callback {
@@ -47,7 +47,7 @@ namespace routing {
                     solution->print(getEnv().out());
             }
 
-            models::Solution *solution = nullptr;
+            Solution *solution = nullptr;
 
             IloCplex::CallbackI *duplicateCallback() const {
                 return new (getEnv()) IncumbentCallback(*this);

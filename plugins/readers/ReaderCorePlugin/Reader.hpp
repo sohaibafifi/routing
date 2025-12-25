@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include <sstream>
 
 namespace routing {

@@ -5,8 +5,8 @@
 #include <gtest/gtest.h>
 
 #include <core/PluginRegistry.hpp>
-#include <plugins/attributes/ComposableCorePlugin/ComposableEntity.hpp>
-#include <plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp>
+#include <plugins/attributes/ComposableCorePlugin/Entity.hpp>
+#include <plugins/attributes/ComposableCorePlugin/Problem.hpp>
 
 #include <plugins/attributes/CapacityPlugin/Consumer.hpp>
 #include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
@@ -14,10 +14,17 @@
 #include <plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp>
 #include <plugins/attributes/CapacityPlugin/Stock.hpp>
 
+#include <compsable/cvrp/Reader.hpp>
+#include <compsable/cvrptw/Reader.hpp>
+
 #include <plugins/attributes/CapacityPlugin/CapacityConstraintGenerator.hpp>
 #include <plugins/attributes/RoutingPlugin/RoutingConstraintGenerator.hpp>
 #include <plugins/attributes/TimeWindowPlugin/TimeWindowConstraintGenerator.hpp>
 
+#include <atomic>
+#include <chrono>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 
@@ -46,6 +53,29 @@ namespace {
         std::string name_;
         std::vector<AttributeTypeId> requiredAttrs_;
         int priority_;
+    };
+
+    class TempFile {
+    public:
+        TempFile(const std::string& contents, const std::string& suffix) {
+            static std::atomic<unsigned long long> counter{0};
+            auto id = counter.fetch_add(1);
+            auto stamp = std::chrono::steady_clock::now().time_since_epoch().count();
+            path_ = std::filesystem::temp_directory_path() /
+                    ("routing_test_" + std::to_string(stamp) + "_" + std::to_string(id) + suffix);
+            std::ofstream out(path_);
+            out << contents;
+        }
+
+        ~TempFile() {
+            std::error_code ec;
+            std::filesystem::remove(path_, ec);
+        }
+
+        const std::filesystem::path& path() const { return path_; }
+
+    private:
+        std::filesystem::path path_;
     };
 } // namespace
 
@@ -161,4 +191,133 @@ TEST(ComposableProblemTest, realGeneratorsAreOrderedByPriority) {
     EXPECT_EQ(problem.getActiveGenerators()[0]->name(), "RoutingConstraintGenerator");
     EXPECT_EQ(problem.getActiveGenerators()[1]->name(), "CapacityConstraintGenerator");
     EXPECT_EQ(problem.getActiveGenerators()[2]->name(), "TimeWindowConstraintGenerator");
+}
+
+TEST(ComposableCVRPReaderTest, parsesTsplibIntoComposableProblem) {
+    const std::string content =
+        "NAME : A-n3-k2\n"
+        "TYPE : CVRP\n"
+        "DIMENSION : 3\n"
+        "CAPACITY : 50\n"
+        "VEHICLES : 2\n"
+        "NODE_COORD_SECTION\n"
+        "1 0 0\n"
+        "2 3 4\n"
+        "3 6 8\n"
+        "DEMAND_SECTION\n"
+        "1 0\n"
+        "2 10\n"
+        "3 20\n"
+        "DEPOT_SECTION\n"
+        "1\n"
+        "-1\n"
+        "EOF\n";
+
+    TempFile file(content, ".vrp");
+    compsable::cvrp::Reader reader;
+    std::unique_ptr<routing::Problem> problem(reader.readFile(file.path().string()));
+
+    ASSERT_NE(problem, nullptr);
+    EXPECT_EQ(problem->getName(), "A-n3-k2");
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::GeoNode>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::Consumer>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::Stock>());
+    EXPECT_EQ(problem->numVehicles(), 2u);
+    EXPECT_EQ(problem->numDepots(), 1u);
+    EXPECT_EQ(problem->numClients(), 2u);
+
+    auto* typed = dynamic_cast<compsable::cvrp::Problem*>(problem.get());
+    ASSERT_NE(typed, nullptr);
+
+    auto* depot = problem->getDepot();
+    ASSERT_NE(depot, nullptr);
+    auto* depotGeo = depot->tryGetAttribute<routing::attributes::GeoNode>();
+    ASSERT_NE(depotGeo, nullptr);
+    EXPECT_DOUBLE_EQ(depotGeo->getX(), 0.0);
+    EXPECT_DOUBLE_EQ(depotGeo->getY(), 0.0);
+
+    routing::Client* client2 = nullptr;
+    routing::Client* client3 = nullptr;
+    for (auto* client : problem->getClients()) {
+        if (client->getID() == 2) {
+            client2 = client;
+        } else if (client->getID() == 3) {
+            client3 = client;
+        }
+    }
+    ASSERT_NE(client2, nullptr);
+    ASSERT_NE(client3, nullptr);
+    auto* demand2 = client2->tryGetAttribute<routing::attributes::Consumer>();
+    auto* demand3 = client3->tryGetAttribute<routing::attributes::Consumer>();
+    ASSERT_NE(demand2, nullptr);
+    ASSERT_NE(demand3, nullptr);
+    EXPECT_EQ(demand2->getDemand(), 10);
+    EXPECT_EQ(demand3->getDemand(), 20);
+
+    auto vehicles = problem->getVehicles();
+    ASSERT_EQ(vehicles.size(), 2u);
+    for (auto* vehicle : vehicles) {
+        auto* stock = vehicle->tryGetAttribute<routing::attributes::Stock>();
+        ASSERT_NE(stock, nullptr);
+        EXPECT_DOUBLE_EQ(stock->getCapacity(), 50.0);
+    }
+}
+
+TEST(ComposableCVRPTWReaderTest, parsesSolomonIntoComposableProblem) {
+    const std::string content =
+        "C101\n"
+        "COMMENT\n"
+        "COMMENT\n"
+        "COMMENT\n"
+        "3 100\n"
+        "HEADER\n"
+        "HEADER\n"
+        "HEADER\n"
+        "HEADER\n"
+        "0 0 0 0 0 1000 0\n"
+        "1 10 10 10 0 100 5\n"
+        "2 20 20 20 10 120 5\n";
+
+    TempFile file(content, ".txt");
+    compsable::cvrptw::Reader reader;
+    std::unique_ptr<routing::Problem> problem(reader.readFile(file.path().string()));
+
+    ASSERT_NE(problem, nullptr);
+    EXPECT_EQ(problem->getName(), "C101");
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::GeoNode>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::Consumer>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::Stock>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::Rendezvous>());
+    EXPECT_TRUE(problem->hasAttribute<routing::attributes::ServiceQuery>());
+    EXPECT_EQ(problem->numVehicles(), 3u);
+    EXPECT_EQ(problem->numDepots(), 1u);
+    EXPECT_EQ(problem->numClients(), 2u);
+
+    auto* typed = dynamic_cast<compsable::cvrptw::Problem*>(problem.get());
+    ASSERT_NE(typed, nullptr);
+
+    auto* depot = problem->getDepot();
+    ASSERT_NE(depot, nullptr);
+    auto* depotTw = depot->tryGetAttribute<routing::attributes::Rendezvous>();
+    ASSERT_NE(depotTw, nullptr);
+    EXPECT_DOUBLE_EQ(depotTw->getTwOpen(), 0.0);
+    EXPECT_DOUBLE_EQ(depotTw->getTwClose(), 1000.0);
+
+    routing::Client* client1 = nullptr;
+    for (auto* client : problem->getClients()) {
+        if (client->getID() == 1) {
+            client1 = client;
+        }
+    }
+    ASSERT_NE(client1, nullptr);
+    auto* demand1 = client1->tryGetAttribute<routing::attributes::Consumer>();
+    auto* tw1 = client1->tryGetAttribute<routing::attributes::Rendezvous>();
+    auto* svc1 = client1->tryGetAttribute<routing::attributes::ServiceQuery>();
+    ASSERT_NE(demand1, nullptr);
+    ASSERT_NE(tw1, nullptr);
+    ASSERT_NE(svc1, nullptr);
+    EXPECT_EQ(demand1->getDemand(), 10);
+    EXPECT_DOUBLE_EQ(tw1->getTwOpen(), 0.0);
+    EXPECT_DOUBLE_EQ(tw1->getTwClose(), 100.0);
+    EXPECT_DOUBLE_EQ(svc1->getService(), 5.0);
 }

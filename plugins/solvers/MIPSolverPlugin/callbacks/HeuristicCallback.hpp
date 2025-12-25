@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Generator.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Constructor.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Destructor.hpp"
@@ -136,7 +136,7 @@ namespace routing::callback {
             return new(getEnv()) HeuristicCallback(*this);
         }
 
-        models::Solution *solution{};
+        Solution *solution{};
         std::vector<double> starts;
 
         virtual void extractSolution() {
@@ -150,7 +150,7 @@ namespace routing::callback {
             return true;
         }
 
-        virtual routing::models::Solution *extractPartialSolution(routing::Problem *problem) {
+        virtual routing::Solution *extractPartialSolution(routing::Problem *problem) {
             auto solution = this->generator->initialSolution();
             solution->constructFromIncumbent(this);
             return solution;

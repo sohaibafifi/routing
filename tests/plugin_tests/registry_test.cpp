@@ -7,6 +7,7 @@
 #include <core/interfaces/ISolver.hpp>
 #include <core/interfaces/INeighborhood.hpp>
 #include <core/interfaces/IReader.hpp>
+#include <plugins/attributes/ComposableCorePlugin/Problem.hpp>
 
 #include <memory>
 #include <set>
@@ -40,13 +41,13 @@ namespace {
         std::vector<routing::AttributeTypeId> requiredAttributes() const override {
             return {std::type_index(typeid(DummyAttribute))};
         }
-        bool checkFeasibility(const routing::ComposableTour&, const routing::InsertionContext&) const override {
+        bool checkFeasibility(const routing::Tour&, const routing::InsertionContext&) const override {
             return true;
         }
-        double evaluateInsertionDelta(const routing::ComposableTour&, const routing::InsertionContext&) const override {
+        double evaluateInsertionDelta(const routing::Tour&, const routing::InsertionContext&) const override {
             return 0.0;
         }
-        void applyInsertion(routing::ComposableTour&, const routing::InsertionContext&) override {}
+        void applyInsertion(routing::Tour&, const routing::InsertionContext&) override {}
     };
 
     class DummySolver : public routing::ISolver {
@@ -57,7 +58,7 @@ namespace {
         void setConfiguration(routing::Configuration* config) override { config_ = config; }
         void setDefaultConfiguration() override {}
         bool solve(double) override { return true; }
-        routing::models::Solution* getSolution() const override { return nullptr; }
+        routing::Solution* getSolution() const override { return nullptr; }
         double getObjectiveValue() const override { return 0.0; }
 
     private:
@@ -68,10 +69,10 @@ namespace {
     class DummyNeighborhood : public routing::INeighborhood {
     public:
         std::string name() const override { return "dummy_neighborhood"; }
-        std::optional<routing::NeighborhoodMove> explore(routing::models::Solution&) override {
+        std::optional<routing::NeighborhoodMove> explore(routing::Solution&) override {
             return std::nullopt;
         }
-        void apply(routing::models::Solution&, const routing::NeighborhoodMove&) override {}
+        void apply(routing::Solution&, const routing::NeighborhoodMove&) override {}
     };
 
     class DummyReader : public routing::IReader {

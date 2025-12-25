@@ -10,8 +10,8 @@
 
 #pragma GCC diagnostic pop
 
-#include "core/Problem.hpp"
-#include "core/Solution.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 
 namespace routing {
     namespace callback {
@@ -45,7 +45,7 @@ namespace routing {
                 return new (getEnv()) InformationCallback(*this);
             }
 
-            virtual models::Solution *getIncumbentSolution() { return nullptr; }
+            virtual Solution *getIncumbentSolution() { return nullptr; }
         };
     }
 }
