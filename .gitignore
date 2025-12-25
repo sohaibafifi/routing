@@ -92,3 +92,5 @@ output
 build_xcsp3/**
 __pycache__
 venv
+.idea
+*.so

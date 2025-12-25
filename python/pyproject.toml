@@ -1,0 +1,50 @@
+[build-system]
+requires = ["scikit-build-core>=0.5", "nanobind>=2.0"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "routing"
+version = "0.1.0"
+description = "A composable, multi-solver VRP framework"
+readme = "README.md"
+license = {text = "Proprietary - Research Use Only"}
+authors = [
+    {name = "Sohaib LAFIFI", email = "sohaib.lafifi@univ-artois.fr"}
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+keywords = ["vrp", "routing", "optimization", "constraint-programming", "metaheuristics"]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "black", "isort", "mypy"]
+
+[project.urls]
+Homepage = "https://github.com/sohaibafifi/routing"
+Documentation = "https://github.com/sohaibafifi/routing/docs"
+
+[tool.scikit-build]
+cmake.build-type = "Release"
+cmake.source-dir = ".."
+wheel.packages = ["routing"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"

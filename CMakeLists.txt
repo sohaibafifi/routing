@@ -33,6 +33,7 @@ option(ROUTING_BUILD_EXAMPLES "Build examples" ON)
 option(ROUTING_BUILD_CPOPTIMIZER "Build the cpoptimizer CLI (requires CPLEX)" ON)
 option(ROUTING_BUILD_GRB "Build the grb CLI (requires GUROBI)" ON)
 option(ROUTING_BUILD_XCSP3 "Build XCSP3 backend (requires ACE/CoSoCo at runtime)" ON)
+option(ROUTING_BUILD_PYTHON "Build Python bindings (requires Python and nanobind)" OFF)
 
 include(CTest)
 
@@ -62,4 +63,8 @@ endif()
 
 if(BUILD_TESTING)
   add_subdirectory(tests)
+endif()
+
+if(ROUTING_BUILD_PYTHON)
+  add_subdirectory(python)
 endif()

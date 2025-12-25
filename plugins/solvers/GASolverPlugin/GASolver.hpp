@@ -214,7 +214,7 @@ namespace routing {
         };
 
         virtual bool solve(double timeout = 3600) override {
-            assert(generator != nullptr);
+            // Note: generator is not used in current implementation
             this->solution = this->problem->initializer()->initialSolution();
             Population *population = Population::initialize(this->problem);
             int itermax = this->configuration->getIntParam(this->configuration->iterMax);
