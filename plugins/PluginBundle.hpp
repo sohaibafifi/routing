@@ -18,6 +18,9 @@
 #include "plugins/solvers/MIPSolverPlugin/MIPSolverPlugin.hpp"
 #include "plugins/solvers/PSOSolverPlugin/PSOSolverPlugin.hpp"
 #include "plugins/solvers/VNSSolverPlugin/VNSSolverPlugin.hpp"
+#ifdef CPLEX_FOUND
+#include "plugins/solvers/CPSolverPlugin/CPSolverPlugin.hpp"
+#endif
 
 #include "plugins/neighborhoods/TwoOptPlugin/TwoOptPlugin.hpp"
 #include "plugins/neighborhoods/IDCHPlugin/IDCHPlugin.hpp"

@@ -180,14 +180,14 @@ public:
         // pos[next[i]] = pos[i] + 1 (mod n) for all i except where next[i] = start
         // This is a simplified MTZ-like formulation
         IntVar startNode = newConstant(0);
-        addEquality(pos[0], 0);
+        addEquality(LinearExpr(pos[0]), 0);
 
         for (int i = 0; i < n; ++i) {
             // If next[i] != 0, then pos[next[i]] = pos[i] + 1
             // This is approximated; full circuit requires more constraints
             for (int j = 1; j < n; ++j) {
                 // If next[i] = j, then pos[j] = pos[i] + 1
-                IntVar isNext = newBoolVar();
+                IntVar isNext = newBoolVar("");
                 model_.add((getIloIntVar(next[i]) == j) == (getIloIntVar(isNext) == 1));
                 model_.add(IloIfThen(env_, getIloIntVar(isNext) == 1,
                                      getIloIntVar(pos[j]) == getIloIntVar(pos[i]) + 1));
@@ -404,12 +404,23 @@ public:
 
     double getObjectiveValue() const override {
         if (!solved_) return std::numeric_limits<double>::infinity();
-        return cp_.getObjValue();
+        // If no objective was set, return 0 (satisfiability problem)
+        if (objectiveExpr_.isEmpty()) return 0.0;
+        try {
+            return cp_.getObjValue();
+        } catch (...) {
+            return 0.0;  // No objective available
+        }
     }
 
     double getObjectiveBound() const override {
         if (!solved_) return 0.0;
-        return cp_.getObjBound();
+        if (objectiveExpr_.isEmpty()) return 0.0;
+        try {
+            return cp_.getObjBound();
+        } catch (...) {
+            return 0.0;
+        }
     }
 
     double getSolveTime() const override {
