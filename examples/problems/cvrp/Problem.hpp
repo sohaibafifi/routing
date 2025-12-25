@@ -9,7 +9,7 @@
 #include <plugins/attributes/CapacityPlugin/Stock.hpp>
 #include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
 
-namespace compsable::cvrp {
+namespace composable::cvrp {
 
 class Problem : public routing::Problem {
 public:
@@ -49,4 +49,4 @@ public:
     }
 };
 
-} // namespace compsable::cvrp
+} // namespace composable::cvrp

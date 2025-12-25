@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include <compsable/cvrptw/Problem.hpp>
+#include <examples/problems/cvrptw/Problem.hpp>
 #include <plugins/attributes/TimeWindowPlugin/SoftTimeWindows.hpp>
 
-namespace compsable::cvrpstw {
+namespace composable::cvrpstw {
 
-class Problem : public compsable::cvrptw::Problem {
+class Problem : public composable::cvrptw::Problem {
 public:
-    Problem() : compsable::cvrptw::Problem() {
+    Problem() : composable::cvrptw::Problem() {
         enableAttribute<routing::attributes::SoftTimeWindows>();
     }
 
-    using compsable::cvrptw::Problem::addClient;
-    using compsable::cvrptw::Problem::addDepot;
-    using compsable::cvrptw::Problem::addVehicle;
+    using composable::cvrptw::Problem::addClient;
+    using composable::cvrptw::Problem::addDepot;
+    using composable::cvrptw::Problem::addVehicle;
 
     routing::Depot* addDepot(unsigned id,
                              routing::Duration x,
@@ -26,10 +26,10 @@ public:
                              routing::Duration twClose,
                              double waitPenalty,
                              double delayPenalty) {
-        auto* depot = compsable::cvrptw::Problem::addDepot(id, x, y, twOpen, twClose);
+        auto* depot = composable::cvrptw::Problem::addDepot(id, x, y, twOpen, twClose);
         depot->addAttribute<routing::attributes::SoftTimeWindows>(waitPenalty, delayPenalty);
         return depot;
     }
 };
 
-} // namespace compsable::cvrpstw
+} // namespace composable::cvrpstw

@@ -5,8 +5,8 @@
 
 #include "../ProblemTest.hpp"
 
-#include <compsable/cvrpstw/Reader.hpp>
-#include <compsable/cvrpstw/Problem.hpp>
+#include <examples/problems/cvrpstw/Reader.hpp>
+#include <examples/problems/cvrpstw/Problem.hpp>
 #include <core/PluginRegistry.hpp>
 #include <plugins/attributes/CapacityPlugin/CapacityPlugin.hpp>
 #include <plugins/attributes/ComposableCorePlugin/ComposableCorePlugin.hpp>
@@ -29,10 +29,10 @@ TEST_F(ProblemTest, solve) {
     }
 
     int nbClients = 10;
-    auto problem = compsable::cvrpstw::Reader().readFile("../../../data/CVRPTW/Solomon/" + std::to_string(nbClients) + "/c101.txt");
+    auto problem = composable::cvrpstw::Reader().readFile("../../../data/CVRPTW/Solomon/" + std::to_string(nbClients) + "/c101.txt");
     {
         routing::MIPSolver mipSolver(problem, nullstream);
-        auto* typed = dynamic_cast<compsable::cvrpstw::Problem *>(mipSolver.getProblem());
+        auto* typed = dynamic_cast<composable::cvrpstw::Problem *>(mipSolver.getProblem());
         ASSERT_NE(typed, nullptr);
         EXPECT_FALSE(typed->getClients().empty());
         EXPECT_EQ(typed->numClients(), static_cast<size_t>(nbClients));

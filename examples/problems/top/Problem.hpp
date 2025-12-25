@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include <compsable/cvrp/Problem.hpp>
+#include <examples/problems/cvrp/Problem.hpp>
 #include <plugins/attributes/ProfitPlugin/Profiter.hpp>
 
-namespace compsable::top {
+namespace composable::top {
 
-class Problem : public compsable::cvrp::Problem {
+class Problem : public composable::cvrp::Problem {
 public:
-    Problem() : compsable::cvrp::Problem() {
+    Problem() : composable::cvrp::Problem() {
         enableAttribute<routing::attributes::Profiter>();
     }
 
-    using compsable::cvrp::Problem::addClient;
-    using compsable::cvrp::Problem::addDepot;
-    using compsable::cvrp::Problem::addVehicle;
+    using composable::cvrp::Problem::addClient;
+    using composable::cvrp::Problem::addDepot;
+    using composable::cvrp::Problem::addVehicle;
 
     routing::Client* addClient(unsigned id,
                                routing::Duration x,
@@ -39,4 +39,4 @@ public:
     }
 };
 
-} // namespace compsable::top
+} // namespace composable::top

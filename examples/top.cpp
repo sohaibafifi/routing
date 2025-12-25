@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 
-#include <compsable/top/Reader.hpp>
+#include <examples/problems/top/Reader.hpp>
 #include <core/PluginRegistry.hpp>
 #include <plugins/PluginBundle.hpp>
 
@@ -61,7 +61,7 @@ int main(int argc, const char *argv[]) {
 
 #ifdef CPLEX_FOUND
     try {
-        auto problem = compsable::top::Reader().readFile(inputFile);
+        auto problem = composable::top::Reader().readFile(inputFile);
         routing::MIPSolver mipSolver(problem);
         mipSolver.getCplex().exportModel(lpFile.string().c_str());
         mipSolver.solve(timeout);

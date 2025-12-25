@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace compsable::cvrptw {
+namespace composable::cvrpstw {
 namespace detail {
 
 inline std::string trim(const std::string& value) {
@@ -85,7 +85,7 @@ public:
             }
 
             if (firstNode) {
-                problem->addDepot(id, x, y, readyTime, dueDate);
+                problem->addDepot(id, x, y, readyTime, dueDate, 1.0, 1.0);
                 firstNode = false;
             } else {
                 problem->addClient(id, x, y, demand, readyTime, dueDate, serviceTime);
@@ -97,4 +97,4 @@ public:
     }
 };
 
-} // namespace compsable::cvrptw
+} // namespace composable::cvrpstw

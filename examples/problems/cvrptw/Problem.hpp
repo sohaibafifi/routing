@@ -11,7 +11,7 @@
 #include <plugins/attributes/TimeWindowPlugin/Rendezvous.hpp>
 #include <plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp>
 
-namespace compsable::cvrptw {
+namespace composable::cvrptw {
 
 class Problem : public routing::Problem {
 public:
@@ -61,4 +61,4 @@ public:
     }
 };
 
-} // namespace compsable::cvrptw
+} // namespace composable::cvrptw

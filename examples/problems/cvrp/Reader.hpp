@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-namespace compsable::cvrp {
+namespace composable::cvrp {
 namespace detail {
 
 inline std::string trim(const std::string& value) {
@@ -170,4 +170,4 @@ public:
     }
 };
 
-} // namespace compsable::cvrp
+} // namespace composable::cvrp

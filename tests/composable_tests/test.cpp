@@ -14,8 +14,8 @@
 #include <plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp>
 #include <plugins/attributes/CapacityPlugin/Stock.hpp>
 
-#include <compsable/cvrp/Reader.hpp>
-#include <compsable/cvrptw/Reader.hpp>
+#include <examples/problems/cvrp/Reader.hpp>
+#include <examples/problems/cvrptw/Reader.hpp>
 
 #include <plugins/attributes/CapacityPlugin/CapacityConstraintGenerator.hpp>
 #include <plugins/attributes/RoutingPlugin/RoutingConstraintGenerator.hpp>
@@ -214,7 +214,7 @@ TEST(ComposableCVRPReaderTest, parsesTsplibIntoComposableProblem) {
         "EOF\n";
 
     TempFile file(content, ".vrp");
-    compsable::cvrp::Reader reader;
+    composable::cvrp::Reader reader;
     std::unique_ptr<routing::Problem> problem(reader.readFile(file.path().string()));
 
     ASSERT_NE(problem, nullptr);
@@ -226,7 +226,7 @@ TEST(ComposableCVRPReaderTest, parsesTsplibIntoComposableProblem) {
     EXPECT_EQ(problem->numDepots(), 1u);
     EXPECT_EQ(problem->numClients(), 2u);
 
-    auto* typed = dynamic_cast<compsable::cvrp::Problem*>(problem.get());
+    auto* typed = dynamic_cast<composable::cvrp::Problem*>(problem.get());
     ASSERT_NE(typed, nullptr);
 
     auto* depot = problem->getDepot();
@@ -279,7 +279,7 @@ TEST(ComposableCVRPTWReaderTest, parsesSolomonIntoComposableProblem) {
         "2 20 20 20 10 120 5\n";
 
     TempFile file(content, ".txt");
-    compsable::cvrptw::Reader reader;
+    composable::cvrptw::Reader reader;
     std::unique_ptr<routing::Problem> problem(reader.readFile(file.path().string()));
 
     ASSERT_NE(problem, nullptr);
@@ -293,7 +293,7 @@ TEST(ComposableCVRPTWReaderTest, parsesSolomonIntoComposableProblem) {
     EXPECT_EQ(problem->numDepots(), 1u);
     EXPECT_EQ(problem->numClients(), 2u);
 
-    auto* typed = dynamic_cast<compsable::cvrptw::Problem*>(problem.get());
+    auto* typed = dynamic_cast<composable::cvrptw::Problem*>(problem.get());
     ASSERT_NE(typed, nullptr);
 
     auto* depot = problem->getDepot();
