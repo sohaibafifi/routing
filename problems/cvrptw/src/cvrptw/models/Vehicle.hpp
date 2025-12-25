@@ -5,9 +5,9 @@
 #pragma once
 
 #include <cvrp/models/Vehicle.hpp>
-#include <core/data/attributes/Stock.hpp>
-#include <core/data/attributes.hpp>
-#include <core/data/models/Vehicle.hpp>
+#include <plugins/attributes/CapacityPlugin/Stock.hpp>
+#include <core/interfaces/IAttribute.hpp>
+#include <plugins/attributes/ComposableCorePlugin/models/Vehicle.hpp>
 
 namespace cvrptw {
     namespace models {

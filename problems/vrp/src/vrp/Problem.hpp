@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <core/data/Problem.hpp>
+#include <core/Problem.hpp>
 #include "models/Depot.hpp"
 
 namespace vrp {

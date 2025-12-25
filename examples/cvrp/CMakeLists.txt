@@ -16,6 +16,7 @@ add_executable(example_cvrp ${example_cvrp_SRC})
 target_include_directories(example_cvrp PUBLIC ../../problems/vrp/src)
 target_include_directories(example_cvrp PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_cvrp PUBLIC ../../core/src)
+target_include_directories(example_cvrp PUBLIC ../../)
 
 
 target_link_libraries(example_cvrp PUBLIC vrp)

@@ -15,6 +15,7 @@ add_executable(example_vrp ${example_vrp_SRC})
 
 target_include_directories(example_vrp PUBLIC ../../problems/vrp/src)
 target_include_directories(example_vrp PUBLIC ../../core/src)
+target_include_directories(example_vrp PUBLIC ../../)
 
 
 target_link_libraries(example_vrp PUBLIC routing)

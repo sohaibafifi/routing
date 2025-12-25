@@ -15,6 +15,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -ffast-math")
 add_library(top SHARED ${top_SRC})
 
 target_include_directories(top PUBLIC ../../core/src/)
+target_include_directories(top PUBLIC ../../)
 target_include_directories(top PUBLIC ../vrp/src/)
 target_include_directories(top PUBLIC ../cvrp/src/)
 

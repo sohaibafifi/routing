@@ -6,7 +6,7 @@
 #pragma once
 
 
-#include <core/data/Reader.hpp>
+#include <plugins/readers/ReaderCorePlugin/Reader.hpp>
 
 namespace cvrptw {
     class Reader : public routing::Reader {

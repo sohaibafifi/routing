@@ -13,6 +13,7 @@ add_executable(example_vrptwtd ${example_vrptwtd_SRC})
 
 
 target_include_directories(example_vrptwtd PUBLIC ../../core/src)
+target_include_directories(example_vrptwtd PUBLIC ../../)
 target_include_directories(example_vrptwtd PUBLIC ../../problems/vrp/src)
 target_include_directories(example_vrptwtd PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_vrptwtd PUBLIC ../../problems/cvrptw/src)

@@ -1,0 +1,139 @@
+﻿// Copyright (c) 2020. Sohaib LAFIFI <sohaib.lafifi@univ-artois.fr>
+// You are allowed to use this project for research purposes as a member of
+// a non-commercial and academic institution.
+
+#pragma once
+
+#include "core/interfaces/IAttribute.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Memory.hpp"
+
+#include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
+#include "plugins/attributes/ComposableCorePlugin/models/Client.hpp"
+#include "plugins/attributes/ComposableCorePlugin/models/Depot.hpp"
+#include "plugins/attributes/ComposableCorePlugin/models/Vehicle.hpp"
+#include <memory>
+#include <string>
+#include <vector>
+
+#ifdef CPLEX_FOUND
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#include <ilcplex/ilocplexi.h>
+#pragma GCC diagnostic pop
+#endif
+
+namespace routing {
+#ifdef CPLEX_FOUND
+    namespace callback {
+        class UserCutCallback;
+        class HeuristicCallback;
+        class IncumbentCallback;
+        class LazyConstraintCallback;
+        class InformationCallback;
+    }
+#endif
+    namespace models {
+        class Solution;
+
+        class Tour;
+    }
+    class Problem;
+
+    class Initializer {
+        Problem *problem;
+    public:
+        Initializer(Problem *p_problem)
+                : problem(p_problem) {
+        }
+
+        Problem *getProblem() const { return problem; }
+        virtual models::Solution *initialSolution() = 0;
+        virtual models::Tour *initialTour(int vehicleID) = 0;
+    };
+
+    class Problem {
+    public :
+        virtual Memory *getMemory() = 0;
+
+
+        virtual ~Problem() {
+            for (unsigned i = 0; i < clients.size(); ++i) delete clients[i];
+            for (unsigned k = 0; k < vehicles.size(); ++k) delete vehicles[k];
+            for (unsigned d = 0; d < depots.size(); ++d) delete depots[d];
+        }
+
+        template<class Reader>
+        static Problem *loadFromFile(std::string filepath) {
+            return Reader().readFile(filepath);
+        }
+
+        virtual Initializer *initializer() = 0;
+#ifdef CPLEX_FOUND
+
+        virtual routing::callback::HeuristicCallback *setHeuristicCallback() { return nullptr; }
+
+        virtual routing::callback::IncumbentCallback *setIncumbentCallback() { return nullptr; }
+
+        virtual routing::callback::UserCutCallback *setUserCutCallback() { return nullptr; }
+
+        virtual routing::callback::LazyConstraintCallback *setLazyConstraintCallback() { return nullptr; }
+
+        virtual routing::callback::InformationCallback *setInformationCallback() { return nullptr; }
+
+#endif
+        std::string getName() const {
+            return name;
+        }
+
+        void setName(const std::string &value) {
+            name = value;
+        }
+
+        virtual routing::Duration getDistance(const models::Client &c1, const models::Client &c2) const = 0;
+
+        virtual routing::Duration getDistance(const models::Client &c1, const models::Depot &d) const = 0;
+
+#ifdef CPLEX_FOUND
+
+        IloCplex cplex;
+        IloObjective obj;
+        IloModel model;
+        IloEnv env;
+        virtual IloCplex& generateModel() {
+            this->model = IloModel(env);
+            this->model.setName(this->getName().c_str());
+            this->addVariables();
+            this->addConstraints();
+            this->addObjective();
+            try{
+                this->cplex = IloCplex(this->model);
+            }catch(IloException &e){
+                std::cout << e.getMessage() << std::endl;
+
+                exit(EXIT_FAILURE);
+            }
+
+            return this->cplex;
+        }
+
+
+#endif
+        std::string name;
+        std::vector<models::Vehicle *> vehicles;
+        std::vector<models::Depot *> depots;
+        std::vector<models::Client *> clients;
+
+        std::vector<models::Client *> getClients() {
+            return this->clients;
+        }
+
+#ifdef CPLEX_FOUND
+
+        virtual void addVariables() = 0;
+
+        virtual void addConstraints() = 0;
+
+        virtual void addObjective() = 0;
+#endif
+    };
+}

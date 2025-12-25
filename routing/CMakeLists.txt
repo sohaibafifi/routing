@@ -7,6 +7,7 @@ add_library(routing SHARED routing.hpp)
 set_target_properties(routing PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(routing PUBLIC ../core/src)
+target_include_directories(routing PUBLIC ../)
 
 foreach (problem tsptw pdvrptw pdvrp toptw top vrptwtd cvrpstw cvrptw cvrp vrp)
     add_subdirectory(../problems/${problem} ${problem})

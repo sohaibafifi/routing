@@ -5,8 +5,8 @@
 #pragma once
 
 #include <vrp/models/Client.hpp>
-#include <core/data/attributes/Consumer.hpp>
-#include <core/data/attributes.hpp>
+#include <plugins/attributes/CapacityPlugin/Consumer.hpp>
+#include <core/interfaces/IAttribute.hpp>
 
 namespace cvrp {
     namespace models {

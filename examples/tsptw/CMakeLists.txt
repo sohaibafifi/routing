@@ -13,6 +13,7 @@ add_executable(example_tsptw ${example_tsptw_SRC})
 
 
 target_include_directories(example_tsptw PUBLIC ../../core/src)
+target_include_directories(example_tsptw PUBLIC ../../)
 target_include_directories(example_tsptw PUBLIC ../../problems/vrp/src)
 target_include_directories(example_tsptw PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_tsptw PUBLIC ../../problems/cvrptw/src)

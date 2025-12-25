@@ -18,6 +18,7 @@ target_include_directories(example_toptw PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_toptw PUBLIC ../../problems/top/src)
 target_include_directories(example_toptw PUBLIC ../../problems/toptw/src)
 target_include_directories(example_toptw PUBLIC ../../core/src)
+target_include_directories(example_toptw PUBLIC ../../)
 
 
 target_link_libraries(example_toptw PUBLIC routing)

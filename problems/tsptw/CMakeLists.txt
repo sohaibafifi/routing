@@ -20,6 +20,7 @@ add_library(tsptw SHARED ${tsptw_SRC})
 
 
 target_include_directories(tsptw PUBLIC ../../core/src/)
+target_include_directories(tsptw PUBLIC ../../)
 target_include_directories(tsptw PUBLIC ../vrp/src/)
 target_include_directories(tsptw PUBLIC ../cvrp/src/)
 target_include_directories(tsptw PUBLIC ../cvrptw/src/)

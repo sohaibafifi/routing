@@ -5,9 +5,9 @@
 #pragma once
 
 #include <cvrp/models/Client.hpp>
-#include <core/data/attributes/Profiter.hpp>
-#include <core/data/attributes/GeoNode.hpp>
-#include <core/data/attributes.hpp>
+#include <plugins/attributes/ProfitPlugin/Profiter.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
+#include <core/interfaces/IAttribute.hpp>
 
 namespace top {
     namespace models {

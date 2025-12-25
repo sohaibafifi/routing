@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <core/data/models/Tour.hpp>
-#include <core/data/attributes/Stock.hpp>
+#include <plugins/attributes/ComposableCorePlugin/models/Tour.hpp>
+#include <plugins/attributes/CapacityPlugin/Stock.hpp>
 #include "Client.hpp"
 
 namespace vrp {

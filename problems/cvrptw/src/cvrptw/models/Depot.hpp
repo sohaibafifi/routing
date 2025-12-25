@@ -6,9 +6,9 @@
 #pragma once
 
 #include <vrp/models/Depot.hpp>
-#include <core/data/attributes/Consumer.hpp>
-#include <core/data/attributes/Rendezvous.hpp>
-#include <core/data/attributes.hpp>
+#include <plugins/attributes/CapacityPlugin/Consumer.hpp>
+#include <plugins/attributes/TimeWindowPlugin/Rendezvous.hpp>
+#include <core/interfaces/IAttribute.hpp>
 
 namespace cvrptw {
     namespace models {

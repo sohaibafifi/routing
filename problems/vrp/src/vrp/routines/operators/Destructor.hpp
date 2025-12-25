@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/routines/operators/Destructor.hpp>
+#include <plugins/solvers/OperatorsPlugin/operators/Destructor.hpp>
 #include "../../models/Solution.hpp"
 #include <cassert>
 #include <random>

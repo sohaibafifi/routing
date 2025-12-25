@@ -17,6 +17,7 @@ target_include_directories(example_top PUBLIC ../../problems/vrp/src)
 target_include_directories(example_top PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_top PUBLIC ../../problems/top/src)
 target_include_directories(example_top PUBLIC ../../core/src)
+target_include_directories(example_top PUBLIC ../../)
 
 
 target_link_libraries(example_top PUBLIC routing)

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/routines/operators/Diver.hpp>
+#include <plugins/solvers/OperatorsPlugin/operators/Diver.hpp>
 #include "Constructor.hpp"
 #include "../../models/Solution.hpp"
 

@@ -19,6 +19,7 @@ target_include_directories(example_cvrptw PUBLIC ../../problems/vrp/src)
 target_include_directories(example_cvrptw PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_cvrptw PUBLIC ../../problems/cvrptw/src)
 target_include_directories(example_cvrptw PUBLIC ../../core/src)
+target_include_directories(example_cvrptw PUBLIC ../../)
 
 
 

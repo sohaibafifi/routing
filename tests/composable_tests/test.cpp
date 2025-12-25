@@ -4,19 +4,19 @@
 
 #include <gtest/gtest.h>
 
-#include <core/data/AttributeRegistry.hpp>
-#include <core/data/ComposableEntity.hpp>
-#include <core/data/ComposableProblem.hpp>
+#include <core/PluginRegistry.hpp>
+#include <plugins/attributes/ComposableCorePlugin/ComposableEntity.hpp>
+#include <plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp>
 
-#include <core/data/attributes/Consumer.hpp>
-#include <core/data/attributes/GeoNode.hpp>
-#include <core/data/attributes/Rendezvous.hpp>
-#include <core/data/attributes/ServiceQuery.hpp>
-#include <core/data/attributes/Stock.hpp>
+#include <plugins/attributes/CapacityPlugin/Consumer.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
+#include <plugins/attributes/TimeWindowPlugin/Rendezvous.hpp>
+#include <plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp>
+#include <plugins/attributes/CapacityPlugin/Stock.hpp>
 
-#include <core/constraints/CapacityConstraintGenerator.hpp>
-#include <core/constraints/RoutingConstraintGenerator.hpp>
-#include <core/constraints/TimeWindowConstraintGenerator.hpp>
+#include <plugins/attributes/CapacityPlugin/CapacityConstraintGenerator.hpp>
+#include <plugins/attributes/RoutingPlugin/RoutingConstraintGenerator.hpp>
+#include <plugins/attributes/TimeWindowPlugin/TimeWindowConstraintGenerator.hpp>
 
 #include <memory>
 #include <stdexcept>
@@ -115,7 +115,7 @@ TEST(ComposableProblemTest, usesGeoNodeForDistance) {
 }
 
 TEST(ComposableProblemTest, activatesGeneratorsFromRegistry) {
-    auto& registry = routing::AttributeRegistry::instance();
+    auto& registry = routing::PluginRegistry::instance();
     registry.clear();
 
     registry.registerGenerator(std::make_unique<DummyGenerator>(
@@ -142,7 +142,7 @@ TEST(ComposableProblemTest, activatesGeneratorsFromRegistry) {
 }
 
 TEST(ComposableProblemTest, realGeneratorsAreOrderedByPriority) {
-    auto& registry = routing::AttributeRegistry::instance();
+    auto& registry = routing::PluginRegistry::instance();
     registry.clear();
 
     registry.registerGenerator(std::make_unique<routing::constraints::TimeWindowConstraintGenerator>());

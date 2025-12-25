@@ -14,6 +14,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -ffast-math")
 add_library(pdvrptw SHARED ${pdvrptw_SRC})
 
 target_include_directories(pdvrptw PUBLIC ../../core/src/)
+target_include_directories(pdvrptw PUBLIC ../../)
 target_include_directories(pdvrptw PUBLIC ../vrp/src/)
 target_include_directories(pdvrptw PUBLIC ../cvrp/src/)
 target_include_directories(pdvrptw PUBLIC ../cvrptw/src/)

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vrp/Reader.hpp>
 #ifdef CPLEX_FOUND
-#include <core/solvers/MIPSolver.hpp>
+#include <plugins/solvers/MIPSolverPlugin/MIPSolver.hpp>
 #endif
 #include "../../libs/argparse/argparse.h"
 

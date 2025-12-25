@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <core/data/models/Solution.hpp>
+#include <core/Solution.hpp>
 #include "../Problem.hpp"
 #include "Tour.hpp"
 

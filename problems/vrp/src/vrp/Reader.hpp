@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Problem.hpp"
-#include <core/data/Reader.hpp>
+#include <plugins/readers/ReaderCorePlugin/Reader.hpp>
 
 namespace vrp {
     class Reader : public routing::Reader {

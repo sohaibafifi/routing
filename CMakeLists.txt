@@ -53,6 +53,7 @@ if(GUROBI_LIBRARY)
 endif()
 
 add_subdirectory(routing)
+add_subdirectory(plugins)
 
 if(ROUTING_BUILD_EXAMPLES)
   add_subdirectory(examples)

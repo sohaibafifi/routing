@@ -5,10 +5,10 @@
 #pragma once
 
 #include <cvrptw/models/Client.hpp>
-#include <core/data/attributes/Pickup.hpp>
-#include <core/data/attributes/Delivery.hpp>
-#include <core/data/attributes/GeoNode.hpp>
-#include <core/data/attributes.hpp>
+#include <plugins/attributes/PickupDeliveryPlugin/Pickup.hpp>
+#include <plugins/attributes/PickupDeliveryPlugin/Delivery.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
+#include <core/interfaces/IAttribute.hpp>
 
 namespace pdvrptw {
     namespace models {

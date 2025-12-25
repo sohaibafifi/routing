@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <plugins/attributes/ComposableCorePlugin/models/Depot.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
+
 namespace vrp {
     namespace models {
         struct Depot

@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include <core/solvers/LSSolver.hpp>
+#include <plugins/solvers/LSSolverPlugin/LSSolver.hpp>
 #include "../models/Solution.hpp"
 #include "../routines/operators/Constructor.hpp"
 #include "../routines/operators/Destructor.hpp"
-#include <core/routines/neighborhoods/Neighborhood.hpp>
-#include <core/routines/neighborhoods/IDCH.hpp>
-#include <core/routines/neighborhoods/TwoOpt.hpp>
-#include <core/routines/neighborhoods/Move.hpp>
+#include <plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp>
+#include <plugins/neighborhoods/IDCHPlugin/IDCH.hpp>
+#include <plugins/neighborhoods/TwoOptPlugin/TwoOpt.hpp>
+#include <plugins/neighborhoods/NeighborhoodCorePlugin/Move.hpp>
 
 namespace vrp {
     template<class Reader>

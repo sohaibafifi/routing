@@ -20,6 +20,7 @@ add_library(vrptwtd SHARED ${vrptwtd_SRC})
 
 
 target_include_directories(vrptwtd PUBLIC ../../core/src/)
+target_include_directories(vrptwtd PUBLIC ../../)
 target_include_directories(vrptwtd PUBLIC ../vrp/src/)
 target_include_directories(vrptwtd PUBLIC ../cvrp/src/)
 target_include_directories(vrptwtd PUBLIC ../cvrptw/src/)

@@ -18,6 +18,7 @@ add_library(cvrpstw SHARED ${cvrpstw_SRC})
 
 
 target_include_directories(cvrpstw PUBLIC ../../core/src/)
+target_include_directories(cvrpstw PUBLIC ../../)
 target_include_directories(cvrpstw PUBLIC ../vrp/src/)
 target_include_directories(cvrpstw PUBLIC ../cvrp/src/)
 target_include_directories(cvrpstw PUBLIC ../cvrptw/src/)

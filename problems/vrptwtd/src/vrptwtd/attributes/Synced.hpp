@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include <core/data/attributes.hpp>
+#include <core/interfaces/IAttribute.hpp>
+#include <plugins/attributes/ComposableCorePlugin/Model.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
 #include <utility>
 #include <vector>
 

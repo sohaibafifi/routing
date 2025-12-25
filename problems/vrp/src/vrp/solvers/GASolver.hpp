@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <core/solvers/GASolver.hpp>
+#include <plugins/solvers/GASolverPlugin/GASolver.hpp>
 #include "../models/Solution.hpp"
 #include "../routines/operators/Constructor.hpp"
 #include "../routines/operators/Destructor.hpp"
-#include <core/routines/neighborhoods/Neighborhood.hpp>
-#include <core/routines/neighborhoods/IDCH.hpp>
-#include <core/routines/neighborhoods/Move.hpp>
+#include <plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp>
+#include <plugins/neighborhoods/IDCHPlugin/IDCH.hpp>
+#include <plugins/neighborhoods/NeighborhoodCorePlugin/Move.hpp>
 
 namespace vrp {
     template<class Reader>

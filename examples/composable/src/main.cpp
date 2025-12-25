@@ -23,26 +23,23 @@
 #include <iomanip>
 
 // Core composable system
-#include <core/data/ComposableProblem.hpp>
-#include <core/data/ComposableEntity.hpp>
-#include <core/data/AttributeRegistry.hpp>
+#include <plugins/attributes/ComposableCorePlugin/ComposableProblem.hpp>
+#include <plugins/attributes/ComposableCorePlugin/ComposableEntity.hpp>
+#include <core/PluginRegistry.hpp>
 
 // Attributes
-#include <core/data/attributes/GeoNode.hpp>
-#include <core/data/attributes/Consumer.hpp>
-#include <core/data/attributes/Stock.hpp>
-#include <core/data/attributes/Rendezvous.hpp>
-#include <core/data/attributes/ServiceQuery.hpp>
-#include <core/data/attributes/Profiter.hpp>
+#include <plugins/attributes/RoutingPlugin/GeoNode.hpp>
+#include <plugins/attributes/CapacityPlugin/Consumer.hpp>
+#include <plugins/attributes/CapacityPlugin/Stock.hpp>
+#include <plugins/attributes/TimeWindowPlugin/Rendezvous.hpp>
+#include <plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp>
+#include <plugins/attributes/ProfitPlugin/Profiter.hpp>
 
-// Constraint generators (auto-registered)
-#include <core/constraints/RoutingConstraintGenerator.hpp>
-#include <core/constraints/CapacityConstraintGenerator.hpp>
-#include <core/constraints/TimeWindowConstraintGenerator.hpp>
-#include <core/constraints/ProfitObjectiveGenerator.hpp>
+// Plugin bundle (auto-registers all core plugins)
+#include <plugins/PluginBundle.hpp>
 
 // MIP Solver
-#include <core/solvers/MIPSolver.hpp>
+#include <plugins/solvers/MIPSolverPlugin/MIPSolver.hpp>
 
 using namespace routing;
 using namespace routing::attributes;
@@ -284,10 +281,15 @@ int main(int argc, const char* argv[]) {
     std::cout << "  Composable Attribute System Demo" << std::endl;
     std::cout << "========================================" << std::endl;
 
+    routing::plugins::registerCorePlugins();
+    routing::PluginRegistry::instance().initializeAll();
+
     // Run examples
     exampleCVRPTW();
     exampleTOP();
     exampleIntrospection();
+
+    routing::PluginRegistry::instance().shutdownAll();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "  Demo Complete" << std::endl;

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <core/routines/operators/Constructor.hpp>
+#include <plugins/solvers/OperatorsPlugin/operators/Constructor.hpp>
 #include "../../models/Solution.hpp"
 #include "../../models/Tour.hpp"
 

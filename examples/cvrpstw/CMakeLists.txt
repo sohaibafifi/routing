@@ -18,6 +18,7 @@ target_include_directories(example_cvrpstw PUBLIC ../../problems/cvrp/src)
 target_include_directories(example_cvrpstw PUBLIC ../../problems/cvrptw/src)
 target_include_directories(example_cvrpstw PUBLIC ../../problems/cvrpstw/src)
 target_include_directories(example_cvrpstw PUBLIC ../../core/src)
+target_include_directories(example_cvrpstw PUBLIC ../../)
 
 
 target_link_libraries(example_cvrpstw PUBLIC routing)

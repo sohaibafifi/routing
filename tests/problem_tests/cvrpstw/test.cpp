@@ -9,7 +9,7 @@
 #include <cvrpstw/Problem.hpp>
 
 #ifdef CPLEX_FOUND
-#include <core/solvers/MIPSolver.hpp>
+#include <plugins/solvers/MIPSolverPlugin/MIPSolver.hpp>
 
 
 TEST_F(ProblemTest, solve) {
