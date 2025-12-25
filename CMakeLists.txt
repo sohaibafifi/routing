@@ -32,6 +32,7 @@ endif()
 option(ROUTING_BUILD_EXAMPLES "Build examples" ON)
 option(ROUTING_BUILD_CPOPTIMIZER "Build the cpoptimizer CLI (requires CPLEX)" ON)
 option(ROUTING_BUILD_GRB "Build the grb CLI (requires GUROBI)" ON)
+option(ROUTING_BUILD_XCSP3 "Build XCSP3 backend (requires ACE/CoSoCo at runtime)" ON)
 
 include(CTest)
 

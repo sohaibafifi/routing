@@ -4,6 +4,9 @@
 
 #include "plugins/PluginBundle.hpp"
 #include "core/PluginRegistry.hpp"
+#ifdef ROUTING_BUILD_XCSP3
+#include "solvers/XCSP3SolverPlugin/XCSP3SolverPlugin.hpp"
+#endif
 
 namespace routing::plugins {
 
@@ -26,6 +29,9 @@ void registerCorePlugins() {
     registry.registerPlugin(std::make_unique<MIPSolverPlugin>());
     registry.registerPlugin(std::make_unique<PSOSolverPlugin>());
     registry.registerPlugin(std::make_unique<VNSSolverPlugin>());
+#ifdef ROUTING_BUILD_XCSP3
+    registry.registerPlugin(std::make_unique<XCSP3SolverPlugin>());
+#endif
 
     // Neighborhood plugins
     registry.registerPlugin(std::make_unique<TwoOptPlugin>());

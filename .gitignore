@@ -89,3 +89,6 @@ git_toolbox_prj.xml
 output
 /.vscode/
 /*.log
+build_xcsp3/**
+__pycache__
+venv
