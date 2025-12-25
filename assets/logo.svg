@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Edgy Route R logo with dashed graph lines">
+  <defs>
+    <linearGradient id="route" x1="60" y1="40" x2="190" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E4D64"/>
+      <stop offset="100%" stop-color="#1B5B4B"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M70 190
+           L70 50
+           L140 50
+           Q185 50 185 95
+           Q185 140 140 140
+           L95 140
+           L175 190"
+        fill="none" stroke="url(#route)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <polyline points="70,190 70,120 140,50 175,95 140,140 175,190"
+            fill="none" stroke="#D8CFC2" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            stroke-dasharray="5 6"/>
+
+  <circle cx="70" cy="190" r="7" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+  <circle cx="70" cy="120" r="6" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+  <circle cx="140" cy="50" r="7" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+  <circle cx="175" cy="95" r="6" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+  <circle cx="140" cy="140" r="6" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+  <circle cx="175" cy="190" r="7" fill="#F28C28" stroke="#F7F4EF" stroke-width="3"/>
+</svg>
