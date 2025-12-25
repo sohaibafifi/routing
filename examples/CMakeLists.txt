@@ -1,4 +1,14 @@
+# Composable examples (recommended for new development)
+add_subdirectory(composable)
+add_subdirectory(plugin_demo)
+
+# Legacy examples (using inheritance-based modeling)
+add_subdirectory(legacy)
+
+# Build target for all examples
 set(examples
+    example_composable
+    example_plugin_demo
     example_vrp
     example_cvrp
     example_top
@@ -7,14 +17,7 @@ set(examples
     example_cvrpstw
     example_vrptwtd
     example_tsptw
-    example_composable
-    example_plugin_demo
 )
-set(problem_examples vrp cvrp top toptw cvrptw cvrpstw vrptwtd tsptw composable)
-foreach (problem ${problem_examples})
-    add_subdirectory(${problem})
-endforeach ()
-add_subdirectory(plugin_demo)
 
 add_custom_target(build_examples)
 add_dependencies(build_examples ${examples})
