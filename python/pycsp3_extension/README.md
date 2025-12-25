@@ -56,12 +56,6 @@ solver = Solver()
 status = solver.solve(problem)
 ```
 
-## Internal Documentation
-
--   [**Main README**](../../README.md): C++ Library compilation and options.
--   [**ROADMAP**](../../ROADMAP.md): Vision for the next-generation VRP solver, including Python bindings (Phase 3).
--   [**PROBLEMS**](../../PROBLEMS.md): Definitions of VRP variants supported by the core library.
-
 ## References & Ecosystem
 
 -   **[XCSP3](http://www.xcsp.org/)**: An XML-based format for representing Constraint Satisfaction and Optimization Problems.
