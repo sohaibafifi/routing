@@ -63,21 +63,29 @@ namespace routing {
         //this->cplex.setParam(IloCplex::Param::Preprocessing::Reduce, 0);
         cplex->resetTime();
         bool solved = this->cplex->solve() != 0;
-        this->os << this->problem->getName()
-                 << "\t" << this->cplex->getStatus()
-                 << "\t" << this->cplex->getObjValue()
-                 << "\t" << this->cplex->getBestObjValue()
-                 << "\t" << this->cplex->getMIPRelativeGap()
-                 << "\t" << this->cplex->getTime()
-                 << std::endl;
+
+        // Check status before accessing solution values
+        auto status = this->cplex->getStatus();
+        bool hasSolution = (status == IloAlgorithm::Optimal ||
+                           status == IloAlgorithm::Feasible);
+
+        this->os << this->problem->getName() << "\t" << status;
+        if (hasSolution) {
+            this->os << "\t" << this->cplex->getObjValue()
+                     << "\t" << this->cplex->getBestObjValue()
+                     << "\t" << this->cplex->getMIPRelativeGap();
+        } else {
+            this->os << "\tN/A\tN/A\tN/A";
+        }
+        this->os << "\t" << this->cplex->getTime() << std::endl;
 
         // Extract solution from CPLEX arc variables
         this->solution = this->problem->initializer()->initialSolution();
-        if (solved && !this->problem->arcs.empty()) {
+        if (hasSolution && !this->problem->arcs.empty()) {
             extractSolutionFromArcs();
         }
 
-        return solved;
+        return hasSolution;
     }
 
     inline void MIPSolver::extractSolutionFromArcs() {
@@ -172,13 +180,19 @@ namespace routing {
     }
 
     inline void MIPSolver::save(std::ofstream &output) const {
-        output << this->getProblem()->getName()
-               << "\t" << getCplex().getStatus()
-               << "\t" << getCplex().getObjValue()
-               << "\t" << getCplex().getBestObjValue()
-               << "\t" << getCplex().getMIPRelativeGap()
-               << "\t" << getCplex().getTime()
-               << std::endl;
+        auto status = getCplex().getStatus();
+        bool hasSolution = (status == IloAlgorithm::Optimal ||
+                           status == IloAlgorithm::Feasible);
+
+        output << this->getProblem()->getName() << "\t" << status;
+        if (hasSolution) {
+            output << "\t" << getCplex().getObjValue()
+                   << "\t" << getCplex().getBestObjValue()
+                   << "\t" << getCplex().getMIPRelativeGap();
+        } else {
+            output << "\tN/A\tN/A\tN/A";
+        }
+        output << "\t" << getCplex().getTime() << std::endl;
         output.close();
     }
 

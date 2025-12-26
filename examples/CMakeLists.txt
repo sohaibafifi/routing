@@ -20,6 +20,9 @@ target_include_directories(example_top PUBLIC
 target_link_libraries(example_top PUBLIC routing_plugins ${CPLEX_LIBRARIES})
 routing_target_link_dl(example_top)
 
+# Benchmark CLI (requires argparse - disabled for now)
+# add_subdirectory(benchmark)
+
 set(examples
     example_cvrptw
     example_top
