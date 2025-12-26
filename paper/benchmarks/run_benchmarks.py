@@ -83,7 +83,7 @@ PLOTS_DIR = SCRIPT_DIR / "plots"
 
 # Instance configurations
 # Solomon instances are in subdirectories by size: Solomon/100/, Solomon/25/, etc.
-SOLOMON_DIR = DATA_DIR / "CVRPTW" / "Solomon" / "25"
+SOLOMON_DIR = DATA_DIR / "CVRPTW" / "Solomon" / "10"
 
 INSTANCES = {
     "solomon_r1": {
@@ -685,7 +685,7 @@ def generate_solver_comparison_table(results: List[BenchmarkResult], output_path
         "ls": "LS"
     }
 
-    for solver in ["mip", "cp", "vns", "ma", "ga", "pso", "ls"]:
+    for solver in WORKING_SOLVERS:
         if solver not in by_solver:
             continue
 
@@ -845,6 +845,17 @@ def run_full_benchmarks() -> List[BenchmarkResult]:
     )
     all_results.extend(results)
     save_results(results, RESULTS_DIR / "solomon_c1.json")
+
+    # Solomon RC1 instances (mixed)
+    results = run_experiment(
+        instances=INSTANCES["solomon_rc1"]["instances"],
+        solvers=WORKING_SOLVERS,
+        timeout=DEFAULT_TIMEOUT,
+        num_runs=3,
+        base_path=INSTANCES["solomon_rc1"]["path"]
+    )
+    all_results.extend(results)
+    save_results(results, RESULTS_DIR / "solomon_rc1.json")
 
     return all_results
 

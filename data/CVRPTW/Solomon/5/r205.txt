@@ -1,0 +1,15 @@
+R205
+
+VEHICLE
+NUMBER     CAPACITY
+  5          1000
+
+CUSTOMER
+CUST NO.   XCOORD.    YCOORD.   DEMAND   READY TIME   DUE DATE   SERVICE TIME
+ 
+    0      35         35          0          0       1000          0   
+    1      41         49         10        658        898         10   
+    2      35         17          7         93        333         10   
+    3      55         45         13        436        676         10   
+    4      55         20         19        620        860         10   
+    5      15         30         26         20        260         10   
