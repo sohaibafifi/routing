@@ -95,28 +95,26 @@ public:
         if (n == 0 || m == 0) return;
 
         if (routingGen_) {
-            // Use vehicle assignment and successor variables from routing generator
-            const auto& vehicleOfVars = routingGen_->getVehicleOfVars();
+            // Use successor variables from routing generator
             const auto& nextVars = routingGen_->getNextVars();
 
-            // For each vehicle, constrain total load
+            // Each client load must at least cover its own demand
+            for (size_t i = 0; i < n; ++i) {
+                LinearExpr ownDemand(loadVars_[i]);
+                cp.addGreaterOrEqual(ownDemand, demands_[i]);
+            }
+
+            // Anchor first client load to its demand when leaving a start depot
             for (size_t k = 0; k < m; ++k) {
-                // Sum of demands for clients assigned to vehicle k <= capacity[k]
-                LinearExpr loadExpr;
+                for (size_t j = 0; j < n; ++j) {
+                    size_t nodeJ = routingGen_->clientNodeIndex(j);
+                    IntVar isFirst = cp.newBoolVar("load_start_" + std::to_string(k) + "_" + std::to_string(j));
+                    cp.addReification(isFirst, nextVars[k], static_cast<int>(nodeJ));
 
-                for (size_t i = 0; i < n; ++i) {
-                    // If vehicleOf[i] == k, add demand[i] to the sum
-                    IntVar onVehicle = cp.newBoolVar("on_v" + std::to_string(k) + "_" + std::to_string(i));
-
-                    // Link: onVehicle == 1 iff vehicleOf[i] == k
-                    cp.addReification(onVehicle, vehicleOfVars[i], static_cast<int>(k));
-
-                    // demand contribution = demand[i] * onVehicle
-                    loadExpr.addTerm(onVehicle, demands_[i]);
+                    LinearExpr anchorExpr(loadVars_[j]);
+                    anchorExpr.addConstant(-demands_[j]);
+                    cp.addImplication(isFirst, anchorExpr, 0, 0);  // load[j] == demand[j]
                 }
-
-                // Total load <= capacity
-                cp.addLessOrEqual(loadExpr, capacities_[k]);
             }
 
             // MTZ-style load propagation

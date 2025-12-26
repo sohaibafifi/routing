@@ -68,20 +68,7 @@ public:
             next_.push_back(cp.newIntVar(0, static_cast<int>(totalNodes_) - 1, varName));
         }
 
-        // Create vehicle assignment variables for clients
-        vehicleOf_.clear();
-        for (size_t i = 0; i < n; ++i) {
-            std::string varName = "vehicle_" + std::to_string(i);
-            vehicleOf_.push_back(cp.newIntVar(0, static_cast<int>(m) - 1, varName));
-        }
-
-        // Create visit interval variables for clients
-        visits_.clear();
-        for (size_t i = 0; i < n; ++i) {
-            std::string varName = "visit_" + std::to_string(i);
-            // Visit duration is 0 for now (service time handled by TimeWindow generator)
-            visits_.push_back(cp.newIntervalVar(0, 1000000, 0, 0, varName));
-        }
+        // No extra variables needed beyond next_ for routing structure
 
         // Store distance matrix reference
         computeDistanceMatrix(problem);
@@ -95,10 +82,9 @@ public:
 
         if (n == 0 || m == 0) return;
 
-        // Note: Subcircuit constraint is currently disabled due to implementation issues
-        // The routing constraints below provide sufficient structure
-        // TODO: Implement proper subcircuit constraint for CP Optimizer
-        // cp.addSubCircuit(next_);
+        // Enforce a permutation structure: each node has a unique predecessor/successor
+        // This allows multiple cycles (one per vehicle) while removing most symmetry.
+        cp.addAllDifferent(next_);
 
         // Start depot k can go to clients (m..m+n-1) or any end depot (m+n..m+n+m-1)
         // Just exclude other start depots: next[k] >= m
@@ -113,6 +99,17 @@ public:
             size_t nodeI = m + i;
             LinearExpr expr(next_[nodeI]);
             cp.addLinearConstraint(expr, static_cast<int>(m), INT_MAX);
+        }
+
+        // Start depot k can only go to its own end depot or a client
+        for (size_t k = 0; k < m; ++k) {
+            for (size_t l = 0; l < m; ++l) {
+                if (l == k) continue;
+                size_t otherEnd = m + n + l;
+                IntVar invalidEnd = cp.newBoolVar("start_end_" + std::to_string(k) + "_" + std::to_string(l));
+                cp.addReification(invalidEnd, next_[k], static_cast<int>(otherEnd));
+                cp.addEquality(LinearExpr(invalidEnd), 0);
+            }
         }
 
         // End depot k MUST return to start depot k
@@ -136,26 +133,7 @@ public:
             cp.addEquality(LinearExpr(selfLoop), 0);  // No self-loops allowed
         }
 
-        // Ensure each client has exactly one predecessor (is visited exactly once)
-        // This is the key constraint to ensure all clients are visited
-        for (size_t j = 0; j < n; ++j) {
-            size_t nodeJ = m + j;  // Client j's node index
-            LinearExpr predecessorCount;
-
-            // Count how many nodes point to client j
-            for (size_t i = 0; i < totalNodes_; ++i) {
-                if (i == nodeJ) continue;  // Skip self
-                // Only count valid predecessors (start depots and other clients)
-                if (i < m || (i >= m && i < m + n)) {
-                    IntVar pointsToJ = cp.newBoolVar("pred_" + std::to_string(i) + "_" + std::to_string(j));
-                    cp.addReification(pointsToJ, next_[i], static_cast<int>(nodeJ));
-                    predecessorCount.addTerm(pointsToJ, 1);
-                }
-            }
-
-            // Exactly one predecessor for each client
-            cp.addEquality(predecessorCount, 1);
-        }
+        // Vehicle assignment is handled implicitly via route structure
     }
 
     void addObjectiveTerms(ICPBackend& cp, Problem& problem, LinearExpr& expr) override {
@@ -213,8 +191,6 @@ public:
 
     // Accessors for variables
     const std::vector<IntVar>& getNextVars() const { return next_; }
-    const std::vector<IntVar>& getVehicleOfVars() const { return vehicleOf_; }
-    const std::vector<IntervalVar>& getVisitVars() const { return visits_; }
     const std::vector<std::vector<int>>& getRoutes() const { return routes_; }
 
     size_t getNumClients() const { return numClients_; }
@@ -224,8 +200,6 @@ public:
 
 private:
     std::vector<IntVar> next_;           // Successor variables
-    std::vector<IntVar> vehicleOf_;      // Vehicle assignment for clients
-    std::vector<IntervalVar> visits_;    // Visit intervals for clients
 
     std::vector<std::vector<int>> distanceMatrix_;  // Distance matrix
     std::vector<std::vector<int>> routes_;          // Extracted routes

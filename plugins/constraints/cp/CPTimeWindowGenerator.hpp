@@ -84,7 +84,7 @@ public:
             int twClose = tw ? static_cast<int>(tw->getTwClose()) : depotClose;
             int serviceTime = service ? static_cast<int>(service->getService()) : 0;
 
-            // Use "tw_visit_" prefix to avoid collision with CPRoutingGenerator's "visit_" intervals
+            // Use "tw_visit_" prefix to keep time-window intervals distinct
             std::string varName = "tw_visit_" + std::to_string(i);
 
             // Create interval variable with time window bounds and service time
