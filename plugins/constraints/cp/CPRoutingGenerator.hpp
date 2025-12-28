@@ -8,6 +8,7 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
 
+#include <cmath>
 #include <unordered_map>
 
 namespace routing {
@@ -209,6 +210,7 @@ private:
     size_t numVehicles_ = 0;
 
     void computeDistanceMatrix(Problem& problem) {
+        constexpr int kTimeScale = 100;
         auto clients = problem.getComposableClients();
         auto vehicles = problem.getComposableVehicles();
         auto depots = problem.getComposableDepots();
@@ -227,7 +229,8 @@ private:
         // Start depots (0 to m-1) to clients (m to m+n-1)
         for (size_t k = 0; k < m; ++k) {
             for (size_t i = 0; i < n; ++i) {
-                int dist = static_cast<int>(problem.getDistance(*depot, *clients[i]));
+                int dist = static_cast<int>(std::lround(
+                    problem.getDistance(*depot, *clients[i]) * kTimeScale));
                 distanceMatrix_[k][m + i] = dist;
             }
             // Start depot to own end depot (empty route)
@@ -238,7 +241,8 @@ private:
         for (size_t i = 0; i < n; ++i) {
             for (size_t j = 0; j < n; ++j) {
                 if (i != j) {
-                    int dist = static_cast<int>(problem.getDistance(*clients[i], *clients[j]));
+                    int dist = static_cast<int>(std::lround(
+                        problem.getDistance(*clients[i], *clients[j]) * kTimeScale));
                     distanceMatrix_[m + i][m + j] = dist;
                 }
             }
@@ -247,7 +251,8 @@ private:
         // Clients to end depots
         for (size_t i = 0; i < n; ++i) {
             for (size_t k = 0; k < m; ++k) {
-                int dist = static_cast<int>(problem.getDistance(*clients[i], *depot));
+                int dist = static_cast<int>(std::lround(
+                    problem.getDistance(*clients[i], *depot) * kTimeScale));
                 distanceMatrix_[m + i][m + n + k] = dist;
             }
         }

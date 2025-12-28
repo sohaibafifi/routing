@@ -11,6 +11,8 @@
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
 #include "CPRoutingGenerator.hpp"
 
+#include <cmath>
+
 namespace routing {
 namespace cp {
 namespace generators {
@@ -31,6 +33,8 @@ namespace generators {
  */
 class CPTimeWindowGenerator : public ICPConstraintGenerator {
 public:
+    static constexpr int kTimeScale = 100;
+
     std::string name() const override {
         return "CPTimeWindowGenerator";
     }
@@ -59,14 +63,18 @@ public:
         size_t m = vehicles.size();
 
         // Get depot time window
+        auto scaleTime = [](Duration value) {
+            return static_cast<int>(std::floor(value * kTimeScale));
+        };
+
         int depotOpen = 0;
-        int depotClose = 1000000;
+        int depotClose = scaleTime(1000000.0);
         if (!depots.empty()) {
             auto* depot = depots[0];
             auto* depotTW = depot->tryGetAttribute<attributes::Rendezvous>();
             if (depotTW) {
-                depotOpen = static_cast<int>(depotTW->getTwOpen());
-                depotClose = static_cast<int>(depotTW->getTwClose());
+                depotOpen = scaleTime(depotTW->getTwOpen());
+                depotClose = scaleTime(depotTW->getTwClose());
             }
         }
 
@@ -80,9 +88,9 @@ public:
             auto* tw = client->tryGetAttribute<attributes::Rendezvous>();
             auto* service = client->tryGetAttribute<attributes::ServiceQuery>();
 
-            int twOpen = tw ? static_cast<int>(tw->getTwOpen()) : depotOpen;
-            int twClose = tw ? static_cast<int>(tw->getTwClose()) : depotClose;
-            int serviceTime = service ? static_cast<int>(service->getService()) : 0;
+            int twOpen = tw ? scaleTime(tw->getTwOpen()) : depotOpen;
+            int twClose = tw ? scaleTime(tw->getTwClose()) : depotClose;
+            int serviceTime = service ? scaleTime(service->getService()) : 0;
 
             // Use "tw_visit_" prefix to keep time-window intervals distinct
             std::string varName = "tw_visit_" + std::to_string(i);
@@ -121,12 +129,16 @@ public:
         auto* depot = depots[0];
 
         // Get depot time window
+        auto scaleTime = [](Duration value) {
+            return static_cast<int>(std::floor(value * kTimeScale));
+        };
+
         int depotOpen = 0;
-        int depotClose = 1000000;
+        int depotClose = scaleTime(1000000.0);
         auto* depotTW = depot->tryGetAttribute<attributes::Rendezvous>();
         if (depotTW) {
-            depotOpen = static_cast<int>(depotTW->getTwOpen());
-            depotClose = static_cast<int>(depotTW->getTwClose());
+            depotOpen = scaleTime(depotTW->getTwOpen());
+            depotClose = scaleTime(depotTW->getTwClose());
         }
 
         // If we have access to routing generator, add temporal constraints
@@ -145,7 +157,8 @@ public:
                     auto* clientJ = clients[j];
 
                     // Travel time from i to j
-                    int travelTime = static_cast<int>(problem.getDistance(*clientI, *clientJ));
+                    int travelTime = static_cast<int>(std::floor(
+                        problem.getDistance(*clientI, *clientJ) * kTimeScale));
 
                     // If next[nodeI] == nodeJ, then end[i] + travel <= start[j]
                     size_t nodeI = routingGen_->clientNodeIndex(i);
@@ -188,13 +201,13 @@ public:
                 if (tw) {
                     // Enforce start time within window
                     LinearExpr startExpr(startTimes_[i]);
-                    cp.addGreaterOrEqual(startExpr, static_cast<int>(tw->getTwOpen()));
+                    cp.addGreaterOrEqual(startExpr, scaleTime(tw->getTwOpen()));
 
                     // End time must respect closing
                     LinearExpr endExpr(endTimes_[i]);
-                    cp.addLessOrEqual(endExpr, static_cast<int>(tw->getTwClose()) +
+                    cp.addLessOrEqual(endExpr, scaleTime(tw->getTwClose()) +
                         (client->tryGetAttribute<attributes::ServiceQuery>() ?
-                         static_cast<int>(client->tryGetAttribute<attributes::ServiceQuery>()->getService()) : 0));
+                         scaleTime(client->tryGetAttribute<attributes::ServiceQuery>()->getService()) : 0));
                 }
             }
         }
