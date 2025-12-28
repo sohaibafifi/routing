@@ -13,6 +13,7 @@
 
 #ifdef CPLEX_FOUND
 #include <plugins/solvers/MIPSolverPlugin/MIPSolver.hpp>
+#include <plugins/solvers/MIPSolverPlugin/CPLEXMIPBackend.hpp>
 #endif
 
 #include "libs/argparse/argparse.h"
@@ -63,10 +64,21 @@ int main(int argc, const char *argv[]) {
     try {
         auto problem = composable::cvrptw::Reader().readFile(inputFile);
         routing::MIPSolver mipSolver(problem);
-        mipSolver.getCplex().exportModel(lpFile.string().c_str());
-        mipSolver.solve(timeout);
+
+        // Export model via CPLEX backend
+        if (auto* cplexBackend = dynamic_cast<routing::mip::CPLEXMIPBackend*>(&mipSolver.getBackend())) {
+            cplexBackend->exportModel(lpFile.string());
+        }
+
+        bool solved = mipSolver.solve(timeout);
+
         if (output.is_open()) {
-            mipSolver.save(output);
+            output << problem->getName() << "\t"
+                   << (solved ? "Solved" : "NotSolved") << "\t"
+                   << mipSolver.getObjectiveValue() << "\t"
+                   << mipSolver.getBackend().getObjectiveBound() << "\t"
+                   << mipSolver.getBackend().getGap() << "\t"
+                   << mipSolver.getBackend().getSolveTime() << std::endl;
         }
     } catch (IloCplex::Exception &exception) {
         std::cout << exception.getMessage() << std::endl;

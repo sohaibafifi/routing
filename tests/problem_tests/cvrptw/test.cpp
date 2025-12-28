@@ -23,12 +23,12 @@ TEST_F(ProblemTest, solve) {
     int nbClients = 10;
     auto problem = composable::cvrptw::Reader().readFile("../../../data/CVRPTW/Solomon/" + std::to_string(nbClients) + "/c101.txt");
     {
-        routing::MIPSolver mipSolver(problem, nullstream);
+        routing::MIPSolver mipSolver(problem);
         auto* typed = dynamic_cast<composable::cvrptw::Problem *>(mipSolver.getProblem());
         ASSERT_NE(typed, nullptr);
         EXPECT_FALSE(typed->getClients().empty());
         EXPECT_EQ(typed->numClients(), static_cast<size_t>(nbClients));
-        bool solution_found = mipSolver.solve();
+        bool solution_found = mipSolver.solve(60.0);
         EXPECT_TRUE(solution_found);
     }
 

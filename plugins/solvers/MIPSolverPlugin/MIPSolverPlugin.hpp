@@ -7,79 +7,48 @@
 #include "core/IPlugin.hpp"
 #include "core/PluginRegistry.hpp"
 #include "core/interfaces/ISolver.hpp"
-#include "plugins/solvers/MIPSolverPlugin/MIPSolver.hpp"
+#include "core/interfaces/IMIPBackend.hpp"
+#include "MIPSolver.hpp"
+#include "CPLEXMIPBackend.hpp"
 
 namespace routing {
 namespace plugins {
 
-class MIPSolverWrapper : public ISolver {
-public:
-    explicit MIPSolverWrapper(Problem* problem)
-        : solver_(problem) {}
-
-    std::string name() const override { return "mip"; }
-    std::string description() const override { return "Exact MIP solver (CPLEX)"; }
-
-    void setProblem(Problem* /*problem*/) override {
-        // MIPSolver takes the problem in its constructor.
-    }
-
-    Problem* getProblem() const override { return solver_.getProblem(); }
-
-    void setConfiguration(Configuration* config) override {
-        solver_.configuration = config;
-    }
-
-    void setDefaultConfiguration() override {
-        solver_.setDefaultConfiguration();
-    }
-
-    bool solve(double timeout) override {
-        return solver_.solve(timeout);
-    }
-
-    Solution* getSolution() const override {
-        return solver_.getSolution();
-    }
-
-    double getObjectiveValue() const override {
-#ifdef CPLEX_FOUND
-        try {
-            return solver_.getCplex().getObjValue();
-        } catch (...) {
-            // Fall through to solution cost.
-        }
-#endif
-        auto* solution = solver_.getSolution();
-        return solution ? solution->getCost() : 0.0;
-    }
-
-    bool isOptimal() const override {
-#ifdef CPLEX_FOUND
-        return solver_.getCplex().getStatus() == IloAlgorithm::Optimal;
-#else
-        return false;
-#endif
-    }
-
-private:
-    MIPSolver solver_;
-};
-
+/**
+ * @brief Plugin for MIP-based solvers with pluggable backends
+ *
+ * Registers MIP solver variants using different backends:
+ * - "mip" / "cplex": CPLEX backend (default)
+ * - "gurobi": Gurobi backend (when available)
+ * - "highs": HiGHS backend (when available)
+ */
 class MIPSolverPlugin : public IPlugin {
 public:
     std::string name() const override { return "MIPSolverPlugin"; }
     PluginType type() const override { return PluginType::Solver; }
 
     void initialize(PluginRegistry& registry) override {
+        // Register CPLEX backend factory
+        registry.registerMIPBackend("cplex", []() -> std::unique_ptr<mip::IMIPBackend> {
+            return std::make_unique<mip::CPLEXMIPBackend>();
+        });
+
+        // Register default MIP solver (uses CPLEX)
         registry.registerSolver("mip",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<MIPSolverWrapper>(problem);
+                return std::make_unique<MIPSolver>(problem, "cplex");
             });
 
+        // Register CPLEX-specific solver alias
         registry.registerSolver("cplex",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<MIPSolverWrapper>(problem);
+                return std::make_unique<MIPSolver>(problem, "cplex");
+            });
+
+        // Register factory that accepts backend type parameter
+        registry.registerSolverWithBackend("mip",
+            [](Problem* problem, const std::string& backend) -> std::unique_ptr<ISolver> {
+                return std::make_unique<MIPSolver>(problem, backend);
             });
     }
 };

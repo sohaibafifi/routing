@@ -10,6 +10,8 @@
 #include "core/interfaces/IReader.hpp"
 #include "core/interfaces/IConstraintGenerator.hpp"
 #include "core/interfaces/IEvaluator.hpp"
+#include "core/interfaces/IMIPBackend.hpp"
+#include "core/interfaces/ICPBackend.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -200,6 +202,77 @@ public:
         return names;
     }
 
+    // ========== Solver with Backend Registration ==========
+
+    using SolverWithBackendFactory = std::function<std::unique_ptr<ISolver>(Problem*, const std::string&)>;
+
+    void registerSolverWithBackend(const std::string& name, SolverWithBackendFactory factory) {
+        std::cout << "[PluginRegistry] Registered solver with backend: " << name << std::endl;
+        solverWithBackendFactories_[name] = std::move(factory);
+    }
+
+    std::unique_ptr<ISolver> createSolverWithBackend(const std::string& name,
+                                                      Problem* problem,
+                                                      const std::string& backend) const {
+        auto it = solverWithBackendFactories_.find(name);
+        if (it == solverWithBackendFactories_.end()) {
+            throw std::runtime_error("Solver with backend support not found: " + name);
+        }
+        return it->second(problem, backend);
+    }
+
+    // ========== MIP Backend Registration ==========
+
+    using MIPBackendFactory = std::function<std::unique_ptr<mip::IMIPBackend>()>;
+
+    void registerMIPBackend(const std::string& name, MIPBackendFactory factory) {
+        std::cout << "[PluginRegistry] Registered MIP backend: " << name << std::endl;
+        mipBackendFactories_[name] = std::move(factory);
+    }
+
+    std::unique_ptr<mip::IMIPBackend> createMIPBackend(const std::string& name) const {
+        auto it = mipBackendFactories_.find(name);
+        if (it == mipBackendFactories_.end()) {
+            throw std::runtime_error("MIP backend not found: " + name);
+        }
+        return it->second();
+    }
+
+    std::vector<std::string> availableMIPBackends() const {
+        std::vector<std::string> names;
+        names.reserve(mipBackendFactories_.size());
+        for (const auto& item : mipBackendFactories_) {
+            names.push_back(item.first);
+        }
+        return names;
+    }
+
+    // ========== CP Backend Registration ==========
+
+    using CPBackendFactory = std::function<std::unique_ptr<cp::ICPBackend>()>;
+
+    void registerCPBackend(const std::string& name, CPBackendFactory factory) {
+        std::cout << "[PluginRegistry] Registered CP backend: " << name << std::endl;
+        cpBackendFactories_[name] = std::move(factory);
+    }
+
+    std::unique_ptr<cp::ICPBackend> createCPBackend(const std::string& name) const {
+        auto it = cpBackendFactories_.find(name);
+        if (it == cpBackendFactories_.end()) {
+            throw std::runtime_error("CP backend not found: " + name);
+        }
+        return it->second();
+    }
+
+    std::vector<std::string> availableCPBackends() const {
+        std::vector<std::string> names;
+        names.reserve(cpBackendFactories_.size());
+        for (const auto& item : cpBackendFactories_) {
+            names.push_back(item.first);
+        }
+        return names;
+    }
+
     // ========== Neighborhood Registration ==========
 
     using NeighborhoodFactory = std::function<std::unique_ptr<INeighborhood>()>;
@@ -293,6 +366,9 @@ public:
         evaluators_.clear();
         evaluatorByName_.clear();
         solverFactories_.clear();
+        solverWithBackendFactories_.clear();
+        mipBackendFactories_.clear();
+        cpBackendFactories_.clear();
         neighborhoodFactories_.clear();
         readerFactories_.clear();
         extensionToFormat_.clear();
@@ -353,6 +429,9 @@ private:
     std::map<std::string, IEvaluator*> evaluatorByName_;
 
     std::map<std::string, SolverFactory> solverFactories_;
+    std::map<std::string, SolverWithBackendFactory> solverWithBackendFactories_;
+    std::map<std::string, MIPBackendFactory> mipBackendFactories_;
+    std::map<std::string, CPBackendFactory> cpBackendFactories_;
     std::map<std::string, NeighborhoodFactory> neighborhoodFactories_;
     std::map<std::string, ReaderFactory> readerFactories_;
     std::map<std::string, std::string> extensionToFormat_;
