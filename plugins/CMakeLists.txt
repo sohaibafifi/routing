@@ -6,6 +6,16 @@ target_include_directories(routing_plugins PUBLIC
 
 target_link_libraries(routing_plugins PUBLIC routing)
 
+# Link CPLEX if available
+if(CPLEX_FOUND)
+    target_link_libraries(routing_plugins PUBLIC ${CPLEX_LIBRARIES})
+endif()
+
+# Link HiGHS if available
+if(HIGHS_FOUND)
+    target_link_libraries(routing_plugins PUBLIC ${HIGHS_LIBRARIES})
+endif()
+
 if(ROUTING_BUILD_XCSP3)
     add_subdirectory(solvers/XCSP3SolverPlugin)
     target_link_libraries(routing_plugins PUBLIC XCSP3SolverPlugin)

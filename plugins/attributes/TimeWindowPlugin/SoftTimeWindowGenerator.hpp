@@ -54,7 +54,12 @@ namespace constraints {
         double getWaitPenalty() const { return waitPenalty_; }
         double getDelayPenalty() const { return delayPenalty_; }
 
+    private:
+        double waitPenalty_;
+        double delayPenalty_;
+
 #ifdef CPLEX_FOUND
+    public:
         void addVariables(ComposableProblem& problem) override {
             auto clients = problem.getComposableClients();
             auto depots = problem.getComposableDepots();
@@ -183,9 +188,6 @@ namespace constraints {
         std::vector<IloNumVar> startTime_;
         std::vector<IloNumVar> wait_;
         std::vector<IloNumVar> delay_;
-
-        double waitPenalty_;
-        double delayPenalty_;
 #endif
     };
 

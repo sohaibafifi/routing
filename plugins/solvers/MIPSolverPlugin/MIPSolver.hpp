@@ -9,6 +9,7 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Solution.hpp"
 #include "CPLEXMIPBackend.hpp"
+#include "HiGHSMIPBackend.hpp"
 
 #include <memory>
 #include <vector>
@@ -24,18 +25,19 @@ using namespace mip;
  *
  * This solver uses the IMIPBackend interface to solve routing problems
  * using mixed integer programming. It supports different backends:
- * - CPLEX (default)
+ * - CPLEX (commercial, high performance)
+ * - HiGHS (open-source, good performance)
  * - Gurobi (future)
- * - HiGHS (future)
  */
 class MIPSolver : public ISolver {
 public:
     /**
      * @brief Construct a MIP solver for a problem
      * @param problem The problem to solve
-     * @param backendType Backend to use ("cplex", "gurobi", "highs")
+     * @param backendType Backend to use ("cplex", "highs", "auto")
+     *                    "auto" selects best available: CPLEX > HiGHS
      */
-    explicit MIPSolver(Problem* problem, const std::string& backendType = "cplex")
+    explicit MIPSolver(Problem* problem, const std::string& backendType = "auto")
         : problem_(problem)
         , solution_(nullptr)
         , objectiveValue_(std::numeric_limits<double>::infinity())
@@ -43,12 +45,35 @@ public:
         , verbose_(false)
     {
         // Create the appropriate backend
-        if (backendType == "cplex" || backendType == "mip") {
+        if (backendType == "cplex") {
             backend_ = std::make_unique<CPLEXMIPBackend>();
+        } else if (backendType == "highs") {
+            backend_ = std::make_unique<HiGHSMIPBackend>();
+        } else if (backendType == "auto" || backendType == "mip") {
+            // Auto-select best available backend
+            backend_ = createBestBackend();
         } else {
             throw std::runtime_error("Unknown MIP backend: " + backendType +
-                                   ". Available: cplex");
+                                   ". Available: cplex, highs, auto");
         }
+    }
+
+    /**
+     * @brief Create the best available backend
+     * Priority: CPLEX > HiGHS
+     */
+    static std::unique_ptr<IMIPBackend> createBestBackend() {
+#ifdef CPLEX_FOUND
+        try {
+            return std::make_unique<CPLEXMIPBackend>();
+        } catch (...) {}
+#endif
+#ifdef HIGHS_FOUND
+        try {
+            return std::make_unique<HiGHSMIPBackend>();
+        } catch (...) {}
+#endif
+        throw std::runtime_error("No MIP backend available. Install CPLEX or HiGHS.");
     }
 
     /**

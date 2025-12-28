@@ -10,6 +10,7 @@
 #include "core/interfaces/IMIPBackend.hpp"
 #include "MIPSolver.hpp"
 #include "CPLEXMIPBackend.hpp"
+#include "HiGHSMIPBackend.hpp"
 
 namespace routing {
 namespace plugins {
@@ -18,9 +19,9 @@ namespace plugins {
  * @brief Plugin for MIP-based solvers with pluggable backends
  *
  * Registers MIP solver variants using different backends:
- * - "mip" / "cplex": CPLEX backend (default)
- * - "gurobi": Gurobi backend (when available)
- * - "highs": HiGHS backend (when available)
+ * - "mip" / "auto": Auto-select best available (CPLEX > HiGHS)
+ * - "cplex": CPLEX backend (commercial)
+ * - "highs": HiGHS backend (open-source)
  */
 class MIPSolverPlugin : public IPlugin {
 public:
@@ -29,21 +30,40 @@ public:
 
     void initialize(PluginRegistry& registry) override {
         // Register CPLEX backend factory
+#ifdef CPLEX_FOUND
         registry.registerMIPBackend("cplex", []() -> std::unique_ptr<mip::IMIPBackend> {
             return std::make_unique<mip::CPLEXMIPBackend>();
         });
+#endif
 
-        // Register default MIP solver (uses CPLEX)
+        // Register HiGHS backend factory
+#ifdef HIGHS_FOUND
+        registry.registerMIPBackend("highs", []() -> std::unique_ptr<mip::IMIPBackend> {
+            return std::make_unique<mip::HiGHSMIPBackend>();
+        });
+#endif
+
+        // Register default MIP solver (auto-selects best backend)
         registry.registerSolver("mip",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<MIPSolver>(problem, "cplex");
+                return std::make_unique<MIPSolver>(problem, "auto");
             });
 
+#ifdef CPLEX_FOUND
         // Register CPLEX-specific solver alias
         registry.registerSolver("cplex",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<MIPSolver>(problem, "cplex");
             });
+#endif
+
+#ifdef HIGHS_FOUND
+        // Register HiGHS-specific solver alias
+        registry.registerSolver("highs",
+            [](Problem* problem) -> std::unique_ptr<ISolver> {
+                return std::make_unique<MIPSolver>(problem, "highs");
+            });
+#endif
 
         // Register factory that accepts backend type parameter
         registry.registerSolverWithBackend("mip",
