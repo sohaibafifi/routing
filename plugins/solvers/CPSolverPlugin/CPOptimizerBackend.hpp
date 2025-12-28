@@ -555,6 +555,7 @@ public:
     void addLinearConstraint(const LinearExpr&, int, int) override {}
     void addLessOrEqual(IntVar, IntVar, int) override {}
     void addImplication(IntVar, const LinearExpr&, int, int) override {}
+    void addReification(IntVar, IntVar, int) override {}
 
     void addAllDifferent(const std::vector<IntVar>&) override {}
     void addElement(IntVar, const std::vector<int>&, IntVar) override {}

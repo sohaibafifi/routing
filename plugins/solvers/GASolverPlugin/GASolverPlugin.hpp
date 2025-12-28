@@ -49,6 +49,10 @@ public:
         return solution ? solution->getCost() : 0.0;
     }
 
+    void setImprovementCallback(ImprovementCallback callback) override {
+        solver_.setImprovementCallback(std::move(callback));
+    }
+
     // Non-ISolver helpers for configuration
     void setGenerator(Generator* generator) {
         solver_.setGenerator(generator);

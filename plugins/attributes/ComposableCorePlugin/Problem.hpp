@@ -255,6 +255,51 @@ namespace routing {
             return activeEvaluators_;
         }
 
+        // ========== Custom Distance Matrix ==========
+
+        /**
+         * @brief Set a custom distance matrix
+         * @param data Pointer to row-major distance data
+         * @param n Size of the matrix (n x n)
+         *
+         * The matrix should include all nodes: depot(s) first, then clients.
+         * Index 0 is typically the depot, indices 1..n-1 are clients.
+         */
+        void setDistanceMatrix(const double* data, size_t n) {
+            customDistanceMatrix_.resize(n, std::vector<double>(n));
+            for (size_t i = 0; i < n; ++i) {
+                for (size_t j = 0; j < n; ++j) {
+                    customDistanceMatrix_[i][j] = data[i * n + j];
+                }
+            }
+            useCustomDistances_ = true;
+        }
+
+        /**
+         * @brief Check if custom distances are enabled
+         */
+        bool hasCustomDistances() const { return useCustomDistances_; }
+
+        /**
+         * @brief Clear custom distance matrix
+         */
+        void clearDistanceMatrix() {
+            customDistanceMatrix_.clear();
+            useCustomDistances_ = false;
+        }
+
+        /**
+         * @brief Get distance from custom matrix by node indices
+         */
+        Duration getCustomDistance(size_t from, size_t to) const {
+            if (useCustomDistances_ &&
+                from < customDistanceMatrix_.size() &&
+                to < customDistanceMatrix_.size()) {
+                return customDistanceMatrix_[from][to];
+            }
+            return 0.0;
+        }
+
         // ========== Distance Calculations ==========
 
         virtual Duration getDistance(const models::Client& c1, const models::Client& c2) const {
@@ -446,6 +491,10 @@ namespace routing {
 
         // Cached initializer to avoid repeated allocations.
         std::unique_ptr<Initializer> initializer_;
+
+        // Custom distance matrix (optional, for non-Euclidean distances)
+        std::vector<std::vector<double>> customDistanceMatrix_;
+        bool useCustomDistances_ = false;
     };
 
     // Backward compatibility alias (deprecated)

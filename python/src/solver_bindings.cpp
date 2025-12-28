@@ -38,6 +38,48 @@ void bind_solver(nb::module_& m) {
         .def("description", &ISolver::description, "Get solver description")
         .def("solve", &ISolver::solve, nb::arg("timeout") = 3600.0,
              "Solve the problem with optional timeout in seconds")
+        .def("solve_with_callback",
+             [](ISolver& solver, double timeout, nb::callable callback) {
+                 // Set callback that acquires GIL before calling Python
+                 solver.setImprovementCallback([callback](Solution* sol, double cost) {
+                     nb::gil_scoped_acquire acquire;
+                     callback(sol, cost);
+                 });
+
+                 // Release GIL during solving for better parallelism
+                 bool result;
+                 {
+                     nb::gil_scoped_release release;
+                     result = solver.solve(timeout);
+                 }
+
+                 // Clear callback to avoid dangling reference
+                 solver.setImprovementCallback(nullptr);
+
+                 return result;
+             },
+             nb::arg("timeout") = 3600.0, nb::arg("callback") = nb::none(),
+             R"doc(
+                 Solve with a callback for solution improvements.
+
+                 Args:
+                     timeout: Time limit in seconds
+                     callback: Function(solution, cost) called on each improvement
+
+                 Example:
+                     def on_improvement(sol, cost):
+                         print(f"New best: {cost}")
+                     solver.solve_with_callback(60, on_improvement)
+             )doc")
+        .def("set_improvement_callback",
+             [](ISolver& solver, nb::callable callback) {
+                 solver.setImprovementCallback([callback](Solution* sol, double cost) {
+                     nb::gil_scoped_acquire acquire;
+                     callback(sol, cost);
+                 });
+             },
+             nb::arg("callback"),
+             "Set a callback function(solution, cost) for solution improvements")
         .def("get_solution", &ISolver::getSolution, nb::rv_policy::reference,
              "Get the solution after solving")
         .def("get_objective_value", &ISolver::getObjectiveValue,
@@ -171,6 +213,76 @@ void bind_solver(nb::module_& m) {
                if solution:
                    print(f"Cost: {solution.cost}")
        )doc");
+
+    // Convenience solve with callback function
+    m.def("solve_with_callback",
+        [](Problem* problem, nb::callable callback,
+           const std::string& solver_type, double timeout, bool verbose) {
+            ensure_plugins();
+            auto& registry = PluginRegistry::instance();
+
+            // Sync legacy pointers for backward compatibility with metaheuristic solvers
+            problem->syncLegacyPointers();
+
+            auto solver = registry.createSolver(solver_type, problem);
+            if (!solver) {
+                throw std::runtime_error("Unknown solver type: " + solver_type);
+            }
+
+            solver->setDefaultConfiguration();
+
+            if (auto* cpSolver = dynamic_cast<cp::CPSolver*>(solver.get())) {
+                cpSolver->setVerbose(verbose);
+            } else if (auto* xcspSolver = dynamic_cast<cp::XCSP3Solver*>(solver.get())) {
+                xcspSolver->setVerbose(verbose);
+            }
+
+            // Set callback with GIL handling
+            solver->setImprovementCallback([callback](Solution* sol, double cost) {
+                nb::gil_scoped_acquire acquire;
+                callback(sol, cost);
+            });
+
+            // Release GIL during solving
+            bool success;
+            {
+                nb::gil_scoped_release release;
+                success = solver->solve(timeout);
+            }
+
+            // Clear callback
+            solver->setImprovementCallback(nullptr);
+
+            if (success) {
+                Solution* sol = solver->getSolution();
+                if (sol) {
+                    return sol->clone();
+                }
+            }
+
+            return static_cast<Solution*>(nullptr);
+        }, nb::rv_policy::take_ownership,
+        nb::arg("problem"), nb::arg("callback"),
+        nb::arg("solver_type") = "ga", nb::arg("timeout") = 60.0, nb::arg("verbose") = false,
+        R"doc(
+            Solve a problem with improvement callback.
+
+            Args:
+                problem: The problem to solve
+                callback: Function(solution, cost) called on each improvement
+                solver_type: Type of solver (default: "ga")
+                timeout: Time limit in seconds (default: 60)
+                verbose: Enable verbose logging (default: False)
+
+            Returns:
+                Solution if found, None otherwise
+
+            Example:
+                def on_improvement(sol, cost):
+                    print(f"New best: {cost}")
+
+                solution = routing.solve_with_callback(problem, on_improvement, "ga", 30)
+        )doc");
 
     // Initialize plugins (called automatically, but can be called explicitly)
     m.def("init", []() {

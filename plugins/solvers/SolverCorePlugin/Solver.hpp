@@ -10,6 +10,7 @@
 
 
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
+#include "core/interfaces/ISolver.hpp"
 #include "Configuration.hpp"
 #include <filesystem>
 #include <fstream>
@@ -22,6 +23,7 @@ class Solver {
 protected:
     Problem *problem{};
     Solution *solution{};
+    ImprovementCallback improvementCallback_;
 
 public:
     std::ostream &os;
@@ -38,6 +40,17 @@ public:
     Solution *getSolution() const { return solution; }
     Problem *getProblem() const { return problem; }
     virtual void save(std::ofstream &output) const;
+
+    void setImprovementCallback(ImprovementCallback callback) {
+        improvementCallback_ = std::move(callback);
+    }
+
+protected:
+    void notifyImprovement(Solution* sol, double cost) {
+        if (improvementCallback_) {
+            improvementCallback_(sol, cost);
+        }
+    }
 };
 
 inline void Solver::save(std::ofstream &output) const {

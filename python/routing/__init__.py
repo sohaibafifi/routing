@@ -41,6 +41,7 @@ from ._routing_core import (
     # Functions
     create_solver,
     solve,
+    solve_with_callback,
     list_solvers,
     init,
 
@@ -54,12 +55,27 @@ from ._routing_core import (
     set_depot_time_window,
     create_solution,
 
+    # NumPy helpers
+    set_distance_matrix,
+    has_custom_distances,
+    clear_distance_matrix,
+    get_custom_distance,
+    set_demands_bulk,
+    set_locations_bulk,
+    set_time_windows_bulk,
+    set_service_times_bulk,
+    set_vehicle_capacities_bulk,
+
     # Version
     __version__,
 )
 
 # Import attributes submodule
 from ._routing_core import attributes
+
+# Import readers
+from .problem import load_solomon, load_tsplib
+from . import readers
 
 # Convenience aliases
 Solver = SolverBase
@@ -79,6 +95,7 @@ __all__ = [
     # Functions
     "create_solver",
     "solve",
+    "solve_with_callback",
     "list_solvers",
     "init",
 
@@ -92,8 +109,24 @@ __all__ = [
     "set_depot_time_window",
     "create_solution",
 
+    # NumPy helpers
+    "set_distance_matrix",
+    "has_custom_distances",
+    "clear_distance_matrix",
+    "get_custom_distance",
+    "set_demands_bulk",
+    "set_locations_bulk",
+    "set_time_windows_bulk",
+    "set_service_times_bulk",
+    "set_vehicle_capacities_bulk",
+
     # Submodules
     "attributes",
+    "readers",
+
+    # File readers
+    "load_solomon",
+    "load_tsplib",
 
     # Metadata
     "__version__",

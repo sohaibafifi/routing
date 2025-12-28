@@ -36,6 +36,7 @@ nanobind_add_module(
     src/solution_bindings.cpp
     src/solver_bindings.cpp
     src/attribute_bindings.cpp
+    src/numpy_bindings.cpp
 )
 
 target_include_directories(_routing_core PRIVATE
@@ -65,5 +66,7 @@ configure_file(routing/solver.py ${CMAKE_CURRENT_BINARY_DIR}/routing/solver.py C
 
 # Install the module
 install(TARGETS _routing_core LIBRARY DESTINATION routing)
-install(TARGETS routing LIBRARY DESTINATION routing)
+if(TARGET routing)
+    install(TARGETS routing LIBRARY DESTINATION routing)
+endif()
 install(DIRECTORY routing/ DESTINATION routing FILES_MATCHING PATTERN "*.py")

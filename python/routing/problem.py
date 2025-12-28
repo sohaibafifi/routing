@@ -159,28 +159,32 @@ def load_solomon(filepath: str) -> _core.Problem:
     Load a problem from Solomon format file.
 
     Args:
-        filepath: Path to the .txt file
+        filepath: Path to the .txt file (CVRPTW format)
 
     Returns:
-        Problem instance
+        Problem instance with time windows and service times
 
-    Note:
-        This function will be implemented when readers are bound.
+    Example:
+        >>> problem = load_solomon("C101.txt")
+        >>> print(f"Clients: {problem.num_clients}")
     """
-    raise NotImplementedError("Solomon reader not yet bound to Python")
+    from .readers.solomon import read_solomon
+    return read_solomon(filepath)
 
 
 def load_tsplib(filepath: str) -> _core.Problem:
     """
-    Load a problem from TSPLIB format file.
+    Load a problem from TSPLIB/CVRPLIB format file.
 
     Args:
-        filepath: Path to the .vrp file
+        filepath: Path to the .vrp file (CVRP format)
 
     Returns:
-        Problem instance
+        Problem instance with demands
 
-    Note:
-        This function will be implemented when readers are bound.
+    Example:
+        >>> problem = load_tsplib("A-n32-k5.vrp")
+        >>> print(f"Clients: {problem.num_clients}")
     """
-    raise NotImplementedError("TSPLIB reader not yet bound to Python")
+    from .readers.tsplib import read_tsplib
+    return read_tsplib(filepath)

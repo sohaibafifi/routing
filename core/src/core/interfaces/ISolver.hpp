@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 namespace routing {
 
@@ -12,6 +13,10 @@ namespace routing {
 class Problem;
 class Configuration;
 class Solution;
+
+/// Callback type for solution improvement notifications
+/// Parameters: solution pointer, objective value
+using ImprovementCallback = std::function<void(Solution*, double)>;
 
 /**
  * @brief Interface for all solver implementations
@@ -52,6 +57,9 @@ public:
 
     /// Get solving statistics
     virtual std::string getStats() const { return ""; }
+
+    /// Set callback for solution improvements
+    virtual void setImprovementCallback(ImprovementCallback /*callback*/) {}
 };
 
 } // namespace routing

@@ -14,6 +14,7 @@ void bind_problem(nb::module_& m);
 void bind_solution(nb::module_& m);
 void bind_solver(nb::module_& m);
 void bind_attributes(nb::module_& m);
+void bind_numpy(nb::module_& m);
 
 NB_MODULE(_routing_core, m) {
     m.doc() = R"doc(
@@ -33,4 +34,5 @@ NB_MODULE(_routing_core, m) {
     bind_solution(m);
     bind_solver(m);
     bind_attributes(m);
+    bind_numpy(m);
 }

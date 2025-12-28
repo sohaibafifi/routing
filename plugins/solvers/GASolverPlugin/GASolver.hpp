@@ -268,6 +268,8 @@ namespace routing {
                 if (population->best()->getCost() < bestCost - 1e-9) {
                     this->os << bestCost << std::endl;
                     bestCost = population->best()->getCost();
+                    // Notify callback of improvement
+                    notifyImprovement(population->best()->decode(), bestCost);
                 }
             }
             this->solution->copy(population->best()->decode());
