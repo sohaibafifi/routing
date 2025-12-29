@@ -70,11 +70,6 @@ public:
     PluginType type() const override { return PluginType::Solver; }
 
     void initialize(PluginRegistry& registry) override {
-        registry.registerSolver("local_search",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<LSSolverWrapper>(problem);
-            });
-
         registry.registerSolver("ls",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<LSSolverWrapper>(problem);

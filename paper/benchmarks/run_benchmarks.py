@@ -103,16 +103,54 @@ INSTANCES = {
     },
 }
 
-# Available solvers
+# Available solvers (type/backend format)
 # Note: Some solvers have known issues:
 #   - vns, pso, ls: segfault in Python bindings
 METAHEURISTIC_SOLVERS = ["ga", "ma"]
-EXACT_SOLVERS = ["mip", "cp"]  # Require CPLEX/CP Optimizer license
-XCSP3_SOLVERS = ["xcsp3"]  # Requires ACE.jar (configured above)
-ALL_SOLVERS = METAHEURISTIC_SOLVERS + XCSP3_SOLVERS + EXACT_SOLVERS
-
-# Working solvers (tested and stable)
+MIP_SOLVERS = ["mip/cplex", "mip/highs"]  # MIP backends
+CP_SOLVERS = ["cp/cplex", "cp/ortools", "cp/xcsp3"]  # CP backends
+ALL_SOLVERS = METAHEURISTIC_SOLVERS + MIP_SOLVERS + CP_SOLVERS
 WORKING_SOLVERS = ALL_SOLVERS
+
+def get_available_solvers() -> List[str]:
+    """Return available solvers from the routing registry"""
+    if not ROUTING_AVAILABLE:
+        return []
+    try:
+        ensure_routing_initialized()
+        return routing.list_solvers()
+    except Exception:
+        return []
+
+    """Filter and normalize solver list based on availability"""
+    if not ROUTING_AVAILABLE:
+        return solvers
+
+    available = set(get_available_solvers())
+    if not available:
+        return solvers
+
+    resolved = []
+    missing = []
+    remapped = []
+
+    for solver in solvers:
+        resolved_name = resolve_solver_name(solver, available)
+        if resolved_name is None:
+            missing.append(solver)
+            continue
+        if resolved_name != solver:
+            remapped.append((solver, resolved_name))
+        if resolved_name not in resolved:
+            resolved.append(resolved_name)
+
+    if remapped:
+        for src, dest in remapped:
+            print(f"  Using solver alias '{dest}' for '{src}'")
+    if missing:
+        print(f"  Skipping unavailable solvers: {', '.join(missing)}")
+
+    return resolved
 
 def check_solver_availability(solver_name: str) -> Tuple[bool, str]:
     """Check if a solver is available and working"""
@@ -122,7 +160,7 @@ def check_solver_availability(solver_name: str) -> Tuple[bool, str]:
     try:
         ensure_routing_initialized()
         # Try to list solvers
-        available = routing.list_solvers()
+        available = get_available_solvers()
         if solver_name not in available:
             return False, f"Solver '{solver_name}' not registered"
         return True, ""
@@ -676,13 +714,19 @@ def generate_solver_comparison_table(results: List[BenchmarkResult], output_path
 """
 
     solver_names = {
-        "mip": "MIP (CPLEX)",
-        "cp": "CP (CP Optimizer)",
+        "mip/cplex": "MIP (CPLEX)",
+        "mip/highs": "MIP (HiGHS)",
+        "cp/cplex": "CP (CPLEX)",
+        "cp/ortools": "CP (OR-Tools)",
+        "cp/xcsp3": "CP (XCSP3)",
         "ga": "GA",
         "vns": "VNS",
         "ma": "MA",
         "pso": "PSO",
-        "ls": "LS"
+        "ls": "LS",
+        # Backward compatibility
+        "mip": "MIP",
+        "cp": "CP"
     }
 
     for solver in WORKING_SOLVERS:

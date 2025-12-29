@@ -18,7 +18,7 @@
 #include "plugins/solvers/MIPSolverPlugin/MIPSolverPlugin.hpp"
 #include "plugins/solvers/PSOSolverPlugin/PSOSolverPlugin.hpp"
 #include "plugins/solvers/VNSSolverPlugin/VNSSolverPlugin.hpp"
-#ifdef CPLEX_FOUND
+#if defined(CPLEX_FOUND) || defined(ORTOOLS_FOUND)
 #include "plugins/solvers/CPSolverPlugin/CPSolverPlugin.hpp"
 #endif
 

@@ -43,28 +43,21 @@ public:
         });
 #endif
 
-        // Register default MIP solver (auto-selects best backend)
-        registry.registerSolver("mip",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<MIPSolver>(problem, "auto");
-            });
+        // Register MIP solvers with type/backend format
 
 #ifdef CPLEX_FOUND
-        // Register CPLEX-specific solver alias
-        registry.registerSolver("cplex",
+        registry.registerSolver("mip/cplex",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<MIPSolver>(problem, "cplex");
             });
 #endif
 
 #ifdef HIGHS_FOUND
-        // Register HiGHS-specific solver alias
-        registry.registerSolver("highs",
+        registry.registerSolver("mip/highs",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<MIPSolver>(problem, "highs");
             });
 #endif
-
         // Register factory that accepts backend type parameter
         registry.registerSolverWithBackend("mip",
             [](Problem* problem, const std::string& backend) -> std::unique_ptr<ISolver> {

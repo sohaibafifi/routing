@@ -20,32 +20,30 @@ public:
     PluginType type() const override { return PluginType::Solver; }
 
     void initialize(PluginRegistry& registry) override {
-        // Register CP solver with multiple aliases
-        registry.registerSolver("cp",
+        // Register CP solvers with type/backend format
+
+        // CP Optimizer (CPLEX backend)
+#ifdef CPLEX_FOUND
+        registry.registerSolver("cp/cplex",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<cp::CPSolver>(problem, "cpoptimizer");
             });
 
-        registry.registerSolver("cpoptimizer",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<cp::CPSolver>(problem, "cpoptimizer");
-            });
-
-        registry.registerSolver("cpo",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<cp::CPSolver>(problem, "cpoptimizer");
-            });
+#endif
 
 #ifdef ORTOOLS_FOUND
-        // Register OR-Tools CP-SAT solver
-        registry.registerSolver("cpsat",
+        // OR-Tools CP-SAT backend
+        registry.registerSolver("cp/ortools",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<cp::CPSolver>(problem, "cpsat");
             });
+#endif
 
-        registry.registerSolver("ortools",
+#if !defined(CPLEX_FOUND) && defined(ORTOOLS_FOUND)
+        // Default CP alias when only OR-Tools is available
+        registry.registerSolver("cp",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<cp::CPSolver>(problem, "ortools");
+                return std::make_unique<cp::CPSolver>(problem, "cpsat");
             });
 #endif
     }

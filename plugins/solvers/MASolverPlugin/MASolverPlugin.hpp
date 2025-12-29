@@ -70,11 +70,6 @@ public:
     PluginType type() const override { return PluginType::Solver; }
 
     void initialize(PluginRegistry& registry) override {
-        registry.registerSolver("memetic",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<MASolverWrapper>(problem);
-            });
-
         registry.registerSolver("ma",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<MASolverWrapper>(problem);

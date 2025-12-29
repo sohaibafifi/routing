@@ -46,6 +46,9 @@ target_include_directories(_routing_core PRIVATE
 )
 
 target_link_libraries(_routing_core PRIVATE routing routing_plugins ${CPLEX_LIBRARIES})
+if(ORTOOLS_FOUND)
+    target_link_libraries(_routing_core PRIVATE ${ORTOOLS_LIBRARIES})
+endif()
 
 # Ensure the extension can locate librouting when installed.
 if(APPLE)

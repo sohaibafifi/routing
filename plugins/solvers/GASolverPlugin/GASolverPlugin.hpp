@@ -72,11 +72,6 @@ public:
     PluginType type() const override { return PluginType::Solver; }
 
     void initialize(PluginRegistry& registry) override {
-        registry.registerSolver("genetic",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<GASolverWrapper>(problem);
-            });
-
         registry.registerSolver("ga",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<GASolverWrapper>(problem);

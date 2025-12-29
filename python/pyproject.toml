@@ -37,7 +37,11 @@ Documentation = "https://github.com/sohaibafifi/routing/docs"
 [tool.scikit-build]
 cmake.build-type = "Release"
 cmake.source-dir = ".."
-cmake.args = [ "-DROUTING_BUILD_CPLEX=OFF" ]
+cmake.args = [
+    "-DROUTING_BUILD_CPLEX=ON",
+    "-DROUTING_BUILD_ORTOOLS=ON",
+    "-DROUTING_BUILD_PYTHON=ON",
+]
 wheel.packages = ["routing"]
 
 [tool.pytest.ini_options]

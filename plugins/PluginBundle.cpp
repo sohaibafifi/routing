@@ -29,7 +29,7 @@ void registerCorePlugins() {
     registry.registerPlugin(std::make_unique<MIPSolverPlugin>());
     registry.registerPlugin(std::make_unique<PSOSolverPlugin>());
     registry.registerPlugin(std::make_unique<VNSSolverPlugin>());
-#ifdef CPLEX_FOUND
+#if defined(CPLEX_FOUND) || defined(ORTOOLS_FOUND)
     registry.registerPlugin(std::make_unique<CPSolverPlugin>());
 #endif
 #ifdef ROUTING_BUILD_XCSP3

@@ -74,11 +74,6 @@ public:
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<PSOSolverWrapper>(problem);
             });
-
-        registry.registerSolver("particle_swarm",
-            [](Problem* problem) -> std::unique_ptr<ISolver> {
-                return std::make_unique<PSOSolverWrapper>(problem);
-            });
     }
 };
 
