@@ -35,6 +35,19 @@ public:
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<cp::CPSolver>(problem, "cpoptimizer");
             });
+
+#ifdef ORTOOLS_FOUND
+        // Register OR-Tools CP-SAT solver
+        registry.registerSolver("cpsat",
+            [](Problem* problem) -> std::unique_ptr<ISolver> {
+                return std::make_unique<cp::CPSolver>(problem, "cpsat");
+            });
+
+        registry.registerSolver("ortools",
+            [](Problem* problem) -> std::unique_ptr<ISolver> {
+                return std::make_unique<cp::CPSolver>(problem, "ortools");
+            });
+#endif
     }
 };
 

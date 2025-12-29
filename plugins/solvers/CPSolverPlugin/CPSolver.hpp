@@ -9,6 +9,7 @@
 #include "core/interfaces/ICPConstraintGenerator.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "CPOptimizerBackend.hpp"
+#include "ORToolsCPSATBackend.hpp"
 #include "plugins/constraints/cp/CPCapacityGenerator.hpp"
 #include "plugins/constraints/cp/CPRoutingGenerator.hpp"
 #include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
@@ -46,9 +47,11 @@ public:
         // Create the appropriate backend
         if (backendType == "cpoptimizer" || backendType == "cp" || backendType == "cpo") {
             backend_ = std::make_unique<CPOptimizerBackend>();
+        } else if (backendType == "cpsat" || backendType == "ortools") {
+            backend_ = std::make_unique<ORToolsCPSATBackend>();
         } else {
             throw std::runtime_error("Unknown CP backend: " + backendType +
-                                   ". Available: cpoptimizer");
+                                   ". Available: cpoptimizer, cpsat/ortools");
         }
     }
 
