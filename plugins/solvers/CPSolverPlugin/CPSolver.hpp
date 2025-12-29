@@ -7,12 +7,13 @@
 #include "core/interfaces/ISolver.hpp"
 #include "core/interfaces/ICPBackend.hpp"
 #include "core/interfaces/ICPConstraintGenerator.hpp"
+#include "core/PluginRegistry.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "CPOptimizerBackend.hpp"
 #include "ORToolsCPSATBackend.hpp"
-#include "plugins/constraints/cp/CPCapacityGenerator.hpp"
-#include "plugins/constraints/cp/CPRoutingGenerator.hpp"
-#include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
+#include "plugins/attributes/CapacityPlugin/CPCapacityGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/CPTimeWindowGenerator.hpp"
 
 #include <memory>
 #include <vector>
@@ -170,51 +171,43 @@ private:
 
     void buildModel() {
         backend_->clear();
-
-        // Collect all active generators
-        std::vector<ICPConstraintGenerator*> generators;
         autoGenerators_.clear();
-
-        const auto& enabled = problem_->getEnabledAttributes();
-        bool hasGeo = enabled.count(std::type_index(typeid(attributes::GeoNode))) > 0;
-        bool hasCapacity = enabled.count(std::type_index(typeid(attributes::Consumer))) > 0
-            && enabled.count(std::type_index(typeid(attributes::Stock))) > 0;
-        bool hasTimeWindow = enabled.count(std::type_index(typeid(attributes::Rendezvous))) > 0
-            && enabled.count(std::type_index(typeid(attributes::ServiceQuery))) > 0;
-
-        generators::CPRoutingGenerator* routing = nullptr;
-        if (hasGeo) {
-            auto gen = std::make_unique<generators::CPRoutingGenerator>();
-            routing = gen.get();
-            autoGenerators_.push_back(std::move(gen));
-        }
-
-        // Test: Enable capacity only
-        if (hasCapacity) {
-            auto gen = std::make_unique<generators::CPCapacityGenerator>();
-            if (routing) {
-                gen->setRoutingGenerator(routing);
-            }
-            autoGenerators_.push_back(std::move(gen));
-        }
-
-        // Time window generator - causes infeasibility
-        if (hasTimeWindow) {
-            auto gen = std::make_unique<generators::CPTimeWindowGenerator>();
-            if (routing) {
-                gen->setRoutingGenerator(routing);
-            }
-            autoGenerators_.push_back(std::move(gen));
-        }
-
         routingGen_ = nullptr;
+
+        // Get enabled attributes from the problem
+        const auto& enabled = problem_->getEnabledAttributes();
+
+        // Dynamically create generators from registry based on enabled attributes
+        autoGenerators_ = PluginRegistry::instance().createCPGenerators(enabled);
+
+        if (verbose_) {
+            std::cout << "[CPSolver] Created " << autoGenerators_.size()
+                      << " generators from registry" << std::endl;
+        }
+
+        // Find the routing generator and wire up dependencies
+        generators::CPRoutingGenerator* routing = nullptr;
         for (auto& gen : autoGenerators_) {
             if (auto* routingPtr = dynamic_cast<generators::CPRoutingGenerator*>(gen.get())) {
+                routing = routingPtr;
                 routingGen_ = routingPtr;
                 break;
             }
         }
 
+        // Wire up generators that depend on routing
+        if (routing) {
+            for (auto& gen : autoGenerators_) {
+                if (auto* capacityGen = dynamic_cast<generators::CPCapacityGenerator*>(gen.get())) {
+                    capacityGen->setRoutingGenerator(routing);
+                } else if (auto* twGen = dynamic_cast<generators::CPTimeWindowGenerator*>(gen.get())) {
+                    twGen->setRoutingGenerator(routing);
+                }
+            }
+        }
+
+        // Collect all generators (auto + custom)
+        std::vector<ICPConstraintGenerator*> generators;
         for (auto& gen : autoGenerators_) {
             generators.push_back(gen.get());
         }
@@ -222,9 +215,9 @@ private:
             generators.push_back(gen.get());
         }
 
-        // Sort by priority
+        // Sort by priority (already sorted by registry, but re-sort to include custom)
         std::sort(generators.begin(), generators.end(),
-                  [](ICPConstraintGenerator* a, ICPConstraintGenerator* b) {
+                  [](const ICPConstraintGenerator* a, const ICPConstraintGenerator* b) {
                       return a->priority() < b->priority();
                   });
 

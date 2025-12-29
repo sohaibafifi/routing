@@ -8,7 +8,7 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/CapacityPlugin/Consumer.hpp"
 #include "plugins/attributes/CapacityPlugin/Stock.hpp"
-#include "CPRoutingGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
 
 namespace routing {
 namespace cp {

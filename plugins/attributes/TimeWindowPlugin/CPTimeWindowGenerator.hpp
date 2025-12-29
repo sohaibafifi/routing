@@ -9,7 +9,7 @@
 #include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
 #include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
-#include "CPRoutingGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
 
 #include <cmath>
 

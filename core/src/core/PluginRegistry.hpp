@@ -12,6 +12,8 @@
 #include "core/interfaces/IEvaluator.hpp"
 #include "core/interfaces/IMIPBackend.hpp"
 #include "core/interfaces/ICPBackend.hpp"
+#include "core/interfaces/ICPConstraintGenerator.hpp"
+#include "core/interfaces/IMIPConstraintGenerator.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -131,6 +133,154 @@ public:
 
     const std::vector<std::unique_ptr<IConstraintGenerator>>& allGenerators() const {
         return generators_;
+    }
+
+    // ========== CP Constraint Generator Registration ==========
+
+    using CPGeneratorFactory = std::function<std::unique_ptr<cp::ICPConstraintGenerator>()>;
+
+    /**
+     * @brief Register a CP generator factory
+     * @param name Generator name (used for lookup)
+     * @param factory Function that creates a new generator instance
+     * @param requiredAttrs Attributes required for this generator
+     * @param priority Generator priority (lower = earlier execution)
+     */
+    void registerCPGenerator(const std::string& name, CPGeneratorFactory factory,
+                             std::vector<AttributeTypeId> requiredAttrs, int priority = 100) {
+        if (cpGeneratorEntries_.count(name)) {
+            std::cerr << "[PluginRegistry] Warning: CP Generator '" << name
+                      << "' already registered, replacing." << std::endl;
+        }
+        std::cout << "[PluginRegistry] Registered CP generator: " << name << std::endl;
+        cpGeneratorEntries_[name] = {std::move(factory), std::move(requiredAttrs), priority};
+    }
+
+    /**
+     * @brief Check if a CP generator is registered
+     */
+    bool hasCPGenerator(const std::string& name) const {
+        return cpGeneratorEntries_.count(name) > 0;
+    }
+
+    /**
+     * @brief Create a single CP generator by name
+     */
+    std::unique_ptr<cp::ICPConstraintGenerator> createCPGenerator(const std::string& name) const {
+        auto it = cpGeneratorEntries_.find(name);
+        if (it == cpGeneratorEntries_.end()) {
+            return nullptr;
+        }
+        return it->second.factory();
+    }
+
+    /**
+     * @brief Create all applicable CP generators for the given enabled attributes
+     * @param enabledAttrs Set of enabled attribute type IDs
+     * @return Vector of fresh generator instances, sorted by priority
+     */
+    std::vector<std::unique_ptr<cp::ICPConstraintGenerator>> createCPGenerators(
+            const std::set<AttributeTypeId>& enabledAttrs) const {
+        std::vector<std::pair<int, std::unique_ptr<cp::ICPConstraintGenerator>>> generators;
+
+        for (const auto& [name, entry] : cpGeneratorEntries_) {
+            if (isApplicable(entry.requiredAttrs, enabledAttrs)) {
+                auto gen = entry.factory();
+                generators.emplace_back(entry.priority, std::move(gen));
+            }
+        }
+
+        // Sort by priority
+        std::sort(generators.begin(), generators.end(),
+                  [](const auto& a, const auto& b) { return a.first < b.first; });
+
+        std::vector<std::unique_ptr<cp::ICPConstraintGenerator>> result;
+        for (auto& [priority, gen] : generators) {
+            result.push_back(std::move(gen));
+        }
+        return result;
+    }
+
+    std::vector<std::string> availableCPGenerators() const {
+        std::vector<std::string> names;
+        for (const auto& [name, _] : cpGeneratorEntries_) {
+            names.push_back(name);
+        }
+        return names;
+    }
+
+    // ========== MIP Constraint Generator Registration ==========
+
+    using MIPGeneratorFactory = std::function<std::unique_ptr<mip::IMIPConstraintGenerator>()>;
+
+    /**
+     * @brief Register a MIP generator factory
+     * @param name Generator name (used for lookup)
+     * @param factory Function that creates a new generator instance
+     * @param requiredAttrs Attributes required for this generator
+     * @param priority Generator priority (lower = earlier execution)
+     */
+    void registerMIPGenerator(const std::string& name, MIPGeneratorFactory factory,
+                              std::vector<AttributeTypeId> requiredAttrs, int priority = 100) {
+        if (mipGeneratorEntries_.count(name)) {
+            std::cerr << "[PluginRegistry] Warning: MIP Generator '" << name
+                      << "' already registered, replacing." << std::endl;
+        }
+        std::cout << "[PluginRegistry] Registered MIP generator: " << name << std::endl;
+        mipGeneratorEntries_[name] = {std::move(factory), std::move(requiredAttrs), priority};
+    }
+
+    /**
+     * @brief Check if a MIP generator is registered
+     */
+    bool hasMIPGenerator(const std::string& name) const {
+        return mipGeneratorEntries_.count(name) > 0;
+    }
+
+    /**
+     * @brief Create a single MIP generator by name
+     */
+    std::unique_ptr<mip::IMIPConstraintGenerator> createMIPGenerator(const std::string& name) const {
+        auto it = mipGeneratorEntries_.find(name);
+        if (it == mipGeneratorEntries_.end()) {
+            return nullptr;
+        }
+        return it->second.factory();
+    }
+
+    /**
+     * @brief Create all applicable MIP generators for the given enabled attributes
+     * @param enabledAttrs Set of enabled attribute type IDs
+     * @return Vector of fresh generator instances, sorted by priority
+     */
+    std::vector<std::unique_ptr<mip::IMIPConstraintGenerator>> createMIPGenerators(
+            const std::set<AttributeTypeId>& enabledAttrs) const {
+        std::vector<std::pair<int, std::unique_ptr<mip::IMIPConstraintGenerator>>> generators;
+
+        for (const auto& [name, entry] : mipGeneratorEntries_) {
+            if (isApplicable(entry.requiredAttrs, enabledAttrs)) {
+                auto gen = entry.factory();
+                generators.emplace_back(entry.priority, std::move(gen));
+            }
+        }
+
+        // Sort by priority
+        std::sort(generators.begin(), generators.end(),
+                  [](const auto& a, const auto& b) { return a.first < b.first; });
+
+        std::vector<std::unique_ptr<mip::IMIPConstraintGenerator>> result;
+        for (auto& [priority, gen] : generators) {
+            result.push_back(std::move(gen));
+        }
+        return result;
+    }
+
+    std::vector<std::string> availableMIPGenerators() const {
+        std::vector<std::string> names;
+        for (const auto& [name, _] : mipGeneratorEntries_) {
+            names.push_back(name);
+        }
+        return names;
     }
 
     // ========== Evaluator Registration ==========
@@ -363,6 +513,8 @@ public:
         plugins_.clear();
         generators_.clear();
         generatorByName_.clear();
+        cpGeneratorEntries_.clear();
+        mipGeneratorEntries_.clear();
         evaluators_.clear();
         evaluatorByName_.clear();
         solverFactories_.clear();
@@ -379,6 +531,29 @@ public:
 
 private:
     PluginRegistry() = default;
+
+    static bool isApplicable(const std::vector<AttributeTypeId>& required,
+                            const std::set<AttributeTypeId>& enabled) {
+        for (const auto& attr : required) {
+            if (enabled.find(attr) == enabled.end()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Generator entry structures for factory-based registration
+    struct CPGeneratorEntry {
+        CPGeneratorFactory factory;
+        std::vector<AttributeTypeId> requiredAttrs;
+        int priority;
+    };
+
+    struct MIPGeneratorEntry {
+        MIPGeneratorFactory factory;
+        std::vector<AttributeTypeId> requiredAttrs;
+        int priority;
+    };
 
     std::vector<std::string> resolveDependencies() {
         std::vector<std::string> order;
@@ -425,6 +600,8 @@ private:
 
     std::vector<std::unique_ptr<IConstraintGenerator>> generators_;
     std::map<std::string, IConstraintGenerator*> generatorByName_;
+    std::map<std::string, CPGeneratorEntry> cpGeneratorEntries_;
+    std::map<std::string, MIPGeneratorEntry> mipGeneratorEntries_;
     std::vector<std::unique_ptr<IEvaluator>> evaluators_;
     std::map<std::string, IEvaluator*> evaluatorByName_;
 

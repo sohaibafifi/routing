@@ -5,9 +5,9 @@
 #include "core/interfaces/ICPConstraintGenerator.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "XCSP3Backend.hpp"
-#include "plugins/constraints/cp/CPCapacityGenerator.hpp"
-#include "plugins/constraints/cp/CPRoutingGenerator.hpp"
-#include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
+#include "plugins/attributes/CapacityPlugin/CPCapacityGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/CPTimeWindowGenerator.hpp"
 
 #include <memory>
 #include <vector>

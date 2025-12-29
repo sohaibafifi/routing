@@ -7,6 +7,9 @@
 #include "core/IPlugin.hpp"
 #include "core/PluginRegistry.hpp"
 #include "plugins/attributes/RoutingPlugin/RoutingConstraintGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/MIPRoutingGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
 
 namespace routing {
 namespace plugins {
@@ -20,9 +23,30 @@ public:
     PluginType type() const override { return PluginType::ConstraintGenerator; }
 
     void initialize(PluginRegistry& registry) override {
+        // Legacy CPLEX generator
         if (!registry.hasGenerator("RoutingConstraintGenerator")) {
             registry.registerGenerator(
                 std::make_unique<constraints::RoutingConstraintGenerator>());
+        }
+
+        // CP generator factory
+        if (!registry.hasCPGenerator("CPRoutingGenerator")) {
+            registry.registerCPGenerator(
+                "CPRoutingGenerator",
+                []() { return std::make_unique<cp::generators::CPRoutingGenerator>(); },
+                { std::type_index(typeid(attributes::GeoNode)) },
+                10  // Priority: runs first, provides base variables
+            );
+        }
+
+        // MIP generator factory
+        if (!registry.hasMIPGenerator("MIPRoutingGenerator")) {
+            registry.registerMIPGenerator(
+                "MIPRoutingGenerator",
+                []() { return std::make_unique<mip::generators::MIPRoutingGenerator>(); },
+                { std::type_index(typeid(attributes::GeoNode)) },
+                10  // Priority: runs first, provides base variables
+            );
         }
     }
 };

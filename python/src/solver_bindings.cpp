@@ -12,9 +12,9 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/attributes/ComposableCorePlugin/Solution.hpp"
 #include "plugins/PluginBundle.hpp"
-#include "plugins/constraints/cp/CPCapacityGenerator.hpp"
-#include "plugins/constraints/cp/CPRoutingGenerator.hpp"
-#include "plugins/constraints/cp/CPTimeWindowGenerator.hpp"
+#include "plugins/attributes/CapacityPlugin/CPCapacityGenerator.hpp"
+#include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/CPTimeWindowGenerator.hpp"
 #include "plugins/solvers/CPSolverPlugin/CPSolver.hpp"
 #include "plugins/solvers/XCSP3SolverPlugin/XCSP3Solver.hpp"
 

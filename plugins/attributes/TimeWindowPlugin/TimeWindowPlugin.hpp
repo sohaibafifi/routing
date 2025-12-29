@@ -7,6 +7,10 @@
 #include "core/IPlugin.hpp"
 #include "core/PluginRegistry.hpp"
 #include "plugins/attributes/TimeWindowPlugin/TimeWindowConstraintGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/CPTimeWindowGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/MIPTimeWindowGenerator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
+#include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
 
 namespace routing {
 namespace plugins {
@@ -20,9 +24,36 @@ public:
     PluginType type() const override { return PluginType::Attribute; }
 
     void initialize(PluginRegistry& registry) override {
+        // Legacy CPLEX generator
         if (!registry.hasGenerator("TimeWindowConstraintGenerator")) {
             registry.registerGenerator(
                 std::make_unique<constraints::TimeWindowConstraintGenerator>());
+        }
+
+        // CP generator factory
+        if (!registry.hasCPGenerator("CPTimeWindowGenerator")) {
+            registry.registerCPGenerator(
+                "CPTimeWindowGenerator",
+                []() { return std::make_unique<cp::generators::CPTimeWindowGenerator>(); },
+                {
+                    std::type_index(typeid(attributes::Rendezvous)),
+                    std::type_index(typeid(attributes::ServiceQuery))
+                },
+                60  // Priority: after routing (10) and capacity (50)
+            );
+        }
+
+        // MIP generator factory
+        if (!registry.hasMIPGenerator("MIPTimeWindowGenerator")) {
+            registry.registerMIPGenerator(
+                "MIPTimeWindowGenerator",
+                []() { return std::make_unique<mip::generators::MIPTimeWindowGenerator>(); },
+                {
+                    std::type_index(typeid(attributes::Rendezvous)),
+                    std::type_index(typeid(attributes::ServiceQuery))
+                },
+                60  // Priority: after routing (10) and capacity (50)
+            );
         }
     }
 };

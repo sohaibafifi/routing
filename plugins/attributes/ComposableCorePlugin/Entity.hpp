@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <typeindex>
 #include <utility>
+#include <iostream>
 
 namespace routing {
 
