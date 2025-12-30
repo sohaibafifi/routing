@@ -17,6 +17,7 @@
 #include <typeindex>
 #include <utility>
 #include <iostream>
+#include <cstring>
 
 namespace routing {
 
@@ -81,7 +82,16 @@ namespace routing {
          */
         template<typename Attr>
         bool hasAttribute() const {
-            return attributes_.count(std::type_index(typeid(Attr))) > 0;
+            if (attributes_.count(std::type_index(typeid(Attr))) > 0) {
+                return true;
+            }
+            const auto* target = typeid(Attr).name();
+            for (const auto& pair : attributes_) {
+                if (std::strcmp(pair.first.name(), target) == 0) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**
@@ -91,6 +101,12 @@ namespace routing {
         Attr& getAttribute() {
             auto it = attributes_.find(std::type_index(typeid(Attr)));
             if (it == attributes_.end()) {
+                const auto* target = typeid(Attr).name();
+                for (auto iter = attributes_.begin(); iter != attributes_.end(); ++iter) {
+                    if (std::strcmp(iter->first.name(), target) == 0) {
+                        return static_cast<Attr&>(*iter->second);
+                    }
+                }
                 throw std::runtime_error(
                     std::string("Attribute not found: ") + typeid(Attr).name());
             }
@@ -104,6 +120,12 @@ namespace routing {
         const Attr& getAttribute() const {
             auto it = attributes_.find(std::type_index(typeid(Attr)));
             if (it == attributes_.end()) {
+                const auto* target = typeid(Attr).name();
+                for (auto iter = attributes_.begin(); iter != attributes_.end(); ++iter) {
+                    if (std::strcmp(iter->first.name(), target) == 0) {
+                        return static_cast<const Attr&>(*iter->second);
+                    }
+                }
                 throw std::runtime_error(
                     std::string("Attribute not found: ") + typeid(Attr).name());
             }
@@ -117,6 +139,12 @@ namespace routing {
         Attr* tryGetAttribute() {
             auto it = attributes_.find(std::type_index(typeid(Attr)));
             if (it == attributes_.end()) {
+                const auto* target = typeid(Attr).name();
+                for (auto iter = attributes_.begin(); iter != attributes_.end(); ++iter) {
+                    if (std::strcmp(iter->first.name(), target) == 0) {
+                        return static_cast<Attr*>(iter->second.get());
+                    }
+                }
                 return nullptr;
             }
             return static_cast<Attr*>(it->second.get());
@@ -129,6 +157,12 @@ namespace routing {
         const Attr* tryGetAttribute() const {
             auto it = attributes_.find(std::type_index(typeid(Attr)));
             if (it == attributes_.end()) {
+                const auto* target = typeid(Attr).name();
+                for (auto iter = attributes_.begin(); iter != attributes_.end(); ++iter) {
+                    if (std::strcmp(iter->first.name(), target) == 0) {
+                        return static_cast<const Attr*>(iter->second.get());
+                    }
+                }
                 return nullptr;
             }
             return static_cast<const Attr*>(it->second.get());
@@ -140,7 +174,18 @@ namespace routing {
          */
         template<typename Attr>
         bool removeAttribute() {
-            return attributes_.erase(std::type_index(typeid(Attr))) > 0;
+            auto removed = attributes_.erase(std::type_index(typeid(Attr)));
+            if (removed > 0) {
+                return true;
+            }
+            const auto* target = typeid(Attr).name();
+            for (auto iter = attributes_.begin(); iter != attributes_.end(); ++iter) {
+                if (std::strcmp(iter->first.name(), target) == 0) {
+                    attributes_.erase(iter);
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**

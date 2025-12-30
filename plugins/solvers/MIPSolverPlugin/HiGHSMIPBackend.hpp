@@ -437,7 +437,10 @@ public:
         conStarts_.clear();
         conIndices_.clear();
         conValues_.clear();
+        objOffset_ = 0.0;
+        objSense_ = ObjSense::kMinimize;
         solved_ = false;
+        modelBuilt_ = false;
         numVars_ = 0;
         numConstraints_ = 0;
     }
@@ -560,9 +563,9 @@ private:
     }
 
     void setObjective(const LinearExpr& expr, ObjSense sense) {
-        objCoeffs_.resize(numVars_, 0.0);
+        objCoeffs_.assign(numVars_, 0.0);
         for (const auto& [varId, coeff] : expr.terms()) {
-            objCoeffs_[varId] = coeff;
+            objCoeffs_[varId] += coeff;
         }
         objOffset_ = expr.constant();
         objSense_ = sense;

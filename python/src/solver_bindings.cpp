@@ -15,6 +15,7 @@
 #include "plugins/attributes/CapacityPlugin/CPCapacityGenerator.hpp"
 #include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
 #include "plugins/attributes/TimeWindowPlugin/CPTimeWindowGenerator.hpp"
+#include "plugins/solvers/MIPSolverPlugin/MIPSolver.hpp"
 #include "plugins/solvers/CPSolverPlugin/CPSolver.hpp"
 #include "plugins/solvers/XCSP3SolverPlugin/XCSP3Solver.hpp"
 
@@ -88,6 +89,24 @@ void bind_solver(nb::module_& m) {
              "Check if the solution is proven optimal")
         .def("get_stats", &ISolver::getStats,
              "Get solver statistics as string")
+        .def("export_model", [](ISolver& solver, const std::string& filename) {
+            if (auto* mipSolver = dynamic_cast<MIPSolver*>(&solver)) {
+                return mipSolver->exportModel(filename);
+            }
+            throw std::runtime_error("Model export is only supported for MIP solvers");
+        }, nb::arg("filename"),
+        "Export the MIP model to a file (MIP solvers only)")
+        .def("get_model_stats", [](ISolver& solver) {
+            if (auto* mipSolver = dynamic_cast<MIPSolver*>(&solver)) {
+                auto& backend = mipSolver->getBackend();
+                nb::dict stats;
+                stats["num_vars"] = backend.getNumVars();
+                stats["num_constraints"] = backend.getNumConstraints();
+                stats["num_nonzeros"] = backend.getNumNonZeros();
+                return stats;
+            }
+            throw std::runtime_error("Model stats are only available for MIP solvers");
+        }, "Get basic MIP model stats (MIP solvers only)")
         .def("set_verbose", [](ISolver& solver, bool verbose) {
             if (auto* cpSolver = dynamic_cast<cp::CPSolver*>(&solver)) {
                 cpSolver->setVerbose(verbose);

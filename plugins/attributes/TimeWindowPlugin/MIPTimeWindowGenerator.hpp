@@ -73,6 +73,7 @@ public:
 
         // Depot time variable
         timeVars_[0] = mip.newVar(depotOpen, depotClose, "t_0");
+        depotEndVar_ = mip.newVar(depotOpen, depotClose, "t_end");
 
         // Client time variables
         for (size_t i = 0; i < n; ++i) {
@@ -106,6 +107,14 @@ public:
         // If x[i][j] = 1, then t[i] + service[i] + travel[i][j] <= t[j]
         // Reformulation: t[i] + service[i] + travel[i][j] - t[j] <= M * (1 - x[i][j])
 
+        // Ensure the depot start time is not after the latest return time.
+        if (depotEndVar_.isValid()) {
+            LinearExpr depotOrder;
+            depotOrder.addTerm(timeVars_[0], 1.0);
+            depotOrder.addTerm(depotEndVar_, -1.0);
+            mip.addLessEqual(depotOrder, 0.0, "depot_time_order");
+        }
+
         for (size_t i = 0; i <= n; ++i) {
             // Get service time for node i
             double serviceI = 0.0;
@@ -135,8 +144,10 @@ public:
                 // t[i] + service[i] + travel[i][j] - t[j] <= M * (1 - x[i][j])
                 // Equivalent to: t[i] - t[j] + M * x[i][j] <= M - service[i] - travel[i][j]
                 LinearExpr precedence;
-                precedence.addTerm(timeVars_[i], 1.0);
-                precedence.addTerm(timeVars_[j], -1.0);
+                const Var timeI = (i == 0) ? timeVars_[0] : timeVars_[i];
+                const Var timeJ = (j == 0 && depotEndVar_.isValid()) ? depotEndVar_ : timeVars_[j];
+                precedence.addTerm(timeI, 1.0);
+                precedence.addTerm(timeJ, -1.0);
                 precedence.addTerm(arcVars[i][j], M);
 
                 mip.addLessEqual(precedence, M - serviceI - travelTime,
@@ -166,6 +177,7 @@ private:
     MIPRoutingGenerator* routingGen_ = nullptr;
     std::vector<Var> timeVars_;           // Time variables t[i]
     std::vector<double> arrivalTimes_;    // Extracted arrival times
+    Var depotEndVar_;                     // Latest return time at depot
 };
 
 } // namespace generators
