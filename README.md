@@ -1,12 +1,12 @@
-# Routing
+# Ri7la: Composable VRP Library
 
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="Routing logo" width="200"/>
+  <img src="docs/assets/logo.svg" alt="Ri7la logo" width="200"/>
 </p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/85e69139d552469fa1c0b0f1b098f60f)](https://app.codacy.com/manual/me_183/routing?utm_source=github.com&utm_medium=referral&utm_content=sohaibafifi/routing&utm_campaign=Badge_Grade_Dashboard)
 
-**Routing** is a modern, modular C++ library for solving Vehicle Routing Problems (VRP). It features a **Composable Architecture** that separates problem definition (Attributes) from solution methods (Solvers), allowing you to mix and match components to solve complex variants efficiently.
+**Ri7la** is a modern, modular C++ library for solving Vehicle Routing Problems (VRP). It features a **Composable Architecture** that separates problem definition (Attributes) from solution methods (Solvers), allowing you to mix and match components to solve complex variants efficiently.
 
 ## Project Ecosystem
 
