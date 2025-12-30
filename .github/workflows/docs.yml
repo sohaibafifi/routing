@@ -45,6 +45,7 @@ jobs:
       - name: Build Doxygen (C++ API)
         run: |
           cd docs
+          mkdir -p _build/doxygen
           doxygen Doxyfile || echo "Doxygen failed, continuing without C++ API docs"
         continue-on-error: true
 
