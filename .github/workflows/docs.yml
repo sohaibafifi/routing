@@ -54,6 +54,9 @@ jobs:
           cd docs
           sphinx-build -W --keep-going -b html . _build/html
 
+      - name: Copy CNAME for custom domain
+        run: cp docs/CNAME docs/_build/html/CNAME
+
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

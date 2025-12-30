@@ -49,6 +49,8 @@ html_logo = "assets/logo.svg"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
+html_baseurl = "https://ri7la.sohaibafifi.com/"
+
 html_theme_options = {
     "github_url": "https://github.com/sohaibafifi/routing",
     "use_edit_page_button": False,
