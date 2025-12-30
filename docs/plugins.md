@@ -380,24 +380,19 @@ ctest --test-dir build --output-on-failure
 
 ## Plugin Lifecycle
 
-```
 1. registerCorePlugins()
-   └── Calls registry.registerPlugin() for each plugin
-       └── Stores plugins in registry
-
+    - Calls registry.registerPlugin() for each plugin
+    - Stores plugins in registry
 2. registry.initializeAll()
-   ├── Resolves dependencies (topological sort)
-   ├── For each plugin in order:
-   │   └── plugin->initialize(registry)
-   │       └── Plugin registers its components
-   └── Sets initialized_ = true
-
+    - Resolves dependencies (topological sort)
+    - For each plugin in order:
+        - plugin->initialize(registry)
+        - Plugin registers its components
+    - Sets initialized_ = true
 3. [Application uses registered components]
-
 4. registry.shutdownAll()
-   └── For each plugin in reverse order:
-       └── plugin->shutdown()
-```
+    - For each plugin in reverse order:
+        - plugin->shutdown()
 
 ## Dependency Management
 
@@ -532,28 +527,28 @@ TEST_F(PluginTest, CreateSolver) {
 
 ```
 plugins/
-├── CMakeLists.txt
-├── PluginBundle.hpp      # Declares registerCorePlugins()
-├── PluginBundle.cpp      # Implements plugin registration
-├── attributes/
-│   ├── ComposableCorePlugin/
-│   ├── RoutingPlugin/
-│   ├── CapacityPlugin/
-│   ├── TimeWindowPlugin/
-│   ├── ProfitPlugin/
-│   ├── PickupDeliveryPlugin/
-│   └── SyncPlugin/
-├── solvers/
-│   ├── GASolverPlugin/
-│   ├── LSSolverPlugin/
-│   ├── MASolverPlugin/
-│   ├── MIPSolverPlugin/
-│   ├── PSOSolverPlugin/
-│   └── VNSSolverPlugin/
-├── neighborhoods/
-│   ├── TwoOptPlugin/
-│   └── IDCHPlugin/
-└── readers/
-    ├── SolomonReaderPlugin/
-    └── TSPLIBReaderPlugin/
++-- CMakeLists.txt
++-- PluginBundle.hpp      # Declares registerCorePlugins()
++-- PluginBundle.cpp      # Implements plugin registration
++-- attributes/
+|   +-- ComposableCorePlugin/
+|   +-- RoutingPlugin/
+|   +-- CapacityPlugin/
+|   +-- TimeWindowPlugin/
+|   +-- ProfitPlugin/
+|   +-- PickupDeliveryPlugin/
+|   +-- SyncPlugin/
++-- solvers/
+|   +-- GASolverPlugin/
+|   +-- LSSolverPlugin/
+|   +-- MASolverPlugin/
+|   +-- MIPSolverPlugin/
+|   +-- PSOSolverPlugin/
+|   +-- VNSSolverPlugin/
++-- neighborhoods/
+|   +-- TwoOptPlugin/
+|   +-- IDCHPlugin/
++-- readers/
+    +-- SolomonReaderPlugin/
+    +-- TSPLIBReaderPlugin/
 ```

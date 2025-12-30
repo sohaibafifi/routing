@@ -1,0 +1,71 @@
+# Build and deploy documentation to GitHub Pages
+name: Documentation
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    branches: [main, master, develop]
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "docs/requirements.txt"
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Install docs dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Build Doxygen (C++ API)
+        run: |
+          cd docs
+          doxygen Doxyfile || echo "Doxygen failed, continuing without C++ API docs"
+        continue-on-error: true
+
+      - name: Build Sphinx
+        run: |
+          cd docs
+          sphinx-build -W --keep-going -b html . _build/html
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build/html
+
+  deploy:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

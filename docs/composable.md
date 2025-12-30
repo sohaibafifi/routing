@@ -1,6 +1,6 @@
 # Composable Attribute System API
 
-The Composable Attribute System allows runtime composition of vehicle routing problem features without inheritance hierarchies. Instead of creating a new class for each problem variant (VRP → CVRP → CVRPTW), you enable attributes at runtime.
+The Composable Attribute System allows runtime composition of vehicle routing problem features without inheritance hierarchies. Instead of creating a new class for each problem variant (VRP -> CVRP -> CVRPTW), you enable attributes at runtime.
 
 ## Quick Start
 

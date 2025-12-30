@@ -1,0 +1,19 @@
+# Doxygen configuration for Routing
+
+PROJECT_NAME = Routing
+OUTPUT_DIRECTORY = _build/doxygen
+GENERATE_XML = YES
+XML_OUTPUT = xml
+GENERATE_HTML = NO
+GENERATE_LATEX = NO
+RECURSIVE = YES
+EXTRACT_ALL = YES
+QUIET = YES
+WARN_IF_UNDOCUMENTED = NO
+WARN_IF_DOC_ERROR = NO
+INPUT = ../core/src \
+        ../plugins \
+        ../routing
+FILE_PATTERNS = *.hpp *.cpp
+STRIP_FROM_PATH = ../
+

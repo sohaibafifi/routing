@@ -129,3 +129,5 @@ ACE.jar
 *.fls
 *.fdb_latexmk
 *.xdv
+docs/_build/**
+.DS_Store

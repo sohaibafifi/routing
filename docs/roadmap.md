@@ -1,95 +1,162 @@
-# Routing Library Roadmap
+# Roadmap
 
-A composable, multi-solver VRP framework with C++ core and Python bindings.
+This document outlines the development roadmap for the Routing library.
+
+---
 
 ## Current Status
 
-### Completed
+### Completed Features
+
+::::{grid} 1 2 2 2
+:gutter: 3
+
+:::{grid-item-card} Composable Problem API
+:class-card: sd-border-success
+
+ECS-inspired attribute system for building any VRP variant at runtime without inheritance hierarchies.
+:::
+
+:::{grid-item-card} Multiple Solvers
+:class-card: sd-border-success
+
+GA, MA, VNS, PSO, Local Search metaheuristics with unified API.
+:::
+
+:::{grid-item-card} Exact Methods
+:class-card: sd-border-success
+
+MIP (CPLEX, HiGHS) and CP (CPLEX CP Optimizer, OR-Tools) solvers.
+:::
+
+:::{grid-item-card} Plugin Architecture
+:class-card: sd-border-success
+
+Extensible system for attributes, constraints, and solvers.
+:::
+
+:::{grid-item-card} Benchmark Readers
+:class-card: sd-border-success
+
+Solomon (CVRPTW) and TSPLIB (CVRP) format support.
+:::
+
+:::{grid-item-card} Python Bindings
+:class-card: sd-border-success
+
+Native Python API using nanobind with pip install support.
+:::
+
+::::
+
+---
+
+## In Development
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **[XCSP3](https://www.xcsp.org/) Export** | Active | Export problems to XCSP3 format for external CP solvers |
+| **Incremental Evaluation** | Planned | O(1) move cost evaluation with delta caching |
+| **Documentation** | Active | Comprehensive API docs and tutorials |
+
+---
+
+## Planned Features
+
+### High Priority
+
+| Feature | Description | Target |
+|---------|-------------|--------|
+| **Hybrid CP + LNS** | CP-based repair operator in Large Neighborhood Search | Q1 2026 |
+| **ALNS Solver** | Adaptive Large Neighborhood Search with operator selection | Q1 2026 |
+| **Parallel Solving** | Multi-threaded solver orchestration and portfolio | Q2 2026 |
+
+### Medium Priority
 
 | Feature | Description |
 |---------|-------------|
-| Composable Problem API | ECS-inspired attribute system for building any VRP variant |
-| Multiple Solvers | GA, VNS, MA, PSO, Local Search, MIP (CPLEX) |
-| CP Backend | Constraint Programming with IBM CP Optimizer |
-| Plugin Architecture | Extensible attributes, constraints, and solvers |
-| Solomon/TSPLIB Readers | Standard benchmark instance formats |
+| **JSON/YAML Format** | Universal instance format for all problem types |
+| **Solution Visualization** | Plot routes and solution statistics |
+| **Warm Starting** | Initialize solvers with existing solutions |
+| **Callback System** | Progress callbacks for monitoring long solves |
 
-### In Progress
+### Future Considerations
 
 | Feature | Description |
 |---------|-------------|
-| Python Bindings | Native Python API using nanobind |
+| **GPU Acceleration** | CUDA-based distance matrix computation |
+| **Cloud Deployment** | REST API and containerized solving |
+| **Machine Learning** | ML-based operator selection and parameter tuning |
 
-### Planned
+---
 
-| Feature | Priority | Description |
-|---------|----------|-------------|
-| Hybrid CP + LNS | High | CP-based repair in Large Neighborhood Search |
-| Incremental Evaluation | High | O(1) move cost evaluation with caching |
-| ALNS Solver | Medium | Adaptive Large Neighborhood Search |
-| HiGHS Backend | Medium | Open-source MIP solver support |
-| JSON/YAML Format | Medium | Universal instance format |
-| Parallel Solving | Medium | Multi-threaded solver orchestration |
-
-## Architecture
+## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Python API                       │
-├─────────────────────────────────────────────────────┤
-│                   C++ Core Library                  │
-│  ┌─────────────────────────────────────────────┐    │
-│  │              Problem Layer                  │    │
-│  │   Attributes │ Constraints │ Evaluators     │    │
-│  └─────────────────────────────────────────────┘    │
-│  ┌─────────────────────────────────────────────┐    │
-│  │              Solver Layer                   │    │
-│  │   GA │ VNS │ ALNS │ SA │ Hybrid │ CP │ MIP  │    │
-│  └─────────────────────────────────────────────┘    │
-│  ┌─────────────────────────────────────────────┐    │
-│  │           Optimization Backends             │    │
-│  │   CPLEX │ GUROBI │ HiGHS │ CP Optimizer     │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────┘
+                    ┌─────────────────────────────────────┐
+                    │          Applications               │
+                    │   (Python scripts, C++ examples)    │
+                    └─────────────────────────────────────┘
+                                      │
+                    ┌─────────────────────────────────────┐
+                    │          Python Bindings            │
+                    │           (nanobind)                │
+                    └─────────────────────────────────────┘
+                                      │
+     ┌────────────────────────────────┼────────────────────────────────┐
+     │                                │                                │
+┌────┴────┐                    ┌──────┴──────┐                   ┌─────┴─────┐
+│ Problem │                    │   Solvers   │                   │  Plugins  │
+│  Layer  │                    │    Layer    │                   │   Layer   │
+├─────────┤                    ├─────────────┤                   ├───────────┤
+│Attributes│                   │GA, MA, VNS  │                   │Attributes │
+│Entities  │                   │PSO, LS      │                   │Constraints│
+│Distances │                   │MIP, CP      │                   │Evaluators │
+└─────────┘                    └─────────────┘                   └───────────┘
+                                      │
+                    ┌─────────────────────────────────────┐
+                    │       Optimization Backends         │
+                    │  CPLEX │ HiGHS │ OR-Tools │ Gurobi  │
+                    └─────────────────────────────────────┘
 ```
 
-## Quick Start (Coming Soon)
+---
 
-```python
-import routing
+## Version History
 
-# Load problem
-problem = routing.Problem.load("instance.json")
+### v0.3.0 (Current)
 
-# Or compose manually
-problem = routing.Problem()
-problem.add_attribute("capacity")
-problem.add_attribute("time_windows")
+- Composable attribute system
+- OR-Tools CP-SAT backend
+- HiGHS MIP backend
+- Python bindings with pip install
+- Documentation site
 
-# Solve
-solver = routing.Solver("genetic", timeout=60)
-solution = solver.solve(problem)
+### v0.2.0
 
-# Results
-print(f"Cost: {solution.cost}")
-for route in solution.routes:
-    print(f"Vehicle {route.id}: {route.nodes}")
-```
+- Plugin architecture
+- MIP solver (CPLEX)
+- CP Optimizer backend
+- Solomon and TSPLIB readers
 
-## Available Attributes
+### v0.1.0
 
-| Attribute | Purpose |
-|-----------|---------|
-| `GeoNode` | x, y coordinates for distance |
-| `Consumer` | Demand at node |
-| `Stock` | Vehicle capacity |
-| `Rendezvous` | Time window bounds |
-| `ServiceQuery` | Service time |
-| `Profiter` | Profit (TOP problems) |
-| `Pickup`, `Delivery` | P&D demands |
-| `Synced` | Temporal synchronization |
+- Initial release
+- Genetic Algorithm solver
+- Basic VRP/CVRP/CVRPTW support
 
+---
+
+## Contributing to the Roadmap
+
+Have ideas for new features? We welcome contributions!
+
+- **Feature Requests**: Open an issue on [GitHub](https://github.com/sohaibafifi/routing/issues)
+- **Discussions**: Join the conversation on [GitHub Discussions](https://github.com/sohaibafifi/routing/discussions)
+- **Pull Requests**: See [Contributing](contributing.md) for guidelines
+
+---
 
 ## License
 
-You are allowed to retrieve this project for research purposes as a member of a non-commercial and academic institution.
+This project is available for research purposes at non-commercial and academic institutions.
