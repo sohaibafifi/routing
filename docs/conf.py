@@ -50,6 +50,7 @@ html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
 html_baseurl = "https://ri7la.sohaibafifi.com/"
+html_show_sourcelink = False
 
 html_theme_options = {
     "github_url": "https://github.com/sohaibafifi/routing",

@@ -45,6 +45,14 @@ Full Python bindings with pip install. Native C++20 performance when you need it
 
 Export problems to [XCSP3](https://www.xcsp.org/) format for interoperability with any CP solver.
 :::
+
+:::{grid-item-card} Plugin Architecture
+:class-card: feature-card
+:link: plugins
+:link-type: doc
+
+Extensible design with plugins for attributes, constraints, solvers, and evaluators.
+:::
 ::::
 
 ---
@@ -165,6 +173,61 @@ int main() {
 
 ---
 
+## Plugin System
+
+The library uses a modular plugin architecture for maximum extensibility:
+
+::::{grid} 2 2 4 4
+:gutter: 2
+
+:::{grid-item-card} Attributes
+:class-card: sd-text-center
+
+`GeoNode`, `Consumer`, `Stock`, `Rendezvous`...
+
+Define problem features
+:::
+
+:::{grid-item-card} Constraints
+:class-card: sd-text-center
+
+`RoutingGenerator`, `CapacityGenerator`, `TimeWindowGenerator`...
+
+Generate solver constraints
+:::
+
+:::{grid-item-card} Solvers
+:class-card: sd-text-center
+
+`GASolver`, `MIPSolver`, `CPSolver`...
+
+Optimization engines
+:::
+
+:::{grid-item-card} Evaluators
+:class-card: sd-text-center
+
+`DistanceEvaluator`, `CapacityEvaluator`...
+
+Solution quality metrics
+:::
+::::
+
+Plugins are auto-registered at startup. Add your own by implementing the interface and using the `ROUTING_REGISTER_*` macros:
+
+```cpp
+// Custom constraint generator - automatically registered
+class MyConstraintGenerator : public IConstraintGenerator {
+    std::string name() const override { return "MyConstraint"; }
+    void addConstraints(IBackend& backend) override { /* ... */ }
+};
+ROUTING_REGISTER_GENERATOR(MyConstraintGenerator)
+```
+
+See [Plugins](plugins.md) for the full guide.
+
+---
+
 ## Installation
 
 ::::{tab-set}
@@ -250,7 +313,7 @@ If you use this library in research, please cite:
 ```bibtex
 @software{routing2026,
   author = {AFIFI, Sohaib},
-  title = {Routing: A Composable Vehicle Routing Problem Library},
+  title = {Rihla: A Composable Vehicle Routing Problem Library},
   year = {2026},
   url = {https://github.com/sohaibafifi/routing}
 }
