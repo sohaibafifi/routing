@@ -106,7 +106,7 @@ INSTANCES = {
 # Available solvers (type/backend format)
 # Note: Some solvers have known issues:
 #   - vns, pso, ls: segfault in Python bindings
-METAHEURISTIC_SOLVERS = ["ga", "ma"]
+METAHEURISTIC_SOLVERS = ["ga", "ma", "vns", "pso", "ls"]  # Metaheuristic solvers
 MIP_SOLVERS = ["mip/cplex", "mip/highs"]  # MIP backends
 CP_SOLVERS = ["cp/cplex", "cp/ortools", "cp/xcsp3"]  # CP backends
 ALL_SOLVERS = METAHEURISTIC_SOLVERS + MIP_SOLVERS + CP_SOLVERS
@@ -170,6 +170,41 @@ def check_solver_availability(solver_name: str) -> Tuple[bool, str]:
 # Default settings
 DEFAULT_TIMEOUT = 60
 QUICK_TIMEOUT = 30
+GA_MA_ITER_MAX = 50000
+
+SOLVER_PARAMS = {
+    "ga": {"iterMax": GA_MA_ITER_MAX},
+    "ma": {"iterMax": GA_MA_ITER_MAX},
+    "pso": {"iterMax": GA_MA_ITER_MAX},
+}
+
+def apply_solver_params(solver, solver_name: str) -> None:
+    params = SOLVER_PARAMS.get(solver_name)
+    if not params:
+        return
+    for key, value in params.items():
+        if isinstance(value, bool):
+            solver.set_param_bool(key, value)
+        elif isinstance(value, int):
+            solver.set_param_int(key, value)
+        else:
+            solver.set_param_double(key, float(value))
+
+
+def solve_with_params(problem: Any, solver_name: str, timeout: int, verbose: bool):
+    ensure_routing_initialized()
+    solver = routing.create_solver(solver_name, problem)
+    apply_solver_params(solver, solver_name)
+    if verbose and solver_name.startswith("cp"):
+        try:
+            solver.set_verbose(True)
+        except Exception:
+            pass
+    ok = solver.solve(timeout)
+    if ok:
+        sol = solver.get_solution()
+        return sol.clone() if sol else None
+    return None
 
 
 @dataclass
@@ -381,7 +416,7 @@ def _solver_worker(problem_data: dict, solver_name: str, timeout: int, result_qu
         problem = builder.build()
 
         start_time = time.time()
-        solution = routing.solve(problem, solver_name, timeout=timeout, verbose=False)
+        solution = solve_with_params(problem, solver_name, timeout=timeout, verbose=False)
         elapsed = time.time() - start_time
 
         if solution:
@@ -436,7 +471,7 @@ def run_solver(problem: Any, solver_name: str, timeout: int,
     start_time = time.time()
     try:
         with SuppressOutput():
-            solution = routing.solve(problem, solver_name, timeout=timeout, verbose=False)
+            solution = solve_with_params(problem, solver_name, timeout=timeout, verbose=False)
         elapsed = time.time() - start_time
         return solution, elapsed, ""
     except Exception as e:

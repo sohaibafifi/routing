@@ -8,6 +8,7 @@
 #include "plugins/attributes/ComposableCorePlugin/Problem.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
 #include <cassert>
+#include <utility>
 
 namespace routing {
     class TwoOptMovement {
@@ -56,6 +57,49 @@ namespace routing {
             bool improved = false;
             TwoOptMovement bestMovement(0, 0, 0, std::numeric_limits<routing::Duration>::max(), false);
             double bestCost = solution->getCost();
+            auto* problem = solution->getProblem();
+            const auto& evaluators = problem->getActiveEvaluators();
+
+            auto isTourFeasible = [&](const std::vector<models::Client*>& seq, unsigned tourId) -> bool {
+                if (evaluators.empty()) {
+                    return true;
+                }
+                auto* tour = new routing::Tour(problem, tourId);
+                bool ok = true;
+                for (auto* client : seq) {
+                    if (!client) {
+                        continue;
+                    }
+                    auto* cost = tour->evaluateInsertion(client, tour->getNbClient());
+                    bool possible = cost->isPossible();
+                    delete cost;
+                    if (!possible) {
+                        ok = false;
+                        break;
+                    }
+                    tour->_pushClient(client);
+                }
+                delete tour;
+                return ok;
+            };
+
+            auto buildCandidate = [&](routing::Tour* tour, int first, int second) {
+                if (first > second) {
+                    std::swap(first, second);
+                }
+                std::vector<models::Client*> seq;
+                seq.reserve(tour->getNbClient());
+                for (int k = 0; k <= first; ++k) {
+                    seq.push_back(tour->getClient(k));
+                }
+                for (int k = second; k > first; --k) {
+                    seq.push_back(tour->getClient(k));
+                }
+                for (int k = second + 1; k < tour->getNbClient(); ++k) {
+                    seq.push_back(tour->getClient(k));
+                }
+                return seq;
+            };
             // in each tour we look for the best remove and try to insert it into the best position
             for (int t = 0; t < solution->getNbTour(); ++t) {
                 if (solution->getTour(t)->getNbClient() == 0) continue;
@@ -81,9 +125,15 @@ namespace routing {
                         );
                         double delta = distance_i_i1 + distance_j_j1 - (distance_i_j + distance_i1_j1);
                         TwoOptMovement cost(i, j, t, delta, true);
-                        if (delta < 0 && bestMovement > cost) {
-                            bestMovement = cost;
-
+                        if (delta < 0) {
+                            auto* tour = solution->getTour(t);
+                            auto candidate = buildCandidate(tour, i, j);
+                            if (!isTourFeasible(candidate, tour->getID())) {
+                                continue;
+                            }
+                            if (bestMovement > cost) {
+                                bestMovement = cost;
+                            }
                         }
                     }
                 }
@@ -99,7 +149,7 @@ namespace routing {
                 for (int k = second; k > first; --k) {
                     tour->_pushClient(solution->getTour(bestMovement.t)->getClient(k));
                 }
-                for (int k = second; k < solution->getTour(bestMovement.t)->getNbClient(); ++k) {
+                for (int k = second + 1; k < solution->getTour(bestMovement.t)->getNbClient(); ++k) {
                     tour->_pushClient(solution->getTour(bestMovement.t)->getClient(k));
                 }
                 solution->overrideTour(tour, bestMovement.t);

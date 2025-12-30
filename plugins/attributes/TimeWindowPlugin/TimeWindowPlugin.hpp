@@ -11,6 +11,7 @@
 #include "plugins/attributes/TimeWindowPlugin/MIPTimeWindowGenerator.hpp"
 #include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
 #include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
+#include "plugins/attributes/TimeWindowPlugin/TimeWindowEvaluator.hpp"
 
 namespace routing {
 namespace plugins {
@@ -54,6 +55,11 @@ public:
                 },
                 60  // Priority: after routing (10) and capacity (50)
             );
+        }
+
+        if (!registry.hasEvaluator("TimeWindowEvaluator")) {
+            registry.registerEvaluator(
+                std::make_unique<evaluators::TimeWindowEvaluator>());
         }
     }
 };

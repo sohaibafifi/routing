@@ -12,15 +12,31 @@
 #include "plugins/solvers/SolverCorePlugin/Solver.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Generator.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
+#include "plugins/attributes/ComposableCorePlugin/Entity.hpp"
+#include "core/interfaces/IEvaluator.hpp"
 #include <cassert>
 #include <algorithm>
 #include <chrono>
 #include <functional>
 #include <set>
+#include <limits>
+#include <sstream>
+#include <iomanip>
 #include <utility>
-#include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
 
 namespace routing {
+    enum class ConstraintMode {
+        DistanceOnly,
+        FeasibleOnly,
+        Penalized
+    };
+
+    struct ConstraintConfig {
+        ConstraintMode mode = ConstraintMode::DistanceOnly;
+        double penaltyWeight = 1000.0;
+        double unservedPenalty = 100000.0;
+    };
+
     class Sequence {
     protected :
         bool updated = true;
@@ -28,20 +44,26 @@ namespace routing {
         long hash = 0;
         routing::Duration cost = 0;
         Solution *solution = nullptr;
+        ConstraintConfig config_;
 
     public :
         Problem *problem;
         std::vector<models::Client *> sequence;
 
-        Sequence(Solution *p_solution) : problem(p_solution->getProblem()),
-                                                sequence(p_solution->getSequence()){
+        Sequence(Solution *p_solution, ConstraintConfig config = {})
+            : problem(p_solution->getProblem()),
+              sequence(p_solution->getSequence()),
+              config_(config) {
             hash = getHash();
             cost = p_solution->getCost();
             problem->getMemory()->add(hash, cost);
         }
 
-        Sequence(Problem *p_problem, const std::vector<models::Client *> & p_sequence) : problem(p_problem),
-                                                                                         sequence(p_sequence) {
+        Sequence(Problem *p_problem, const std::vector<models::Client *> & p_sequence,
+                 ConstraintConfig config = {})
+            : problem(p_problem),
+              sequence(p_sequence),
+              config_(config) {
             hash = getHash();
             cost = decode()->getCost();
             problem->getMemory()->add(hash, cost);
@@ -57,7 +79,9 @@ namespace routing {
             return std::less<const Sequence*>{}(&lhs, &rhs);
         }
 
-        Sequence(Problem *p_problem) : problem(p_problem) {
+        Sequence(Problem *p_problem, ConstraintConfig config = {})
+            : problem(p_problem),
+              config_(config) {
             sequence = std::vector<models::Client *>();
             for (int i = 0; i < problem->clients.size(); ++i) {
                 sequence.push_back(problem->clients.at(i));
@@ -76,7 +100,7 @@ namespace routing {
         Solution *decode() {
             if (decoded && solution != nullptr) return solution;
             Solution *solution = problem->initializer()->initialSolution();
-            this->solution = solution->initFromSequence(problem, this->sequence);
+            this->solution = buildSolutionFromSequence(solution);
             this->cost = this->solution->getCost();
             decoded = true;
             return this->solution;
@@ -97,16 +121,186 @@ namespace routing {
                     hash = 0;
                     return hash;
                 }
-                std::string sequence_str;
+                std::ostringstream ss;
+                ss << "mode=" << static_cast<int>(config_.mode)
+                   << "|pen=" << std::fixed << std::setprecision(6) << config_.penaltyWeight
+                   << "|unserved=" << config_.unservedPenalty << "|";
                 for (models::Client * client : sequence) {
-                    sequence_str.append(std::to_string(client->getID()));
-                    sequence_str.push_back('-');
+                    ss << client->getID() << '-';
                 }
                 std::hash<std::string> hash_fn_sequence;
                 updated = false;
-                hash = hash_fn_sequence(sequence_str);
+                hash = hash_fn_sequence(ss.str());
             }
             return hash;
+        }
+
+    private:
+        Solution* buildSolutionFromSequence(Solution* base) {
+            if (config_.mode == ConstraintMode::DistanceOnly) {
+                return base->initFromSequence(problem, sequence);
+            }
+
+            base->setPenalty(0.0);
+            base->notserved.clear();
+
+            auto* depot = problem->getDepot();
+            if (!depot) {
+                return base->initFromSequence(problem, sequence);
+            }
+
+            const auto& evaluators = problem->getActiveEvaluators();
+            if (evaluators.empty()) {
+                return base->initFromSequence(problem, sequence);
+            }
+
+            auto vehicles = problem->getComposableVehicles();
+            size_t numVehicles = vehicles.size();
+            if (numVehicles == 0) {
+                numVehicles = 1;
+            }
+
+            auto* depotEntity = dynamic_cast<Entity*>(depot);
+            if (!depotEntity) {
+                return base->initFromSequence(problem, sequence);
+            }
+
+            auto toEntity = [](models::Client* client) -> Entity* {
+                return dynamic_cast<Entity*>(client);
+            };
+
+            auto buildContext = [&](Tour* currentTour, models::Client* client, size_t position)
+                -> InsertionContext {
+                size_t safePos = position;
+                if (safePos > currentTour->getNbClient()) {
+                    safePos = currentTour->getNbClient();
+                }
+                Entity* pred = depotEntity;
+                Entity* succ = depotEntity;
+                if (safePos > 0) {
+                    pred = toEntity(currentTour->getClient(safePos - 1));
+                }
+                if (safePos < currentTour->getNbClient()) {
+                    succ = toEntity(currentTour->getClient(safePos));
+                }
+                return InsertionContext{toEntity(client),
+                                        static_cast<int>(safePos),
+                                        pred,
+                                        succ};
+            };
+
+            auto checkInsertion = [&](Tour* currentTour, models::Client* client, size_t position,
+                                      int& failures) -> bool {
+                failures = 0;
+                auto ctx = buildContext(currentTour, client, position);
+                if (!ctx.client || !ctx.predecessor || !ctx.successor) {
+                    return true;
+                }
+                bool ok = true;
+                for (auto* eval : evaluators) {
+                    if (!eval->checkFeasibility(*currentTour, ctx)) {
+                        ok = false;
+                        failures++;
+                    }
+                }
+                return ok;
+            };
+
+            double violationSum = 0.0;
+            auto applyInsertion = [&](Tour* currentTour, models::Client* client, size_t position,
+                                      int failures) {
+                auto ctx = buildContext(currentTour, client, position);
+                if (ctx.client && ctx.predecessor && ctx.successor) {
+                    for (auto* eval : evaluators) {
+                        eval->applyInsertion(*currentTour, ctx);
+                    }
+                }
+                currentTour->_pushClient(client);
+                if (failures > 0) {
+                    violationSum += failures;
+                }
+            };
+
+            size_t vehicleIdx = 0;
+            auto* tour = new Tour(problem, static_cast<unsigned>(vehicleIdx));
+            bool feasible = true;
+
+            auto pushTour = [&]() {
+                if (!tour) return;
+                if (tour->getNbClient() > 0) {
+                    base->pushTour(tour);
+                } else {
+                    delete tour;
+                }
+            };
+
+            auto startNewTour = [&]() -> bool {
+                if (vehicleIdx + 1 >= numVehicles) {
+                    return false;
+                }
+                pushTour();
+                vehicleIdx++;
+                tour = new Tour(problem, static_cast<unsigned>(vehicleIdx));
+                return true;
+            };
+
+            for (auto* client : sequence) {
+                if (!tour) {
+                    base->notserved.push_back(client);
+                    feasible = false;
+                    continue;
+                }
+
+                size_t position = tour->getNbClient();
+                int failures = 0;
+                bool ok = checkInsertion(tour, client, position, failures);
+
+                if (!ok) {
+                    bool started = startNewTour();
+                    if (started) {
+                        position = tour->getNbClient();
+                        int newFailures = 0;
+                        bool okNew = checkInsertion(tour, client, position, newFailures);
+                        if (okNew) {
+                            applyInsertion(tour, client, position, 0);
+                            continue;
+                        }
+                        if (config_.mode == ConstraintMode::Penalized) {
+                            applyInsertion(tour, client, position, newFailures);
+                            continue;
+                        }
+                        base->notserved.push_back(client);
+                        feasible = false;
+                        continue;
+                    }
+
+                    if (config_.mode == ConstraintMode::Penalized) {
+                        applyInsertion(tour, client, position, failures);
+                        continue;
+                    }
+
+                    base->notserved.push_back(client);
+                    feasible = false;
+                    continue;
+                }
+
+                applyInsertion(tour, client, position, 0);
+            }
+
+            pushTour();
+            base->update();
+
+            if (config_.mode == ConstraintMode::Penalized) {
+                double penalty = config_.penaltyWeight * violationSum;
+                if (!base->notserved.empty()) {
+                    penalty += config_.unservedPenalty * base->notserved.size();
+                }
+                base->setPenalty(penalty);
+            } else if (!feasible || !base->notserved.empty()) {
+                base->setPenalty(std::numeric_limits<double>::infinity());
+            }
+
+            return base;
         }
     };
 
@@ -119,20 +313,22 @@ namespace routing {
     class Population {
     public :
         Problem *problem;
+        ConstraintConfig config;
         std::set<Sequence *, ChromosomeCmp> sequences;
 
-        Population(Problem *p_problem) : problem(p_problem) {
+        Population(Problem *p_problem, ConstraintConfig cfg)
+            : problem(p_problem), config(cfg) {
             sequences = std::set<Sequence *, ChromosomeCmp>();
             while (sequences.size() < problem->clients.size()) {
-                auto* sequence = new Sequence(problem);
+                auto* sequence = new Sequence(problem, config);
                 if (!sequences.insert(sequence).second) {
                     delete sequence;
                 }
             }
         }
 
-        static Population *initialize(Problem *p_problem) {
-            Population *population = new Population(p_problem);
+        static Population *initialize(Problem *p_problem, ConstraintConfig cfg) {
+            Population *population = new Population(p_problem, cfg);
             return population;
         }
 
@@ -169,7 +365,7 @@ namespace routing {
                     }
                 }
             }
-            Sequence *child = new Sequence(problem, child_sequence);
+            Sequence *child = new Sequence(problem, child_sequence, config);
             return child;
         }
 
@@ -236,12 +432,16 @@ namespace routing {
             this->configuration = new Configuration();
             this->configuration->setIntParam(this->configuration->iterMax,
                                              this->problem->clients.size() * this->problem->clients.size());
+            this->configuration->setBoolParam("feasibleOnly", false);
+            this->configuration->setDoubleParam("infeasiblePenalty", 1000.0);
+            this->configuration->setDoubleParam("unservedPenalty", 100000.0);
         };
 
         virtual bool solve(double timeout = 3600) override {
             // Note: generator is not used in current implementation
             this->solution = this->problem->initializer()->initialSolution();
-            Population *population = Population::initialize(this->problem);
+            ConstraintConfig config = buildConstraintConfig();
+            Population *population = Population::initialize(this->problem, config);
             int itermax = this->configuration->getIntParam(this->configuration->iterMax);
             int iter = 1;
             double bestCost = population->best()->getCost();
@@ -279,5 +479,41 @@ namespace routing {
         }
 
         virtual ~GASolver() = default;
+
+    private:
+        ConstraintConfig buildConstraintConfig() const {
+            ConstraintConfig cfg;
+            bool feasibleOnly = false;
+            double penalty = cfg.penaltyWeight;
+            double unserved = cfg.unservedPenalty;
+
+            if (configuration) {
+                try {
+                    feasibleOnly = configuration->getBoolParam("feasibleOnly");
+                } catch (const ParameterNotFound&) {
+                }
+                try {
+                    penalty = configuration->getDoubleParam("infeasiblePenalty");
+                } catch (const ParameterNotFound&) {
+                }
+                try {
+                    unserved = configuration->getDoubleParam("unservedPenalty");
+                } catch (const ParameterNotFound&) {
+                }
+            }
+
+            cfg.penaltyWeight = penalty;
+            cfg.unservedPenalty = unserved;
+
+            if (feasibleOnly) {
+                cfg.mode = ConstraintMode::FeasibleOnly;
+            } else if (penalty > 0.0 || unserved > 0.0) {
+                cfg.mode = ConstraintMode::Penalized;
+            } else {
+                cfg.mode = ConstraintMode::DistanceOnly;
+            }
+
+            return cfg;
+        }
     };
 }

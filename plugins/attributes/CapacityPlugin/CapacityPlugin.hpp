@@ -11,6 +11,7 @@
 #include "plugins/attributes/CapacityPlugin/MIPCapacityGenerator.hpp"
 #include "plugins/attributes/CapacityPlugin/Consumer.hpp"
 #include "plugins/attributes/CapacityPlugin/Stock.hpp"
+#include "plugins/attributes/CapacityPlugin/CapacityEvaluator.hpp"
 
 namespace routing {
 namespace plugins {
@@ -54,6 +55,11 @@ public:
                 },
                 50  // Priority: after routing (10), before time windows (60)
             );
+        }
+
+        if (!registry.hasEvaluator("CapacityEvaluator")) {
+            registry.registerEvaluator(
+                std::make_unique<evaluators::CapacityEvaluator>());
         }
     }
 };

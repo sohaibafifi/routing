@@ -11,7 +11,10 @@
 
 #include "plugins/solvers/SolverCorePlugin/Solver.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Generator.hpp"
+#include "plugins/solvers/OperatorsPlugin/operators/GreedyConstructor.hpp"
+#include "plugins/solvers/OperatorsPlugin/operators/RandomDestructor.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
+#include "plugins/neighborhoods/TwoOptPlugin/TwoOpt.hpp"
 #include <cassert>
 
 namespace routing {
@@ -55,8 +58,20 @@ namespace routing {
         };
 
         virtual bool solve(double timeout = 3600) override {
-            assert(generator != nullptr);
-            this->solution = generator->generate();
+            GreedyConstructor fallbackConstructor;
+            RandomDestructor fallbackDestructor(0.2);
+            Generator fallbackGenerator(this->problem, &fallbackConstructor, &fallbackDestructor);
+            Generator* activeGenerator = generator ? generator : &fallbackGenerator;
+            auto* previousGenerator = generator;
+            generator = activeGenerator;
+
+            std::vector<Neighborhood *> activeNeighbors = neighbors;
+            static TwoOpt fallbackTwoOpt;
+            if (activeNeighbors.empty()) {
+                activeNeighbors.push_back(&fallbackTwoOpt);
+            }
+
+            this->solution = activeGenerator->generate();
             std::random_device rd;
             int itermax = this->configuration->getIntParam(this->configuration->iterMax);
             int iter = 1;
@@ -64,12 +79,12 @@ namespace routing {
             double bestCost = this->solution->getCost();
             while (iter++ < itermax) {
                 shake(this->solution);
-                std::vector<bool> run(neighbors.size(), false);
+                std::vector<bool> run(activeNeighbors.size(), false);
                 while (std::find(run.begin(), run.end(), false) != run.end()) {
                     unsigned i = 0;
                     do { i = rd() % run.size(); } while (run[i]);
-                    if (neighbors[i]->look(this->solution)) {
-                        run = std::vector<bool>(neighbors.size(), false);
+                    if (activeNeighbors[i]->look(this->solution)) {
+                        run = std::vector<bool>(activeNeighbors.size(), false);
                     } else {
                         run[i] = true;
                     }
@@ -86,6 +101,7 @@ namespace routing {
                      << "\t" << this->solution->getCost()
                      << std::endl;
             this->solution->print(this->os);
+            generator = previousGenerator;
             return this->solution != nullptr;
         }
 

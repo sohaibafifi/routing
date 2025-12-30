@@ -18,6 +18,9 @@
 #include "plugins/solvers/MIPSolverPlugin/MIPSolver.hpp"
 #include "plugins/solvers/CPSolverPlugin/CPSolver.hpp"
 #include "plugins/solvers/XCSP3SolverPlugin/XCSP3Solver.hpp"
+#include "plugins/solvers/GASolverPlugin/GASolverPlugin.hpp"
+#include "plugins/solvers/MASolverPlugin/MASolverPlugin.hpp"
+#include "plugins/solvers/PSOSolverPlugin/PSOSolverPlugin.hpp"
 
 namespace nb = nanobind;
 using namespace routing;
@@ -118,6 +121,54 @@ void bind_solver(nb::module_& m) {
             }
             throw std::runtime_error("Verbose flag is not supported for solver: " + solver.name());
         }, nb::arg("verbose"), "Enable verbose logging (CP/XCSP3 only)")
+        .def("set_param_bool", [](ISolver& solver, const std::string& name, bool value) {
+            if (auto* gaSolver = dynamic_cast<plugins::GASolverWrapper*>(&solver)) {
+                gaSolver->setBoolParam(name, value);
+                return;
+            }
+            if (auto* maSolver = dynamic_cast<plugins::MASolverWrapper*>(&solver)) {
+                maSolver->setBoolParam(name, value);
+                return;
+            }
+            if (auto* psoSolver = dynamic_cast<plugins::PSOSolverWrapper*>(&solver)) {
+                psoSolver->setBoolParam(name, value);
+                return;
+            }
+            throw std::runtime_error("Parameter setting is not supported for solver: " + solver.name());
+        }, nb::arg("name"), nb::arg("value"),
+        "Set a GA/MA/PSO boolean configuration parameter")
+        .def("set_param_double", [](ISolver& solver, const std::string& name, double value) {
+            if (auto* gaSolver = dynamic_cast<plugins::GASolverWrapper*>(&solver)) {
+                gaSolver->setDoubleParam(name, value);
+                return;
+            }
+            if (auto* maSolver = dynamic_cast<plugins::MASolverWrapper*>(&solver)) {
+                maSolver->setDoubleParam(name, value);
+                return;
+            }
+            if (auto* psoSolver = dynamic_cast<plugins::PSOSolverWrapper*>(&solver)) {
+                psoSolver->setDoubleParam(name, value);
+                return;
+            }
+            throw std::runtime_error("Parameter setting is not supported for solver: " + solver.name());
+        }, nb::arg("name"), nb::arg("value"),
+        "Set a GA/MA/PSO double configuration parameter")
+        .def("set_param_int", [](ISolver& solver, const std::string& name, int value) {
+            if (auto* gaSolver = dynamic_cast<plugins::GASolverWrapper*>(&solver)) {
+                gaSolver->setIntParam(name, value);
+                return;
+            }
+            if (auto* maSolver = dynamic_cast<plugins::MASolverWrapper*>(&solver)) {
+                maSolver->setIntParam(name, value);
+                return;
+            }
+            if (auto* psoSolver = dynamic_cast<plugins::PSOSolverWrapper*>(&solver)) {
+                psoSolver->setIntParam(name, value);
+                return;
+            }
+            throw std::runtime_error("Parameter setting is not supported for solver: " + solver.name());
+        }, nb::arg("name"), nb::arg("value"),
+        "Set a GA/MA/PSO integer configuration parameter")
         .def("add_cp_generators", [](ISolver& solver) {
             auto add_all = [](auto& target) {
                 auto routing = std::make_unique<cp::generators::CPRoutingGenerator>();

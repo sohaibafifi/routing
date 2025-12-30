@@ -22,6 +22,8 @@ namespace routing {
         protected:
             Problem *problem;
         public :
+            Problem* getProblem() const { return problem; }
+
             virtual void update() = 0;
 
             virtual void pushClient(Client *client, routing::InsertionCost * cost) = 0;
@@ -35,7 +37,7 @@ namespace routing {
 
             virtual Client *getClient(unsigned long) const = 0;
 
-            virtual unsigned long getNbClient() = 0;
+            virtual unsigned long getNbClient() const = 0;
 
             virtual Tour *clone() const = 0;
 

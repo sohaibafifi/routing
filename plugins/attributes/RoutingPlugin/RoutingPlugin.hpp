@@ -10,6 +10,7 @@
 #include "plugins/attributes/RoutingPlugin/CPRoutingGenerator.hpp"
 #include "plugins/attributes/RoutingPlugin/MIPRoutingGenerator.hpp"
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
+#include "plugins/attributes/RoutingPlugin/RoutingEvaluator.hpp"
 
 namespace routing {
 namespace plugins {
@@ -47,6 +48,11 @@ public:
                 { std::type_index(typeid(attributes::GeoNode)) },
                 10  // Priority: runs first, provides base variables
             );
+        }
+
+        if (!registry.hasEvaluator("RoutingEvaluator")) {
+            registry.registerEvaluator(
+                std::make_unique<evaluators::RoutingEvaluator>());
         }
     }
 };

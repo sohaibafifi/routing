@@ -559,6 +559,56 @@ namespace routing {
         return copy;
     }
 
+    inline InsertionCost* Tour::evaluateInsertion(models::Client* client, unsigned long position) {
+        auto* problem = getProblem();
+        if (!problem) {
+            return new InsertionCost(0, true);
+        }
+        const auto& evaluators = problem->getActiveEvaluators();
+        if (evaluators.empty()) {
+            return new InsertionCost(0, true);
+        }
+
+        auto* clientEntity = dynamic_cast<Entity*>(client);
+        if (!clientEntity) {
+            return new InsertionCost(0, true);
+        }
+
+        auto* depotEntity = dynamic_cast<Entity*>(problem->getDepot());
+        if (!depotEntity) {
+            return new InsertionCost(0, true);
+        }
+
+        size_t safePos = position;
+        if (safePos > clients_.size()) {
+            safePos = clients_.size();
+        }
+        Entity* pred = depotEntity;
+        Entity* succ = depotEntity;
+        if (safePos > 0) {
+            pred = dynamic_cast<Entity*>(clients_[safePos - 1]);
+        }
+        if (safePos < clients_.size()) {
+            succ = dynamic_cast<Entity*>(clients_[safePos]);
+        }
+
+        if (!pred || !succ) {
+            return new InsertionCost(0, true);
+        }
+
+        InsertionContext ctx{clientEntity, static_cast<int>(safePos), pred, succ};
+        bool possible = true;
+        double delta = 0.0;
+        for (auto* eval : evaluators) {
+            if (!eval->checkFeasibility(*this, ctx)) {
+                possible = false;
+            }
+            delta += eval->evaluateInsertionDelta(*this, ctx);
+        }
+
+        return new InsertionCost(delta, possible);
+    }
+
     // Solution implementations that need Problem definition
     inline Solution* Solution::initFromSequence(Problem* problem, std::vector<models::Client*> sequence) {
         for (auto* tour : tours_) {
@@ -567,6 +617,7 @@ namespace routing {
         tours_.clear();
         notserved.clear();
         totalCost_ = 0;
+        setPenalty(0.0);
         problem_ = problem;
 
         auto* tour = new Tour(problem, 0);

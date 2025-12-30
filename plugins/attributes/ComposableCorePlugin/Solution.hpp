@@ -69,15 +69,13 @@ namespace routing {
             return pos < clients_.size() ? clients_[pos] : nullptr;
         }
 
-        unsigned long getNbClient() override {
+        unsigned long getNbClient() const override {
             return clients_.size();
         }
 
         models::Tour* clone() const override;
 
-        InsertionCost* evaluateInsertion(models::Client* client, unsigned long position) override {
-            return new InsertionCost(0, true);
-        }
+        InsertionCost* evaluateInsertion(models::Client* client, unsigned long position) override;
 
         RemoveCost* evaluateRemove(unsigned long position) override {
             return new RemoveCost(0);
@@ -108,13 +106,14 @@ namespace routing {
     class Solution : public Model {
     protected:
         Problem* problem_;
+        double penaltyCost_;
 
     public:
         explicit Solution(Problem* p_problem)
-            : problem_(p_problem), totalCost_(0) {}
+            : problem_(p_problem), totalCost_(0), penaltyCost_(0) {}
 
         Solution(const Solution& other)
-            : problem_(other.problem_), totalCost_(other.totalCost_) {
+            : problem_(other.problem_), totalCost_(other.totalCost_), penaltyCost_(other.penaltyCost_) {
             copy(&other);
         }
 
@@ -133,7 +132,15 @@ namespace routing {
         }
 
         virtual double getCost() {
-            return totalCost_;
+            return totalCost_ + penaltyCost_;
+        }
+
+        virtual void setPenalty(double penalty) {
+            penaltyCost_ = penalty;
+        }
+
+        virtual double getPenalty() const {
+            return penaltyCost_;
         }
 
         virtual void pushTour(Tour* tour) {
@@ -174,6 +181,7 @@ namespace routing {
                     tours_.push_back(dynamic_cast<Tour*>(p_solution->tours_[i]->clone()));
                 }
                 totalCost_ = p_solution->totalCost_;
+                penaltyCost_ = p_solution->penaltyCost_;
                 notserved = p_solution->notserved;
             }
         }

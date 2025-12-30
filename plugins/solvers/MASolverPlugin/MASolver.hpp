@@ -12,7 +12,11 @@
 #include "plugins/solvers/GASolverPlugin/GASolver.hpp"
 #include "plugins/solvers/SolverCorePlugin/Solver.hpp"
 #include "plugins/solvers/OperatorsPlugin/operators/Generator.hpp"
+#include "plugins/solvers/OperatorsPlugin/operators/GreedyConstructor.hpp"
+#include "plugins/solvers/OperatorsPlugin/operators/RandomDestructor.hpp"
 #include "plugins/neighborhoods/NeighborhoodCorePlugin/Neighborhood.hpp"
+#include "plugins/neighborhoods/IDCHPlugin/IDCH.hpp"
+#include "plugins/neighborhoods/TwoOptPlugin/TwoOpt.hpp"
 #include <cassert>
 #include <algorithm>
 #include <set>
@@ -38,13 +42,22 @@ namespace routing {
         void mutate(Sequence *sequence) override {
             Solution * solution = sequence->decode();
             assert(solution->notserved.empty());
-            std::vector<bool> run(this->neighbors.size(), false);
+            std::vector<Neighborhood *> active = this->neighbors;
+            static GreedyConstructor constructor;
+            static RandomDestructor destructor(0.2);
+            static IDCH idch(&constructor, &destructor);
+            static TwoOpt twoopt;
+            if (active.empty()) {
+                active.push_back(&idch);
+                active.push_back(&twoopt);
+            }
+            std::vector<bool> run(active.size(), false);
             std::random_device rd;
             while (std::find(run.begin(), run.end(), false) != run.end()) {
                 unsigned i = 0;
                 do { i = rd() % run.size(); } while (run[i]);
-                if (this->neighbors[i]->look(solution)) {
-                    run = std::vector<bool>(this->neighbors.size(), false);
+                if (active[i]->look(solution)) {
+                    run = std::vector<bool>(active.size(), false);
                 } else {
                     run[i] = true;
                 }

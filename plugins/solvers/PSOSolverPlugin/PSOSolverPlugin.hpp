@@ -60,7 +60,28 @@ public:
         solver_.setNeighbors(neighbors);
     }
 
+    void setBoolParam(const std::string& name, bool value) {
+        ensureConfig();
+        solver_.configuration->setBoolParam(name, value);
+    }
+
+    void setDoubleParam(const std::string& name, double value) {
+        ensureConfig();
+        solver_.configuration->setDoubleParam(name, value);
+    }
+
+    void setIntParam(const std::string& name, int value) {
+        ensureConfig();
+        solver_.configuration->setIntParam(name, value);
+    }
+
 private:
+    void ensureConfig() {
+        if (!solver_.configuration) {
+            solver_.setDefaultConfiguration();
+        }
+    }
+
     PSOSolver solver_;
 };
 
