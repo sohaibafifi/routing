@@ -283,6 +283,20 @@ html[data-theme="dark"] tr:hover {
   font-weight: 500;
 }
 
+/* Hide empty section navigation sidebar */
+.bd-docs-nav.bd-links:has(.bd-toc-item:empty),
+.bd-docs-nav.bd-links .bd-toc-item:empty {
+  display: none;
+}
+
+/* Fallback for browsers without :has() support */
+nav.bd-docs-nav.bd-links {
+  display: none;
+}
+.bd-sidebar-primary{
+  display: none;
+}
+
 /* --------------------------------------------------------------------------
    Section Headings
    -------------------------------------------------------------------------- */

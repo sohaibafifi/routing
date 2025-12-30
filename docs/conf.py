@@ -60,6 +60,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo"],
     "navbar_center": ["navbar-nav"],
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "show_toc_level": 2,
 }
 
 breathe_projects = {
