@@ -11,7 +11,7 @@
 #include "plugins/attributes/CapacityPlugin/MIPCapacityGenerator.hpp"
 #include "plugins/attributes/CapacityPlugin/Consumer.hpp"
 #include "plugins/attributes/CapacityPlugin/Stock.hpp"
-#include "plugins/attributes/CapacityPlugin/CapacityEvaluator.hpp"
+#include "plugins/attributes/CapacityPlugin/CapacityIncrementalEvaluator.hpp"
 
 namespace routing {
 namespace plugins {
@@ -57,9 +57,9 @@ public:
             );
         }
 
-        if (!registry.hasEvaluator("CapacityEvaluator")) {
+        if (!registry.hasEvaluator("CapacityIncrementalEvaluator")) {
             registry.registerEvaluator(
-                std::make_unique<evaluators::CapacityEvaluator>());
+                std::make_unique<evaluators::CapacityIncrementalEvaluator>());
         }
     }
 };

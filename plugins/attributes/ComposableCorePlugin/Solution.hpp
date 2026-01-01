@@ -7,6 +7,7 @@
 #include "Model.hpp"
 #include "models/Tour.hpp"
 #include "Entity.hpp"
+#include "core/cache/RouteCache.hpp"
 #include <vector>
 #include <iostream>
 #include <algorithm>
@@ -63,6 +64,7 @@ namespace routing {
         void clear() override {
             clients_.clear();
             cost_ = 0;
+            cache_.invalidate();
         }
 
         models::Client* getClient(unsigned long pos) const override {
@@ -93,9 +95,28 @@ namespace routing {
 
         const std::vector<models::Client*>& getClients() const { return clients_; }
 
+        // ========== Cache Support ==========
+
+        /// Get mutable cache reference
+        RouteCache& getCache() { return cache_; }
+
+        /// Get const cache reference
+        const RouteCache& getCache() const { return cache_; }
+
+        /// Check if cache is valid
+        bool isCacheValid() const { return cache_.isValid(); }
+
+        /// Mark cache as invalid (will be rebuilt on next ensureCache())
+        void invalidateCache() { cache_.invalidate(); }
+
+        /// Ensure cache is populated (lazy initialization)
+        /// This is declared here but implemented in Problem.hpp after Problem is defined
+        void ensureCache() const;
+
     private:
         std::vector<models::Client*> clients_;
         double cost_;
+        mutable RouteCache cache_;  ///< Cached state for incremental evaluation
     };
 
     /**

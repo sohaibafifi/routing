@@ -11,7 +11,7 @@
 #include "plugins/attributes/TimeWindowPlugin/MIPTimeWindowGenerator.hpp"
 #include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
 #include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
-#include "plugins/attributes/TimeWindowPlugin/TimeWindowEvaluator.hpp"
+#include "plugins/attributes/TimeWindowPlugin/TimeWindowIncrementalEvaluator.hpp"
 
 namespace routing {
 namespace plugins {
@@ -57,9 +57,9 @@ public:
             );
         }
 
-        if (!registry.hasEvaluator("TimeWindowEvaluator")) {
+        if (!registry.hasEvaluator("TimeWindowIncrementalEvaluator")) {
             registry.registerEvaluator(
-                std::make_unique<evaluators::TimeWindowEvaluator>());
+                std::make_unique<evaluators::TimeWindowIncrementalEvaluator>());
         }
     }
 };

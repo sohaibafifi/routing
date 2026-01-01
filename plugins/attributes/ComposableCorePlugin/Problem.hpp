@@ -9,6 +9,7 @@
 #include "core/PluginRegistry.hpp"
 #include "core/interfaces/IConstraintGenerator.hpp"
 #include "core/interfaces/IEvaluator.hpp"
+#include "core/interfaces/IIncrementalEvaluator.hpp"
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
 
 #include <set>
@@ -559,6 +560,30 @@ namespace routing {
         return copy;
     }
 
+    inline void Tour::ensureCache() const {
+        if (cache_.isValid()) {
+            return;
+        }
+
+        auto* problem = getProblem();
+        if (!problem) {
+            return;
+        }
+
+        const auto& evaluators = problem->getActiveEvaluators();
+        cache_.resize(clients_.size());
+
+        // Let each incremental evaluator build its part of the cache
+        for (auto* eval : evaluators) {
+            if (auto* incEval = dynamic_cast<IIncrementalEvaluator*>(eval)) {
+                incEval->buildCache(*this, cache_);
+            }
+        }
+
+        cache_.setValid();
+        cache_.version++;
+    }
+
     inline InsertionCost* Tour::evaluateInsertion(models::Client* client, unsigned long position) {
         auto* problem = getProblem();
         if (!problem) {
@@ -599,7 +624,23 @@ namespace routing {
         InsertionContext ctx{clientEntity, static_cast<int>(safePos), pred, succ};
         bool possible = true;
         double delta = 0.0;
+
+        // Try to use incremental evaluation if cache is valid
+        bool useIncremental = cache_.isValid();
+
         for (auto* eval : evaluators) {
+            if (useIncremental) {
+                if (auto* incEval = dynamic_cast<IIncrementalEvaluator*>(eval)) {
+                    // Use O(1) incremental evaluation
+                    MoveDelta md = incEval->evaluateInsertionIncremental(*this, cache_, ctx);
+                    if (!md.feasible) {
+                        possible = false;
+                    }
+                    delta += md.costDelta;
+                    continue;
+                }
+            }
+            // Fallback to O(n) evaluation
             if (!eval->checkFeasibility(*this, ctx)) {
                 possible = false;
             }
