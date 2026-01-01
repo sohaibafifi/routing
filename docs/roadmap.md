@@ -56,7 +56,7 @@ Native Python API using nanobind with pip install support.
 | Feature | Status | Description |
 |---------|--------|-------------|
 | **[XCSP3](https://www.xcsp.org/) Export** | Active | Export problems to XCSP3 format for external CP solvers |
-| **Incremental Evaluation** | Planned | O(1) move cost evaluation with delta caching |
+| **Incremental Evaluation** | Active | O(1) move cost evaluation with delta caching |
 | **Documentation** | Active | Comprehensive API docs and tutorials |
 
 ---
