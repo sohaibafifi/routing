@@ -60,5 +60,6 @@ status = solver.solve(problem)
 
 -   **[XCSP3](http://www.xcsp.org/)**: An XML-based format for representing Constraint Satisfaction and Optimization Problems.
 -   **[PyCSP3](https://pycsp.org/)**: A Python library for modeling combinatorial constrained problems.
+-   **[PyCSP3-Scheduling](https://github.com/sohaibafifi/pycsp3-scheduling)**: Scheduling extension for pycsp3 with interval variables, sequence variables, and scheduling constraints.
 -   **[ACE (Abstract Constraint Engine)](https://github.com/xcsp3team/ace)**: A generic Constraint Programming solver focused on XCSP3.
 -   **[CoSoCo](https://github.com/xcsp3team/cosoco)**: A C++ CP solver for XCSP3.
