@@ -152,7 +152,7 @@ public:
                 distances.push_back(distanceMatrix_[i][j]);
             }
 
-            IntVar arcCost = cp.newIntVar(0, 1000000, "arc_cost_" + std::to_string(i));
+            IntVar arcCost = cp.newIntVar(0, 10000, "arc_cost_" + std::to_string(i));
             cp.addElement(next_[i], distances, arcCost);
             expr.addTerm(arcCost, 1);
         }

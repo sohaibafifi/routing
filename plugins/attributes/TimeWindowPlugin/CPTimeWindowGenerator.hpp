@@ -68,7 +68,7 @@ public:
         };
 
         int depotOpen = 0;
-        int depotClose = scaleTime(1000000.0);
+        int depotClose = scaleTime(10000.0);
         if (!depots.empty()) {
             auto* depot = depots[0];
             auto* depotTW = depot->tryGetAttribute<attributes::Rendezvous>();
@@ -134,7 +134,7 @@ public:
         };
 
         int depotOpen = 0;
-        int depotClose = scaleTime(1000000.0);
+        int depotClose = scaleTime(10000.0);
         auto* depotTW = depot->tryGetAttribute<attributes::Rendezvous>();
         if (depotTW) {
             depotOpen = scaleTime(depotTW->getTwOpen());

@@ -61,7 +61,7 @@ public:
         auto* depot = depots[0];
         auto* depotTW = depot->tryGetAttribute<attributes::Rendezvous>();
         double depotOpen = 0.0;
-        double depotClose = 1000000.0;
+        double depotClose = 10000.0;
         if (depotTW) {
             depotOpen = depotTW->getTwOpen();
             depotClose = depotTW->getTwClose();
@@ -101,7 +101,7 @@ public:
         const auto& arcVars = routingGen_->getArcVars();
 
         // Big-M value (should be large enough to not constrain, but not too large for numerical stability)
-        double M = 1000000.0;
+        double M = 10000.0;
 
         // Precedence constraints with big-M
         // If x[i][j] = 1, then t[i] + service[i] + travel[i][j] <= t[j]
