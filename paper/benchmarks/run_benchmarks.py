@@ -106,7 +106,7 @@ INSTANCES = {
 # Available solvers (type/backend format)
 # Note: Some solvers have known issues:
 #   - vns, pso, ls: segfault in Python bindings
-METAHEURISTIC_SOLVERS = ["ga", "ma", "vns", "pso", "ls"]  # Metaheuristic solvers
+METAHEURISTIC_SOLVERS = ["alns", "ga", "ma", "vns", "pso", "ls"]  # Metaheuristic solvers
 MIP_SOLVERS = ["mip/cplex", "mip/highs"]  # MIP backends
 CP_SOLVERS = ["cp/cplex", "cp/ortools", "cp/xcsp3"]  # CP backends
 ALL_SOLVERS = METAHEURISTIC_SOLVERS + MIP_SOLVERS + CP_SOLVERS

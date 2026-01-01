@@ -21,6 +21,8 @@
 #include "plugins/solvers/GASolverPlugin/GASolverPlugin.hpp"
 #include "plugins/solvers/MASolverPlugin/MASolverPlugin.hpp"
 #include "plugins/solvers/PSOSolverPlugin/PSOSolverPlugin.hpp"
+#include "plugins/solvers/ALNSSolverPlugin/ALNSSolverPlugin.hpp"
+#include "plugins/solvers/ALNSSolverPlugin/ALNSSolverPlugin.hpp"
 
 namespace nb = nanobind;
 using namespace routing;
@@ -212,21 +214,21 @@ void bind_solver(nb::module_& m) {
         return solver.release();
     }, nb::rv_policy::take_ownership,
        nb::arg("solver_type"), nb::arg("problem"),
-       R"doc(
-           Create a solver instance.
+        R"doc(
+            Create a solver instance.
 
-           Args:
-               solver_type: Type of solver ("ga", "vns", "ma", "pso", "ls", "mip", "cp")
-               problem: The problem to solve
+            Args:
+                solver_type: Type of solver ("alna", "ga", "vns", "ma", "pso", "ls", "alns", "mip", "cp")
+                problem: The problem to solve
 
-           Returns:
-               A solver instance
+            Returns:
+                A solver instance
 
-           Example:
-               solver = routing.create_solver("ga", problem)
-               solver.solve(timeout=60)
-               solution = solver.get_solution()
-       )doc");
+            Example:
+                solver = routing.create_solver("ga", problem)
+                solver.solve(timeout=60)
+                solution = solver.get_solution()
+        )doc");
 
     // List available solvers
     m.def("list_solvers", []() {

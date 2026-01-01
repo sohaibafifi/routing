@@ -27,7 +27,7 @@ Runtime composition of problem features. No deep inheritance hierarchies needed.
 :link: solvers
 :link-type: doc
 
-GA, MA, VNS, PSO, MIP (CPLEX/HiGHS), CP (CPLEX/OR-Tools) - all unified under one API.
+GA, MA, VNS, PSO, ALNS, LS, MIP (CPLEX/HiGHS), CP (CPLEX/OR-Tools) - all unified under one API.
 :::
 
 :::{grid-item-card} Python & C++
@@ -154,6 +154,7 @@ int main() {
 - Memetic Algorithm (MA)
 - Variable Neighborhood Search (VNS)
 - Particle Swarm (PSO)
+- Adaptive Large Neighborhood Search (ALNS)
 - Local Search (LS)
 :::
 

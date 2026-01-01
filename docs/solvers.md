@@ -8,9 +8,9 @@ The Routing library provides multiple solver backends for different needs.
 
 | Category | Solvers | Best For |
 |----------|---------|----------|
-| **Metaheuristics** | GA, MA, VNS, PSO, LS | Large instances, fast approximations |
-| **MIP** | CPLEX, HiGHS | Proven optimality, small-medium instances |
-| **CP** | CPLEX CP Optimizer, OR-Tools, XCSP3 | Complex constraints, scheduling |
+|  **Metaheuristics** | GA, MA, VNS, PSO, LS, ALNS | Large instances, fast approximations |
+|  **MIP** | CPLEX, HiGHS | Proven optimality, small-medium instances |
+|  **CP** | CPLEX CP Optimizer, OR-Tools, XCSP3 | Complex constraints, scheduling |
 
 ---
 
@@ -20,11 +20,12 @@ Fast, scalable solvers for large instances where optimal solutions aren't requir
 
 | Solver | Name | Description |
 |--------|------|-------------|
-| **GA** | `ga` | Genetic Algorithm - good balance of quality and speed |
-| **MA** | `ma` | Memetic Algorithm - GA with local search intensification |
-| **VNS** | `vns` | Variable Neighborhood Search - systematic local search |
-| **PSO** | `pso` | Particle Swarm Optimization - swarm-based metaheuristic |
-| **LS** | `ls` | Local Search - fast improvement heuristic |
+|  **GA** | `ga` | Genetic Algorithm - good balance of quality and speed |
+|  **MA** | `ma` | Memetic Algorithm - GA with local search intensification |
+|  **VNS** | `vns` | Variable Neighborhood Search - systematic local search |
+|  **PSO** | `pso` | Particle Swarm Optimization - swarm-based metaheuristic |
+|  **LS** | `ls` | Local Search - fast improvement heuristic |
+|  **ALNS** | `alns` | Adaptive Large Neighborhood Search - multi-destroy/repair with adaptive weights |
 
 ### Parameters
 
@@ -32,23 +33,65 @@ Fast, scalable solvers for large instances where optimal solutions aren't requir
 
 | Parameter | Type | Applies To | Description |
 |-----------|------|------------|-------------|
-| `iterMax` | int | GA, MA, VNS, PSO | Maximum iterations for main loop |
+|  `iterMax` | int | GA, MA, VNS, PSO, ALNS | Maximum iterations for main loop |
 
 #### GA/MA Feasibility Controls
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `feasibleOnly` | bool | `true` | Enforce feasibility during decoding |
-| `infeasiblePenalty` | float | `1000.0` | Penalty weight for infeasible solutions |
-| `unservedPenalty` | float | `10000.0` | Penalty per unserved client |
+|  `feasibleOnly` | bool | `true` | Enforce feasibility during decoding |
+|  `infeasiblePenalty` | float | `1000.0` | Penalty weight for infeasible solutions |
+|  `unservedPenalty` | float | `10000.0` | Penalty per unserved client |
 
-### Example
+#### ALNS Adaptive Parameters
+
+ALNS uses adaptive operator selection that learns which destroy/repair combinations work best during search.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+|  `reactionFactor` | float | `0.1` | Weight update reaction factor (0-1) |
+|  `decayFactor` | float | `0.8` | Weight decay factor per segment (0-1) |
+|  `temperature` | float | `100.0` | Initial temperature for simulated annealing |
+|  `coolingRate` | float | `0.9995` | Temperature cooling rate per iteration |
+|  `segmentSize` | int | `100` | Iterations between weight updates |
+|  `minTemperature` | float | `0.01` | Minimum temperature for acceptance |
+
+**ALNS Destroy Operators:**
+- **RandomRemoval**: Removes random subset of clients (configurable fraction)
+- **WorstRemoval**: Removes clients with highest cost impact (with randomness)
+- **ShawRemoval**: Removes similar clients (based on distance, demand, time windows)
+- **RouteRemoval**: Removes entire routes from solution
+
+**ALNS Repair Operators:**
+- **GreedyRepair**: Re-inserts clients using greedy best-insertion
+- **RegretRepair**: Re-inserts using regret-k heuristic (balances multiple good positions)
+- **RandomRepair**: Randomly re-inserts clients
+
+### Examples
+
+#### GA Example
 
 ```python
 solver = routing.create_solver("ga", problem)
 solver.set_param_int("iterMax", 10000)
 solver.set_param_bool("feasibleOnly", True)
 solver.set_param_float("infeasiblePenalty", 500.0)
+
+if solver.solve(60.0):  # 60 second timeout
+    print(f"Best cost: {solver.get_objective_value():.2f}")
+```
+
+#### ALNS Example
+
+```python
+# Create ALNS solver with custom parameters
+solver = routing.create_solver("alns", problem)
+
+# Configure adaptive parameters
+solver.set_param_float("reactionFactor", 0.15)
+solver.set_param_float("decayFactor", 0.85)
+solver.set_param_float("temperature", 50.0)
+solver.set_param_int("segmentSize", 50)
 
 if solver.solve(60.0):  # 60 second timeout
     print(f"Best cost: {solver.get_objective_value():.2f}")
@@ -62,8 +105,8 @@ Exact methods that can prove optimality for small-medium instances.
 
 | Solver | Name | Backend | License |
 |--------|------|---------|---------|
-| **CPLEX MIP** | `mip/cplex` | IBM CPLEX | Commercial |
-| **HiGHS MIP** | `mip/highs` | HiGHS | Open-source (MIT) |
+|  **CPLEX MIP** | `mip/cplex` | IBM CPLEX | Commercial |
+|  **HiGHS MIP** | `mip/highs` | HiGHS | Open-source (MIT) |
 
 ### Example
 
@@ -84,9 +127,9 @@ Powerful for problems with complex constraints like time windows and precedences
 
 | Solver | Name | Backend | License |
 |--------|------|---------|---------|
-| **CPLEX CP** | `cp/cplex` | IBM CP Optimizer | Commercial |
-| **OR-Tools** | `cp/ortools` | Google OR-Tools CP-SAT | Open-source (Apache 2.0) |
-| **XCSP3** | `cp/xcsp3` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
+|  **CPLEX CP** | `cp/cplex` | IBM CP Optimizer | Commercial |
+|  **OR-Tools** | `cp/ortools` | Google OR-Tools CP-SAT | Open-source (Apache 2.0) |
+|  **XCSP3** | `cp/xcsp3` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
 
 ### XCSP3 Integration
 
@@ -98,13 +141,13 @@ Powerful for problems with complex constraints like time windows and precedences
 - **Export** problems to XCSP3 format for use with any XCSP3-compatible solver
 - **Solve** using external XCSP3 solvers like [ACE](https://github.com/xcsp3team/ACE), [Choco](https://choco-solver.org/), or [PicatSAT](http://picat-lang.org/)
 
-This enables interoperability with the broader constraint programming ecosystem.
+This enables interoperability with broader constraint programming ecosystem.
 :::
 
 **Key Benefits of XCSP3:**
 
 - **Solver Independence**: Export once, solve with any XCSP3 solver
-- **Benchmarking**: Compare different CP solvers on the same model
+- **Benchmarking**: Compare different CP solvers on same model
 - **Research**: Standard format for academic publications
 - **Competitions**: Official format for [XCSP competitions](https://www.xcsp.org/competitions/)
 
@@ -152,7 +195,9 @@ flowchart TD
     J -->|Yes| K[CP]
     J -->|No| L[MIP]
 
-    E --> M[GA or MA]
+    E --> M{Adaptive search?}
+    M -->|Yes| N[ALNS]
+    M -->|No| O[GA or MA]
     G --> M
     I --> M
 ```
@@ -162,11 +207,23 @@ flowchart TD
 | Scenario | Recommended Solver |
 |----------|-------------------|
 | Quick solution needed | `ga` with low `iterMax` |
-| Best quality, large instance | `ma` with high `iterMax` |
+| Best quality, large instance | `ma` or `alns` with high `iterMax` |
+| Adaptive exploration of neighborhoods | `alns` with custom parameters |
 | Proven optimality needed | `mip/cplex` or `mip/highs` |
 | Complex time windows | `cp/ortools` or `cp/cplex` |
 | Benchmarking/Research | `cp/xcsp3` for export |
-| Open-source only | `mip/highs`, `cp/ortools` |
+| Open-source only | `mip/highs`, `cp/ortools`, `alns` |
+
+### ALNS vs Other Metaheuristics
+
+| Aspect | ALNS | GA/MA/PSO | VNS |
+|---------|--------|-------------|-----|
+| **Neighborhood Exploration** | Multiple adaptive | Population-based | Systematic |
+| **Diversification** | Destroy operators | Crossover/mutation | Shaking |
+| **Intensification** | Repair operators | Selection/local search | Best improvement |
+| **Adaptivity** | Dynamic operator weights | Parameter tuning | Fixed |
+| **Best For** | Rich neighborhood structure | Diverse solutions | Local improvement |
+| **Complexity** | Medium | Low-Medium | Low |
 
 ---
 

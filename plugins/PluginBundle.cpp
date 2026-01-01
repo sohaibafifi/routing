@@ -4,6 +4,7 @@
 
 #include "plugins/PluginBundle.hpp"
 #include "core/PluginRegistry.hpp"
+#include "plugins/solvers/ALNSSolverPlugin/ALNSSolverPlugin.hpp"
 #ifdef ROUTING_BUILD_XCSP3
 #include "solvers/XCSP3SolverPlugin/XCSP3SolverPlugin.hpp"
 #endif
@@ -29,6 +30,7 @@ void registerCorePlugins() {
     registry.registerPlugin(std::make_unique<MIPSolverPlugin>());
     registry.registerPlugin(std::make_unique<PSOSolverPlugin>());
     registry.registerPlugin(std::make_unique<VNSSolverPlugin>());
+    registry.registerPlugin(std::make_unique<ALNSSolverPlugin>());
 #if defined(CPLEX_FOUND) || defined(ORTOOLS_FOUND)
     registry.registerPlugin(std::make_unique<CPSolverPlugin>());
 #endif

@@ -19,7 +19,7 @@ routing.init()
 
 # List available solvers
 print(routing.list_solvers())
-# ['ga', 'ma', 'vns', 'pso', 'ls', 'mip/cplex', 'mip/highs', 'cp/cplex', 'cp/ortools', ...]
+# ['ga', 'ma', 'vns', 'pso', 'ls', 'alns', 'mip/cplex', 'mip/highs', 'cp/cplex', 'cp/ortools', ...]
 ```
 
 ---
@@ -48,7 +48,7 @@ Returns a list of available solver names.
 
 ```python
 solvers = routing.list_solvers()
-# ['ga', 'ma', 'vns', 'cp/cplex', 'cp/ortools', 'mip/cplex', 'mip/highs', ...]
+# ['ga', 'ma', 'vns', 'pso', 'ls', 'alns', 'cp/cplex', 'cp/ortools', 'mip/cplex', 'mip/highs', ...]
 ```
 
 **Returns:** `List[str]` - List of solver identifiers
@@ -338,10 +338,17 @@ solver.set_param_float("infeasiblePenalty", 1000.0)
 
 | Parameter | Type | Solvers | Description |
 |-----------|------|---------|-------------|
-| `iterMax` | int | GA, MA, VNS, PSO | Maximum iterations |
+| `iterMax` | int | GA, MA, VNS, PSO, ALNS | Maximum iterations |
 | `feasibleOnly` | bool | GA, MA | Only generate feasible solutions |
 | `infeasiblePenalty` | float | GA, MA | Penalty for constraint violations |
 | `unservedPenalty` | float | GA, MA | Penalty per unserved client |
+| `reactionFactor` | float | ALNS | Weight update reaction factor (0-1) |
+| `decayFactor` | float | ALNS | Weight decay factor per segment (0-1) |
+| `temperature` | float | ALNS | Initial temperature for simulated annealing |
+| `coolingRate` | float | ALNS | Temperature cooling rate per iteration |
+| `segmentSize` | int | ALNS | Iterations between weight updates |
+| `minTemperature` | float | ALNS | Minimum temperature for acceptance |
+
 
 ---
 
@@ -421,7 +428,7 @@ print(f"Instance: {problem.num_clients} clients, {problem.num_vehicles} vehicles
 # Try different solvers
 results = {}
 
-for solver_name in ["ga", "mip/highs", "cp/ortools"]:
+for solver_name in ["ga", "alns", "mip/highs", "cp/ortools"]:
     try:
         solver = routing.create_solver(solver_name, problem)
 

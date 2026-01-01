@@ -31,7 +31,7 @@ class Solver:
         Create a new solver.
 
         Args:
-            solver_type: Type of solver ("ga", "vns", "ma", "pso", "ls", "mip", "cp")
+            solver_type: Type of solver ("alns", "ga", "vns", "ma", "pso", "ls", "mip", "cp")
             problem: Problem to solve (can be set later)
         """
         self.solver_type = solver_type
