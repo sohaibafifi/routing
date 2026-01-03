@@ -37,7 +37,7 @@ This guide walks you through installing and using the Routing library for the fi
 
 ```bash
 # Clone the repository
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 
 # Install Python package
@@ -71,7 +71,7 @@ Available solvers: ['ga', 'ma', 'vns', 'cp/cplex', 'cp/ortools', 'mip/cplex', 'm
 
 ```bash
 # Clone with submodules
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 

@@ -31,8 +31,8 @@ test = ["pytest>=7.0"]
 dev = ["pytest>=7.0", "black", "isort", "mypy"]
 
 [project.urls]
-Homepage = "https://github.com/sohaibafifi/routing"
-Documentation = "https://github.com/sohaibafifi/routing/docs"
+Homepage = "https://github.com/sohaibafifi/rihla"
+Documentation = "https://github.com/sohaibafifi/rihla/docs"
 
 [tool.scikit-build]
 cmake.build-type = "Release"

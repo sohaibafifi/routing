@@ -17,7 +17,7 @@ Thank you for your interest in contributing to the Routing library! This guide w
 
 ```bash
 # Clone with submodules
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 
@@ -292,8 +292,8 @@ xdg-open _build/html/index.html  # Linux
 
 ## Getting Help
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/sohaibafifi/routing/issues)
-- **Discussions**: Ask questions on [GitHub Discussions](https://github.com/sohaibafifi/routing/discussions)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/sohaibafifi/rihla/issues)
+- **Discussions**: Ask questions on [GitHub Discussions](https://github.com/sohaibafifi/rihla/discussions)
 
 ---
 

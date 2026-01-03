@@ -251,7 +251,7 @@ python -c "import routing; routing.init(); print(routing.list_solvers())"
 
 ```bash
 # Clone and build
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 
@@ -316,7 +316,7 @@ If you use this library in research, please cite:
   author = {AFIFI, Sohaib},
   title = {Rihla: A Composable Vehicle Routing Problem Library},
   year = {2026},
-  url = {https://github.com/sohaibafifi/routing}
+  url = {https://github.com/sohaibafifi/rihla}
 }
 ```
 

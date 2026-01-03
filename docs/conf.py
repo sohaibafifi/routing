@@ -53,7 +53,7 @@ html_baseurl = "https://ri7la.sohaibafifi.com/"
 html_show_sourcelink = False
 
 html_theme_options = {
-    "github_url": "https://github.com/sohaibafifi/routing",
+    "github_url": "https://github.com/sohaibafifi/rihla",
     "use_edit_page_button": False,
     "logo": {
         "text": "Ri7la",

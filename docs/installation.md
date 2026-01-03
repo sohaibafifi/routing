@@ -31,7 +31,7 @@ For most users, this is the recommended approach:
 
 ```bash
 # Clone the repository
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 
 # Install Python package
@@ -76,7 +76,7 @@ pip install ortools
 
 ```bash
 # Clone with submodules
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 
@@ -125,7 +125,7 @@ brew install or-tools
 
 ```bash
 # Clone with submodules
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 
@@ -164,7 +164,7 @@ pip install -e .
 
 ```powershell
 # Clone with submodules
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 
@@ -417,7 +417,7 @@ For contributors working on the library:
 
 ```bash
 # Clone with all history
-git clone https://github.com/sohaibafifi/routing.git
+git clone https://github.com/sohaibafifi/rihla.git
 cd routing
 git submodule update --init --recursive
 

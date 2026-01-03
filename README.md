@@ -4,10 +4,11 @@
   <img src="docs/assets/logo.svg" alt="Ri7la logo" width="200"/>
 </p>
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85e69139d552469fa1c0b0f1b098f60f)](https://app.codacy.com/manual/me_183/routing?utm_source=github.com&utm_medium=referral&utm_content=sohaibafifi/routing&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85e69139d552469fa1c0b0f1b098f60f)](https://app.codacy.com/manual/me_183/routing?utm_source=github.com&utm_medium=referral&utm_content=sohaibafifi/rihla&utm_campaign=Badge_Grade_Dashboard)
 
 **Ri7la** is a modern, modular C++ library for solving Vehicle Routing Problems (VRP). It features a **Composable Architecture** that separates problem definition (Attributes) from solution methods (Solvers), allowing you to mix and match components to solve complex variants efficiently.
 
+**Ri7la** name is derived from the Arabic word "رحلة" meaning "journey" or "trip", reflecting its focus on routing and logistics optimization. The 7 represents the Arabic letter "ح" (Haa), pronounced as a hard "H", not like the one in my name "Sohaib" ;).
 ## Project Ecosystem
 
 ### 1. Composable Problem Definition (Attributes)

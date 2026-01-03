@@ -151,8 +151,8 @@ Native Python API using nanobind with pip install support.
 
 Have ideas for new features? We welcome contributions!
 
-- **Feature Requests**: Open an issue on [GitHub](https://github.com/sohaibafifi/routing/issues)
-- **Discussions**: Join the conversation on [GitHub Discussions](https://github.com/sohaibafifi/routing/discussions)
+- **Feature Requests**: Open an issue on [GitHub](https://github.com/sohaibafifi/rihla/issues)
+- **Discussions**: Join the conversation on [GitHub Discussions](https://github.com/sohaibafifi/rihla/discussions)
 - **Pull Requests**: See [Contributing](contributing.md) for guidelines
 
 ---
