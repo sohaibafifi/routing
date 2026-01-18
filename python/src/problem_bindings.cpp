@@ -93,72 +93,69 @@ void bind_problem(nb::module_& m) {
             return false;
         }, "Check if entity has a specific attribute")
         .def("add_attribute", [](Entity& e, const std::string& name, nb::args args, nb::kwargs kwargs) {
+            // Helper to get value from args or kwargs
+            auto get_double = [&](size_t idx, const char* key) -> double {
+                if (kwargs.contains(key)) return nb::cast<double>(kwargs[key]);
+                if (args.size() > idx) return nb::cast<double>(args[idx]);
+                throw std::runtime_error(std::string("Missing required parameter: ") + key);
+            };
+            auto get_int = [&](size_t idx, const char* key) -> int {
+                if (kwargs.contains(key)) return nb::cast<int>(kwargs[key]);
+                if (args.size() > idx) return nb::cast<int>(args[idx]);
+                throw std::runtime_error(std::string("Missing required parameter: ") + key);
+            };
+            auto has_param = [&](size_t idx, const char* key) -> bool {
+                return kwargs.contains(key) || args.size() > idx;
+            };
+
             // Generic attribute addition by name
             if (name == "GeoNode") {
-                if (args.size() >= 2) {
-                    double x = nb::cast<double>(args[0]);
-                    double y = nb::cast<double>(args[1]);
-                    e.addAttribute<attributes::GeoNode>(x, y);
-                    return;
-                }
+                double x = get_double(0, "x");
+                double y = get_double(1, "y");
+                e.addAttribute<attributes::GeoNode>(x, y);
+                return;
             }
             if (name == "Consumer") {
-                if (args.size() >= 1) {
-                    int demand = nb::cast<int>(args[0]);
-                    e.addAttribute<attributes::Consumer>(demand);
-                    return;
-                }
+                int demand = get_int(0, "demand");
+                e.addAttribute<attributes::Consumer>(demand);
+                return;
             }
             if (name == "Stock") {
-                if (args.size() >= 1) {
-                    int capacity = nb::cast<int>(args[0]);
-                    e.addAttribute<attributes::Stock>(capacity);
-                    return;
-                }
+                int capacity = get_int(0, "capacity");
+                e.addAttribute<attributes::Stock>(capacity);
+                return;
             }
             if (name == "Rendezvous") {
-                if (args.size() >= 2) {
-                    double open = nb::cast<double>(args[0]);
-                    double close = nb::cast<double>(args[1]);
-                    e.addAttribute<attributes::Rendezvous>(open, close);
-                    return;
-                }
+                double open = get_double(0, "open");
+                double close = get_double(1, "close");
+                e.addAttribute<attributes::Rendezvous>(open, close);
+                return;
             }
             if (name == "ServiceQuery") {
-                if (args.size() >= 1) {
-                    double service = nb::cast<double>(args[0]);
-                    e.addAttribute<attributes::ServiceQuery>(service);
-                    return;
-                }
+                double service = get_double(0, "service_time");
+                e.addAttribute<attributes::ServiceQuery>(service);
+                return;
             }
             if (name == "Profiter") {
-                if (args.size() >= 1) {
-                    double profit = nb::cast<double>(args[0]);
-                    e.addAttribute<attributes::Profiter>(profit);
-                    return;
-                }
+                double profit = get_double(0, "profit");
+                e.addAttribute<attributes::Profiter>(profit);
+                return;
             }
             if (name == "Pickup") {
-                if (args.size() >= 1) {
-                    int pickup = nb::cast<int>(args[0]);
-                    e.addAttribute<attributes::Pickup>(pickup);
-                    return;
-                }
+                int pickup = get_int(0, "demand");
+                e.addAttribute<attributes::Pickup>(pickup);
+                return;
             }
             if (name == "Delivery") {
-                if (args.size() >= 1) {
-                    int delivery = nb::cast<int>(args[0]);
-                    e.addAttribute<attributes::Delivery>(delivery);
-                    return;
-                }
+                int delivery = get_int(0, "demand");
+                e.addAttribute<attributes::Delivery>(delivery);
+                return;
             }
             if (name == "SoftTimeWindows") {
-                if (args.size() >= 2) {
-                    double wait_penalty = nb::cast<double>(args[0]);
-                    double delay_penalty = nb::cast<double>(args[1]);
-                    e.addAttribute<attributes::SoftTimeWindows>(wait_penalty, delay_penalty);
-                    return;
-                }
+                double wait_penalty = get_double(0, "wait_penalty");
+                double delay_penalty = get_double(1, "delay_penalty");
+                e.addAttribute<attributes::SoftTimeWindows>(wait_penalty, delay_penalty);
+                return;
             }
             if (name == "Synced") {
                 e.addAttribute<attributes::Synced>();
@@ -166,7 +163,11 @@ void bind_problem(nb::module_& m) {
             }
 
             throw std::runtime_error("Unknown attribute '" + name + "' or invalid parameters");
-        }, "Add attribute by name with parameters. Usage: entity.add_attribute('GeoNode', 10.0, 20.0)");
+        }, "Add attribute by name. Supports positional or keyword args.\n"
+           "Examples:\n"
+           "  entity.add_attribute(Attribute.GEONODE, x=10.0, y=20.0)\n"
+           "  entity.add_attribute(Attribute.CONSUMER, demand=5)\n"
+           "  entity.add_attribute(Attribute.RENDEZVOUS, open=0, close=100)");
 
     // Client class
     nb::class_<Client, Entity>(m, "Client")

@@ -17,16 +17,16 @@ problem = routing.Problem()
 
 # Add depot
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0, 0)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
 
 # Add client
 client = problem.add_client(1)
-client.add_attribute(Attribute.GEONODE, 10, 20)
-client.add_attribute(Attribute.CONSUMER, 15)
+client.add_attribute(Attribute.GEONODE, x=10, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=15)
 
 # Add vehicle
 vehicle = problem.add_vehicle(0)
-vehicle.add_attribute(Attribute.STOCK, 100)
+vehicle.add_attribute(Attribute.STOCK, capacity=100)
 
 # Solve (attributes auto-enabled!)
 solution = routing.solve(problem, "ga", timeout=30)
@@ -42,10 +42,10 @@ Add attributes using the `Attribute` enum from `routing.constants`:
 ```python
 from routing.constants import Attribute
 
-client.add_attribute(Attribute.GEONODE, 10, 20)       # Location
-client.add_attribute(Attribute.CONSUMER, 5)           # Demand
-client.add_attribute(Attribute.RENDEZVOUS, 0, 100)    # Time window
-client.add_attribute(Attribute.SERVICE_QUERY, 10)     # Service time
+client.add_attribute(Attribute.GEONODE, x=10, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=5)
+client.add_attribute(Attribute.RENDEZVOUS, open=0, close=100)
+client.add_attribute(Attribute.SERVICE_QUERY, service_time=10)
 ```
 
 | Enum | Parameters | Description |
@@ -96,8 +96,8 @@ All entities (Client, Depot, Vehicle) share these methods:
 ```python
 from routing.constants import Attribute
 
-# Add attribute
-entity.add_attribute(Attribute.GEONODE, 10, 20)
+# Add attribute (named args recommended)
+entity.add_attribute(Attribute.GEONODE, x=10, y=20)
 
 # Check if attribute exists
 if entity.has_attribute(Attribute.GEONODE):
@@ -218,18 +218,18 @@ problem = routing.Problem()
 
 # Depot
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0, 0)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
 
 # Clients
 for i in range(1, 11):
     client = problem.add_client(i)
-    client.add_attribute(Attribute.GEONODE, i * 10, i * 10)
-    client.add_attribute(Attribute.CONSUMER, 5 + i)
+    client.add_attribute(Attribute.GEONODE, x=i*10, y=i*10)
+    client.add_attribute(Attribute.CONSUMER, demand=5+i)
 
 # Vehicles
 for v in range(3):
     vehicle = problem.add_vehicle(v)
-    vehicle.add_attribute(Attribute.STOCK, 50)
+    vehicle.add_attribute(Attribute.STOCK, capacity=50)
 
 # Solve
 solution = routing.solve(problem, "ga", timeout=30)
@@ -245,19 +245,19 @@ problem = routing.Problem()
 
 # Depot with time window
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0, 0)
-depot.add_attribute(Attribute.RENDEZVOUS, 0, 1000)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
+depot.add_attribute(Attribute.RENDEZVOUS, open=0, close=1000)
 
 # Client with time window
 client = problem.add_client(1)
-client.add_attribute(Attribute.GEONODE, 20, 20)
-client.add_attribute(Attribute.CONSUMER, 10)
-client.add_attribute(Attribute.RENDEZVOUS, 0, 100)
-client.add_attribute(Attribute.SERVICE_QUERY, 10)
+client.add_attribute(Attribute.GEONODE, x=20, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=10)
+client.add_attribute(Attribute.RENDEZVOUS, open=0, close=100)
+client.add_attribute(Attribute.SERVICE_QUERY, service_time=10)
 
 # Vehicle
 vehicle = problem.add_vehicle(0)
-vehicle.add_attribute(Attribute.STOCK, 50)
+vehicle.add_attribute(Attribute.STOCK, capacity=50)
 
 solution = routing.solve(problem, "alns", timeout=60)
 ```

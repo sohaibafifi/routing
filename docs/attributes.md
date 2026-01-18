@@ -28,9 +28,9 @@ Attributes define problem features and automatically enable matching constraint 
 | **CVRP** | `GeoNode`, `Consumer`, `Stock` |
 | **VRPTW** | `GeoNode`, `Rendezvous`, `ServiceQuery` |
 | **CVRPTW** | `GeoNode`, `Consumer`, `Stock`, `Rendezvous`, `ServiceQuery` |
-| **TOP** | `GeoNode`, `Profiter`, `Rendezvous` |
-| **PDVRP** | `GeoNode`, `Pickup`, `Delivery`, `Stock` |
 | **VRPTWTD** | All above + `Synced` |
+| **PDVRP** | `GeoNode`, `Pickup`, `Delivery`, `Stock` |
+| **TOP** | `GeoNode`, `Profiter`, `Rendezvous` |
 
 ---
 
@@ -44,37 +44,36 @@ from routing.constants import Attribute
 
 routing.init()
 
-# Create problem
 problem = routing.Problem()
 
-# Add depot with attributes
+# Depot
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0.0, 0.0)
-depot.add_attribute(Attribute.RENDEZVOUS, 0.0, 1000.0)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
+depot.add_attribute(Attribute.RENDEZVOUS, open=0, close=1000)
 
-# Add client with attributes
+# Client
 client = problem.add_client(1)
-client.add_attribute(Attribute.GEONODE, 10.0, 20.0)
-client.add_attribute(Attribute.CONSUMER, 5)
-client.add_attribute(Attribute.RENDEZVOUS, 0.0, 200.0)
-client.add_attribute(Attribute.SERVICE_QUERY, 10.0)
+client.add_attribute(Attribute.GEONODE, x=10, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=5)
+client.add_attribute(Attribute.RENDEZVOUS, open=0, close=200)
+client.add_attribute(Attribute.SERVICE_QUERY, service_time=10)
 
-# Add vehicle with attributes
+# Vehicle
 vehicle = problem.add_vehicle(0)
-vehicle.add_attribute(Attribute.STOCK, 100)
+vehicle.add_attribute(Attribute.STOCK, capacity=100)
 
-# Attributes are automatically enabled!
+# Solve (attributes auto-enabled!)
 solution = routing.solve(problem, "ga", timeout=30)
 ```
 
-**Attribute Syntax:**
+**Attribute Parameters:**
 
 | Enum | Parameters |
 |------|------------|
-| `Attribute.GEONODE` | `x, y` |
+| `Attribute.GEONODE` | `x`, `y` |
 | `Attribute.CONSUMER` | `demand` |
 | `Attribute.STOCK` | `capacity` |
-| `Attribute.RENDEZVOUS` | `open, close` |
+| `Attribute.RENDEZVOUS` | `open`, `close` |
 | `Attribute.SERVICE_QUERY` | `service_time` |
 | `Attribute.PROFITER` | `profit` |
 | `Attribute.PICKUP` | `demand` |

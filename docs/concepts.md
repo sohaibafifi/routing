@@ -6,9 +6,9 @@ Problems are built by adding attributes to entities.
 ```python
 from routing.constants import Attribute
 
-client.add_attribute(Attribute.GEONODE, 10, 20)    # Location
-client.add_attribute(Attribute.CONSUMER, 5)        # Demand
-client.add_attribute(Attribute.RENDEZVOUS, 0, 100) # Time window
+client.add_attribute(Attribute.GEONODE, x=10, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=5)
+client.add_attribute(Attribute.RENDEZVOUS, open=0, close=100)
 ```
 
 ## Automatic Enabling

@@ -16,20 +16,20 @@ problem = routing.Problem()
 
 # Depot
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0.0, 0.0)
-depot.add_attribute(Attribute.RENDEZVOUS, 0, 1000)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
+depot.add_attribute(Attribute.RENDEZVOUS, open=0, close=1000)
 
 # Vehicles
 for v in range(3):
     vehicle = problem.add_vehicle(v)
-    vehicle.add_attribute(Attribute.STOCK, 100)
+    vehicle.add_attribute(Attribute.STOCK, capacity=100)
 
 # Clients
 client = problem.add_client(1)
-client.add_attribute(Attribute.GEONODE, 10.0, 20.0)
-client.add_attribute(Attribute.CONSUMER, 15)
-client.add_attribute(Attribute.RENDEZVOUS, 50, 200)
-client.add_attribute(Attribute.SERVICE_QUERY, 10)
+client.add_attribute(Attribute.GEONODE, x=10, y=20)
+client.add_attribute(Attribute.CONSUMER, demand=15)
+client.add_attribute(Attribute.RENDEZVOUS, open=50, close=200)
+client.add_attribute(Attribute.SERVICE_QUERY, service_time=10)
 
 # Solve (constraints auto-activated!)
 solution = routing.solve(problem, "ga", timeout=30)

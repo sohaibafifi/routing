@@ -127,21 +127,21 @@ problem = routing.Problem()
 
 # Add depot with location and time window
 depot = problem.add_depot(0)
-depot.add_attribute(Attribute.GEONODE, 0, 0)
-depot.add_attribute(Attribute.RENDEZVOUS, 0, 1000)
+depot.add_attribute(Attribute.GEONODE, x=0, y=0)
+depot.add_attribute(Attribute.RENDEZVOUS, open=0, close=1000)
 
 # Add clients with location, demand, time window, and service time
 for i, (x, y) in enumerate([(10, 0), (0, 10), (10, 10)], start=1):
     client = problem.add_client(i)
-    client.add_attribute(Attribute.GEONODE, x, y)
-    client.add_attribute(Attribute.CONSUMER, 5)
-    client.add_attribute(Attribute.RENDEZVOUS, 0, 200)
-    client.add_attribute(Attribute.SERVICE_QUERY, 10)
+    client.add_attribute(Attribute.GEONODE, x=x, y=y)
+    client.add_attribute(Attribute.CONSUMER, demand=5)
+    client.add_attribute(Attribute.RENDEZVOUS, open=0, close=200)
+    client.add_attribute(Attribute.SERVICE_QUERY, service_time=10)
 
 # Add vehicles with capacity
 for v in range(2):
     vehicle = problem.add_vehicle(v)
-    vehicle.add_attribute(Attribute.STOCK, 20)
+    vehicle.add_attribute(Attribute.STOCK, capacity=20)
 
 # Solve with genetic algorithm (attributes are auto-enabled!)
 solution = routing.solve(problem, "ga", timeout=10)
