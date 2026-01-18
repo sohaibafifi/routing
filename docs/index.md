@@ -60,10 +60,8 @@ Extensible design with plugins for attributes, constraints, solvers, and evaluat
 ## Architecture Overview
 
 ```{mermaid}
----
-config:
-  layout: dagre
----
+:config: {"layout": "dagre"}
+
 flowchart TB
  subgraph Problem_Layer["Problem Layer"]
     direction TB
@@ -216,9 +214,9 @@ int main() {
 | **CVRP** | `GeoNode`, `Consumer`, `Stock` | Capacitated VRP |
 | **VRPTW** | `GeoNode`, `Rendezvous`, `ServiceQuery` | VRP with Time Windows |
 | **CVRPTW** | `GeoNode`, `Consumer`, `Stock`, `Rendezvous`, `ServiceQuery` | Capacitated VRPTW |
+| **VRPTWTD** | All above + `Synced` | VRPTW with Temporal Dependencies |
 | **TOP** | `GeoNode`, `Profiter` | Team Orienteering Problem |
 | **PDVRP** | `GeoNode`, `Pickup`, `Delivery` | Pickup & Delivery VRP |
-| **VRPTWTD** | All above + `Synced` | VRPTW with Temporal Dependencies |
 
 ---
 
@@ -247,7 +245,7 @@ int main() {
 **Constraint Programming**
 - CPLEX CP Optimizer
 - OR-Tools CP-SAT
-- [XCSP3](https://www.xcsp.org/) export
+- [XCSP3](https://www.xcsp.org/) export solver using [ACE](https://github.com/xcsp3team/ACE)
 :::
 ::::
 
