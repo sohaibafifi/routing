@@ -122,7 +122,7 @@ Powerful for problems with complex constraints like time windows and precedences
 |--------|------|---------|---------|
 |  **CPLEX CP** | `cp/cpo` | IBM CP Optimizer | Commercial |
 |  **OR-Tools** | `cp/ortools` | Google OR-Tools CP-SAT | Open-source (Apache 2.0) |
-|  **XCSP3** | `cp/ace` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
+|  **XCSP3** | `cp/ace` | [XCSP3](https://www.xcsp.org/) Format solved using [ACE](https://github.com/xcsp3team/ACE) | Open standard |
 
 ### XCSP3 Integration
 
@@ -162,29 +162,6 @@ print(f"Cost: {solution.cost:.2f}")
 
 ## Solver Selection Guide
 
-```{mermaid}
-flowchart TD
-    A[Start] --> B{Instance size?}
-    B -->|Small < 50| C{Need optimality?}
-    B -->|Medium 50-200| D{Time budget?}
-    B -->|Large > 200| E[Metaheuristic]
-
-    C -->|Yes| F[MIP or CP]
-    C -->|No| G[Metaheuristic]
-
-    D -->|Minutes| H[CP or MIP]
-    D -->|Seconds| I[Metaheuristic]
-
-    F --> J{Complex constraints?}
-    J -->|Yes| K[CP]
-    J -->|No| L[MIP]
-
-    E --> M{Adaptive search?}
-    M -->|Yes| N[ALNS]
-    M -->|No| O[GA or MA]
-    G --> M
-    I --> M
-```
 
 ### Quick Recommendations
 

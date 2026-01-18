@@ -57,6 +57,85 @@ Extensible design with plugins for attributes, constraints, solvers, and evaluat
 
 ---
 
+## Architecture Overview
+
+```mermaid
+---
+config:
+  layout: dagre
+---
+flowchart TB
+ subgraph Problem_Layer["Problem Layer"]
+    direction TB
+        PL1["Attribute<br>Plugin"]
+        PL2["Constraint<br>Plugin"]
+        PL3["Evaluator<br>Plugin"]
+        PL4["Propagator<br>Plugin"]
+  end
+ subgraph Solver_Layer["Solver Layer"]
+    direction TB
+        SL1["Meta-heuristics"]
+        SL2["MIP"]
+        SL3["CP"]
+        SL4["Hybrid"]
+  end
+ subgraph MIP_Back["MIP Backend"]
+    direction TB
+        M1["CPLEX"]
+        M2["GUROBI"]
+        M3["HiGHS"]
+  end
+ subgraph CP_Back["CP Backend"]
+    direction TB
+        C1["CP-SAT"]
+        C2["CPO"]
+        C3["ACE"]
+  end
+ subgraph Opt_Backends["Optimization Backends"]
+    direction TB
+        MIP_Back
+        CP_Back
+  end
+ subgraph Core_Lib["C++ Core Library"]
+    direction TB
+        Problem_Layer
+        Solver_Layer
+  end
+    API["C++/Python API<br>"] --> Core_Lib
+    Core_Lib --> Opt_Backends
+    Problem_Layer --> Solver_Layer
+
+     PL1:::problem
+     PL2:::problem
+     PL3:::problem
+     PL4:::problem
+     SL1:::solver
+     SL2:::solver
+     SL3:::solver
+     SL4:::solver
+    
+     M1:::mip
+     M2:::mip
+     M3:::mip
+     C1:::cp
+     C2:::cp
+     C3:::cp
+     Problem_Layer:::layer
+     Solver_Layer:::layer
+     API:::python
+     Opt_Backends:::layer
+    classDef python fill:#FFD43B,stroke:#306998,stroke-width:2px,color:#306998,font-weight:bold
+    classDef core fill:#f9f9f9,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    classDef layer fill:#fff,stroke:#666,stroke-width:1px,color:#333
+    classDef problem fill:#e1f5fe,stroke:#0277bd,stroke-width:1px,rx:5,ry:5
+    classDef solver fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px,rx:5,ry:5
+    classDef mip fill:#fff3e0,stroke:#ef6c00,stroke-width:1px,rx:5,ry:5
+    classDef cp fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,rx:5,ry:5
+    classDef subBackend fill:#fafafa,stroke:#999,stroke-width:1px,stroke-dasharray: 3 3
+```
+
+---
+
 ## Quick Start
 
 ::::{tab-set}
@@ -301,7 +380,6 @@ api
 
 composable
 plugins
-roadmap
 contributing
 ```
 

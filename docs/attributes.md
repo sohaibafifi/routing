@@ -118,22 +118,6 @@ When you add an attribute to an entity using `add_attribute()`, the system autom
 3. **Activates constraint generators** that depend on that attribute
 4. **Activates evaluators** for solution quality assessment
 
-```
-entity.add_attribute() → Auto-Enable Attribute Type → Activate Generators → Add Constraints
-         ↓
-    GeoNode              → RoutingGenerator         → Distance objective
-    Consumer             → CapacityGenerator        → Load ≤ Capacity
-    Stock                → CapacityGenerator        → Vehicle capacity limit
-    Rendezvous           → TimeWindowGenerator      → Arrival ∈ [open, close]
-    ServiceQuery         → TimeWindowGenerator      → Service time in scheduling
-```
-
-**Note:** You can still explicitly pre-enable attributes if needed:
-```python
-# Optional: Pre-enable before adding entities
-problem.enable_attributes(["GeoNode", "Consumer", "Stock"])
-```
-
 ---
 
 ## Custom Attributes
