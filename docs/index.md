@@ -66,6 +66,7 @@ Extensible design with plugins for attributes, constraints, solvers, and evaluat
 
 ```python
 import routing
+from routing.constants import Attribute
 
 # Initialize the library
 routing.init()
@@ -74,11 +75,10 @@ routing.init()
 problem = routing.load_solomon("data/CVRPTW/Solomon/10/c101.txt")
 
 # Solve with genetic algorithm
-solver = routing.create_solver("ga", problem)
-solver.set_param_int("iterMax", 5000)
+solution = routing.solve(problem, "ga", timeout=30)
 
-if solver.solve(30.0):  # 30 second timeout
-    print(f"Best cost: {solver.get_objective_value():.2f}")
+if solution:
+    print(f"Best cost: {solution.cost:.2f}")
 ```
 :::
 

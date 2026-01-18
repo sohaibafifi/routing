@@ -36,69 +36,49 @@ Attributes define problem features and automatically enable matching constraint 
 
 ## Usage
 
-### Python - Generic Attribute API
-
-Python uses a generic `add_attribute()` method for all attributes:
+### Python
 
 ```python
 import routing
+from routing.constants import Attribute
 
 routing.init()
 
 # Create problem
 problem = routing.Problem()
 
-# Add depot and set its attributes
+# Add depot with attributes
 depot = problem.add_depot(0)
-depot.add_attribute("GeoNode", 0.0, 0.0)           # Location
-depot.add_attribute("Rendezvous", 0.0, 1000.0)     # Time window
+depot.add_attribute(Attribute.GEONODE, 0.0, 0.0)
+depot.add_attribute(Attribute.RENDEZVOUS, 0.0, 1000.0)
 
-# Add client and set its attributes
+# Add client with attributes
 client = problem.add_client(1)
-client.add_attribute("GeoNode", 10.0, 20.0)        # Location
-client.add_attribute("Consumer", 5)                 # Demand
-client.add_attribute("Rendezvous", 0.0, 200.0)     # Time window
-client.add_attribute("ServiceQuery", 10.0)          # Service time
+client.add_attribute(Attribute.GEONODE, 10.0, 20.0)
+client.add_attribute(Attribute.CONSUMER, 5)
+client.add_attribute(Attribute.RENDEZVOUS, 0.0, 200.0)
+client.add_attribute(Attribute.SERVICE_QUERY, 10.0)
 
-# Add vehicle and set its attributes
+# Add vehicle with attributes
 vehicle = problem.add_vehicle(0)
-vehicle.add_attribute("Stock", 100)                 # Capacity
+vehicle.add_attribute(Attribute.STOCK, 100)
 
-# Attributes are automatically enabled when added!
-# Solve
-solver = routing.create_solver("ga", problem)
-solver.solve(30.0)
-```
-
-**Generic Attribute API - Syntax:**
-
-| Attribute | Syntax |
-|-----------|--------|
-| `GeoNode` | `entity.add_attribute("GeoNode", x, y)` |
-| `Consumer` | `client.add_attribute("Consumer", demand)` |
-| `Stock` | `vehicle.add_attribute("Stock", capacity)` |
-| `Rendezvous` | `entity.add_attribute("Rendezvous", open, close)` |
-| `ServiceQuery` | `client.add_attribute("ServiceQuery", time)` |
-| `Profiter` | `client.add_attribute("Profiter", profit)` |
-| `Pickup` | `client.add_attribute("Pickup", demand)` |
-| `Delivery` | `client.add_attribute("Delivery", demand)` |
-
-### Python - ProblemBuilder (High-Level)
-
-The `ProblemBuilder` provides a fluent interface using the generic API internally:
-
-```python
-from routing.problem import ProblemBuilder
-
-problem = (ProblemBuilder()
-    .with_depot(0, 0, tw_open=0, tw_close=1000)
-    .add_client(x=10, y=20, demand=5, tw_open=0, tw_close=200, service_time=10)
-    .add_vehicles(count=2, capacity=20)
-    .build())  # Attributes are automatically enabled
-
-# Ready to solve - no enable_attributes() needed!
+# Attributes are automatically enabled!
 solution = routing.solve(problem, "ga", timeout=30)
 ```
+
+**Attribute Syntax:**
+
+| Enum | Parameters |
+|------|------------|
+| `Attribute.GEONODE` | `x, y` |
+| `Attribute.CONSUMER` | `demand` |
+| `Attribute.STOCK` | `capacity` |
+| `Attribute.RENDEZVOUS` | `open, close` |
+| `Attribute.SERVICE_QUERY` | `service_time` |
+| `Attribute.PROFITER` | `profit` |
+| `Attribute.PICKUP` | `demand` |
+| `Attribute.DELIVERY` | `demand` |
 
 ### C++
 

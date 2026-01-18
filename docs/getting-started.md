@@ -117,37 +117,40 @@ Let's solve a small Capacitated Vehicle Routing Problem with Time Windows (CVRPT
 
 ```python
 import routing
-from routing.problem import ProblemBuilder
+from routing.constants import Attribute
 
 # Initialize the library
 routing.init()
 
-# Build a small problem
-problem = (ProblemBuilder()
-    # Depot at origin, open 0-1000
-    .with_depot(0, 0, tw_open=0, tw_close=1000)
+# Create problem
+problem = routing.Problem()
 
-    # 3 clients with coordinates, demand, and time windows
-    .add_client(1, x=10, y=0, demand=5, tw_open=0, tw_close=200, service_time=10)
-    .add_client(2, x=0, y=10, demand=5, tw_open=0, tw_close=200, service_time=10)
-    .add_client(3, x=10, y=10, demand=5, tw_open=0, tw_close=200, service_time=10)
+# Add depot with location and time window
+depot = problem.add_depot(0)
+depot.add_attribute(Attribute.GEONODE, 0, 0)
+depot.add_attribute(Attribute.RENDEZVOUS, 0, 1000)
 
-    # 2 vehicles with capacity 20
-    .add_vehicles(count=2, capacity=20)
-    .build())
+# Add clients with location, demand, time window, and service time
+for i, (x, y) in enumerate([(10, 0), (0, 10), (10, 10)], start=1):
+    client = problem.add_client(i)
+    client.add_attribute(Attribute.GEONODE, x, y)
+    client.add_attribute(Attribute.CONSUMER, 5)
+    client.add_attribute(Attribute.RENDEZVOUS, 0, 200)
+    client.add_attribute(Attribute.SERVICE_QUERY, 10)
 
-# Solve with genetic algorithm
-solver = routing.create_solver("ga", problem)
-solver.set_param_int("iterMax", 1000)
+# Add vehicles with capacity
+for v in range(2):
+    vehicle = problem.add_vehicle(v)
+    vehicle.add_attribute(Attribute.STOCK, 20)
 
-if solver.solve(10.0):
+# Solve with genetic algorithm (attributes are auto-enabled!)
+solution = routing.solve(problem, "ga", timeout=10)
+
+if solution:
     print(f"Solution found!")
-    print(f"Total distance: {solver.get_objective_value():.2f}")
-
-    # Print routes
-    solution = solver.get_solution()
-    for i, route in enumerate(solution.get_routes()):
-        print(f"  Route {i}: {route.clients}")
+    print(f"Total distance: {solution.cost:.2f}")
+    for i, tour in enumerate(solution.get_tours()):
+        print(f"  Route {i}: {tour.get_client_ids()}")
 else:
     print("No solution found")
 ```
@@ -157,38 +160,21 @@ else:
 :sync: cpp
 
 ```cpp
-#include <iostream>
-#include <plugins/PluginBundle.hpp>
-#include <plugins/attributes/ComposableCorePlugin/Problem.hpp>
-#include <plugins/solvers/GASolverPlugin/GASolver.hpp>
+#include <routing/routing.hpp>
 
 int main() {
-    // Register and initialize plugins
-    routing::plugins::registerAllPlugins(routing::PluginRegistry::instance());
-    routing::PluginRegistry::instance().initializeAll();
-
-    // Create problem
     routing::Problem problem;
 
-    // Enable CVRPTW attributes
-    problem.enableAttributes<
-        routing::attributes::GeoNode,
-        routing::attributes::Consumer,
-        routing::attributes::Stock,
-        routing::attributes::Rendezvous,
-        routing::attributes::ServiceQuery>();
-
-    // Add depot
+    // Add depot with location and time window
     auto* depot = problem.addDepot(0);
     depot->addAttribute<routing::attributes::GeoNode>(0.0, 0.0);
     depot->addAttribute<routing::attributes::Rendezvous>(0.0, 1000.0);
 
     // Add clients
+    double coords[][2] = {{10.0, 0.0}, {0.0, 10.0}, {10.0, 10.0}};
     for (int i = 1; i <= 3; ++i) {
         auto* client = problem.addClient(i);
-        client->addAttribute<routing::attributes::GeoNode>(
-            i == 2 ? 0.0 : 10.0,
-            i == 1 ? 0.0 : 10.0);
+        client->addAttribute<routing::attributes::GeoNode>(coords[i-1][0], coords[i-1][1]);
         client->addAttribute<routing::attributes::Consumer>(5);
         client->addAttribute<routing::attributes::Rendezvous>(0.0, 200.0);
         client->addAttribute<routing::attributes::ServiceQuery>(10.0);
@@ -200,15 +186,11 @@ int main() {
         vehicle->addAttribute<routing::attributes::Stock>(20);
     }
 
-    // Solve
+    // Solve (attributes are auto-enabled!)
     routing::GASolver solver(&problem);
-    solver.setDefaultConfiguration();
-
     if (solver.solve(10.0)) {
-        std::cout << "Solution found!" << std::endl;
         std::cout << "Total distance: " << solver.getObjectiveValue() << std::endl;
     }
-
     return 0;
 }
 ```
@@ -241,58 +223,26 @@ problem = routing.load_tsplib("data/CVRP/A/A-n32-k5.vrp")
 
 ## Choosing a Solver
 
-The library offers multiple solvers for different needs:
-
-### Metaheuristics
-
-Best for large instances where optimal solutions aren't required.
-
-| Solver | Name | Best For |
-|--------|------|----------|
-| Genetic Algorithm | `ga` | General purpose, good balance |
-| Memetic Algorithm | `ma` | Higher quality, slower |
-| VNS | `vns` | Fast local improvement |
+| Category | Solvers | Best For |
+|----------|---------|----------|
+| **Metaheuristics** | `ga`, `ma`, `vns`, `alns` | Large instances, fast results |
+| **MIP** | `mip/cplex`, `mip/highs` | Small instances, proven optimality |
+| **CP** | `cp/cpo`, `cp/ortools` | Complex constraints |
 
 ```python
-solver = routing.create_solver("ga", problem)
-solver.set_param_int("iterMax", 10000)
-solver.solve(60.0)
-```
+# Metaheuristic (default choice)
+solution = routing.solve(problem, "ga", timeout=60)
 
-### Exact Methods
-
-Best for small instances or when proven optimality is needed.
-
-| Solver | Name | Backend |
-|--------|------|---------|
-| MIP (CPLEX) | `mip/cplex` | IBM CPLEX |
-| MIP (HiGHS) | `mip/highs` | Open-source |
-| CP (CPLEX) | `cp/cpo` | IBM CP Optimizer |
-| CP (OR-Tools) | `cp/ortools` | Google OR-Tools |
-| CP ([XCSP3](https://www.xcsp.org/)) | `cp/xcsp3` | Export to XML format |
-
-```python
-# Use HiGHS (open-source)
-solver = routing.create_solver("mip/highs", problem)
-solver.solve(300.0)  # 5 minute time limit
-```
-
-### XCSP3 Export
-
-Export your problem to [XCSP3](https://www.xcsp.org/) format for use with any XCSP3-compatible solver:
-
-```python
-solver = routing.create_solver("cp/xcsp3", problem)
-solver.export_model("my_problem.xml")
+# Open-source MIP solver
+solution = routing.solve(problem, "mip/highs", timeout=300)
 ```
 
 ---
 
 ## Next Steps
 
-- **[Concepts](concepts.md)**: Learn about the composable attribute system
-- **[Solvers](solvers.md)**: Detailed solver configuration and parameters
 - **[Attributes](attributes.md)**: Available problem attributes
+- **[Solvers](solvers.md)**: Detailed solver configuration
 - **[Python API](python-api.md)**: Complete Python reference
 - **[C++ API](cpp-api.md)**: Complete C++ reference
 
@@ -304,7 +254,6 @@ solver.export_model("my_problem.xml")
 
 1. Check time limit - metaheuristics need time
 2. Verify problem is feasible (capacity, time windows)
-3. Try `feasibleOnly=False` for GA/MA to see intermediate solutions
 
 ### Import Error
 
@@ -312,23 +261,9 @@ solver.export_model("my_problem.xml")
 ImportError: routing._routing_core not found
 ```
 
-The C++ extension wasn't built. Run:
+Rebuild the C++ extension:
 
 ```bash
 cd python
 pip install -e . --no-build-isolation
-```
-
-### Solver Not Available
-
-```python
->>> routing.list_solvers()
-['ga', 'ma', 'vns']  # Missing mip/cplex, cp/cpo
-```
-
-CPLEX not found during build. Install CPLEX and rebuild:
-
-```bash
-cmake -S . -B build -DCPLEX_ROOT=/path/to/cplex
-cmake --build build
 ```

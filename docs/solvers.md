@@ -72,29 +72,23 @@ ALNS uses adaptive operator selection that learns which destroy/repair combinati
 #### GA Example
 
 ```python
-solver = routing.create_solver("ga", problem)
-solver.set_param_int("iterMax", 10000)
-solver.set_param_bool("feasibleOnly", True)
-solver.set_param_float("infeasiblePenalty", 500.0)
+import routing
+from routing.constants import Attribute
 
-if solver.solve(60.0):  # 60 second timeout
-    print(f"Best cost: {solver.get_objective_value():.2f}")
+routing.init()
+
+problem = routing.Problem()
+# ... add entities with attributes ...
+
+solution = routing.solve(problem, "ga", timeout=60)
+print(f"Cost: {solution.cost:.2f}")
 ```
 
 #### ALNS Example
 
 ```python
-# Create ALNS solver with custom parameters
-solver = routing.create_solver("alns", problem)
-
-# Configure adaptive parameters
-solver.set_param_float("reactionFactor", 0.15)
-solver.set_param_float("decayFactor", 0.85)
-solver.set_param_float("temperature", 50.0)
-solver.set_param_int("segmentSize", 50)
-
-if solver.solve(60.0):  # 60 second timeout
-    print(f"Best cost: {solver.get_objective_value():.2f}")
+solution = routing.solve(problem, "alns", timeout=60)
+print(f"Cost: {solution.cost:.2f}")
 ```
 
 ---
@@ -111,12 +105,11 @@ Exact methods that can prove optimality for small-medium instances.
 ### Example
 
 ```python
-# Open-source solver
-solver = routing.create_solver("mip/highs", problem)
-solver.solve(300.0)  # 5 minute time limit
+# Open-source MIP solver
+solution = routing.solve(problem, "mip/highs", timeout=300)
 
-if solver.is_optimal():
-    print("Proven optimal!")
+if solution:
+    print(f"Cost: {solution.cost:.2f}")
 ```
 
 ---
@@ -154,24 +147,15 @@ This enables interoperability with broader constraint programming ecosystem.
 ### Example: Export to XCSP3
 
 ```python
-# Create solver with XCSP3 backend
 solver = routing.create_solver("cp/xcsp3", problem)
-
-# Export model to file
 solver.export_model("routing_problem.xml")
-
-# Or solve directly if an XCSP3 solver is configured
-solver.solve(60.0)
 ```
 
 ### Example: OR-Tools CP-SAT
 
 ```python
-solver = routing.create_solver("cp/ortools", problem)
-solver.solve(120.0)  # 2 minute time limit
-
-print(f"Objective: {solver.get_objective_value()}")
-print(solver.get_stats())
+solution = routing.solve(problem, "cp/ortools", timeout=120)
+print(f"Cost: {solution.cost:.2f}")
 ```
 
 ---
