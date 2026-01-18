@@ -10,7 +10,18 @@
 #include "core/interfaces/IConstraintGenerator.hpp"
 #include "core/interfaces/IEvaluator.hpp"
 #include "core/interfaces/IIncrementalEvaluator.hpp"
+
+// Attribute headers (for auto-enabling)
 #include "plugins/attributes/RoutingPlugin/GeoNode.hpp"
+#include "plugins/attributes/CapacityPlugin/Consumer.hpp"
+#include "plugins/attributes/CapacityPlugin/Stock.hpp"
+#include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
+#include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
+#include "plugins/attributes/ProfitPlugin/Profiter.hpp"
+#include "plugins/attributes/PickupDeliveryPlugin/Pickup.hpp"
+#include "plugins/attributes/PickupDeliveryPlugin/Delivery.hpp"
+#include "plugins/attributes/TimeWindowPlugin/SoftTimeWindows.hpp"
+#include "plugins/attributes/SyncPlugin/Synced.hpp"
 
 #include <set>
 #include <vector>
@@ -105,6 +116,24 @@ namespace routing {
         }
 
         /**
+         * @brief Auto-enable an attribute type if not already enabled
+         *
+         * Called automatically when Entity::addAttribute() is used.
+         * Only enables if the attribute type is not yet enabled.
+         */
+        template<typename Attr>
+        void autoEnableAttribute() {
+            if (!hasAttribute<Attr>()) {
+                enableAttribute<Attr>();
+            }
+        }
+
+        /**
+         * @brief Auto-enable an attribute by name (for Python bindings)
+         */
+        void autoEnableAttributeByName(const std::string& name);
+
+        /**
          * @brief Check if an attribute type is enabled
          */
         template<typename Attr>
@@ -127,6 +156,7 @@ namespace routing {
         Client* addClient(unsigned id) {
             auto entity = std::make_unique<Client>(id);
             Client* ptr = entity.get();
+            ptr->setProblem(this);  // Set parent reference for auto-enabling
             clients_.push_back(std::move(entity));
             clientPtrs_.push_back(ptr);
             return ptr;
@@ -138,6 +168,7 @@ namespace routing {
         Vehicle* addVehicle(unsigned id) {
             auto entity = std::make_unique<Vehicle>(id);
             Vehicle* ptr = entity.get();
+            ptr->setProblem(this);  // Set parent reference for auto-enabling
             vehicles_.push_back(std::move(entity));
             vehiclePtrs_.push_back(ptr);
             return ptr;
@@ -149,6 +180,7 @@ namespace routing {
         Depot* addDepot(unsigned id) {
             auto entity = std::make_unique<Depot>(id);
             Depot* ptr = entity.get();
+            ptr->setProblem(this);  // Set parent reference for auto-enabling
             depots_.push_back(std::move(entity));
             depotPtrs_.push_back(ptr);
             return ptr;
@@ -529,6 +561,50 @@ namespace routing {
             initializer_ = std::make_unique<DefaultInitializer>(this);
         }
         return initializer_.get();
+    }
+
+    // Entity::addAttribute implementation (needs Problem to be complete)
+    template<typename Attr, typename... Args>
+    Attr& Entity::addAttribute(Args&&... args) {
+        static_assert(std::is_base_of<IAttribute, Attr>::value,
+            "Attr must inherit from IAttribute");
+
+        auto attr = std::make_unique<Attr>(std::forward<Args>(args)...);
+        Attr* ptr = attr.get();
+        attributes_[std::type_index(typeid(Attr))] = std::move(attr);
+
+        // Auto-enable this attribute type on the parent problem
+        if (problem_) {
+            problem_->autoEnableAttribute<Attr>();
+        }
+
+        return *ptr;
+    }
+
+    // Problem::autoEnableAttributeByName implementation (for Python bindings)
+    inline void Problem::autoEnableAttributeByName(const std::string& name) {
+        if (name == "GeoNode" && !hasAttribute<attributes::GeoNode>()) {
+            enableAttribute<attributes::GeoNode>();
+        } else if (name == "Consumer" && !hasAttribute<attributes::Consumer>()) {
+            enableAttribute<attributes::Consumer>();
+        } else if (name == "Stock" && !hasAttribute<attributes::Stock>()) {
+            enableAttribute<attributes::Stock>();
+        } else if (name == "Rendezvous" && !hasAttribute<attributes::Rendezvous>()) {
+            enableAttribute<attributes::Rendezvous>();
+        } else if (name == "ServiceQuery" && !hasAttribute<attributes::ServiceQuery>()) {
+            enableAttribute<attributes::ServiceQuery>();
+        } else if (name == "Profiter" && !hasAttribute<attributes::Profiter>()) {
+            enableAttribute<attributes::Profiter>();
+        } else if (name == "Pickup" && !hasAttribute<attributes::Pickup>()) {
+            enableAttribute<attributes::Pickup>();
+        } else if (name == "Delivery" && !hasAttribute<attributes::Delivery>()) {
+            enableAttribute<attributes::Delivery>();
+        } else if (name == "SoftTimeWindows" && !hasAttribute<attributes::SoftTimeWindows>()) {
+            enableAttribute<attributes::SoftTimeWindows>();
+        } else if (name == "Synced" && !hasAttribute<attributes::Synced>()) {
+            enableAttribute<attributes::Synced>();
+        }
+        // Unknown attribute names are silently ignored (already enabled or not recognized)
     }
 
     // Tour implementations that need Problem definition

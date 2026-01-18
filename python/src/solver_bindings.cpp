@@ -22,7 +22,6 @@
 #include "plugins/solvers/MASolverPlugin/MASolverPlugin.hpp"
 #include "plugins/solvers/PSOSolverPlugin/PSOSolverPlugin.hpp"
 #include "plugins/solvers/ALNSSolverPlugin/ALNSSolverPlugin.hpp"
-#include "plugins/solvers/ALNSSolverPlugin/ALNSSolverPlugin.hpp"
 
 namespace nb = nanobind;
 using namespace routing;

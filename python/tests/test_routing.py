@@ -49,30 +49,30 @@ class TestProblem:
         assert p.num_vehicles == 0
 
     def test_add_client(self):
-        from routing import Problem, set_client_location, set_client_demand
+        from routing import Problem
         p = Problem()
         c = p.add_client(1)
         assert c.get_id() == 1
 
-        set_client_location(c, 10.0, 20.0)
+        c.add_attribute("GeoNode", 10.0, 20.0)
         assert c.x == 10.0
         assert c.y == 20.0
 
-        set_client_demand(c, 5)
+        c.add_attribute("Consumer", 5)
         assert c.demand == 5
 
     def test_add_vehicle(self):
-        from routing import Problem, set_vehicle_capacity
+        from routing import Problem
         p = Problem()
         v = p.add_vehicle(0)
-        set_vehicle_capacity(v, 100)
+        v.add_attribute("Stock", 100)
         assert v.capacity == 100
 
     def test_add_depot(self):
-        from routing import Problem, set_depot_location
+        from routing import Problem
         p = Problem()
         d = p.add_depot(0)
-        set_depot_location(d, 0.0, 0.0)
+        d.add_attribute("GeoNode", 0.0, 0.0)
         assert d.x == 0.0
         assert d.y == 0.0
 

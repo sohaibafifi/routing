@@ -17,11 +17,13 @@ def routing():
 @pytest.fixture
 def simple_problem(routing):
     """Create a simple test problem."""
+    from routing.constants import Attribute
+
     problem = routing.Problem()
 
-    # Add depot
+    # Add depot with location using Level 2 API
     depot = problem.add_depot(0)
-    routing.set_depot_location(depot, 0, 0)
+    depot.add_attribute(Attribute.GEONODE, 0, 0)
 
     # Add 5 clients
     for i in range(1, 6):

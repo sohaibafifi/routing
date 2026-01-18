@@ -21,6 +21,9 @@
 
 namespace routing {
 
+    // Forward declaration
+    class Problem;
+
     /**
      * @brief Runtime-composable entity that can hold any combination of attributes
      *
@@ -41,7 +44,7 @@ namespace routing {
      */
     class Entity : public virtual Model {
     public:
-        explicit Entity(unsigned id) {
+        explicit Entity(unsigned id) : problem_(nullptr) {
             setID(id);
         }
 
@@ -56,26 +59,38 @@ namespace routing {
         Entity& operator=(Entity&&) = default;
 
         /**
+         * @brief Set the parent problem for this entity
+         * @param problem Pointer to the parent Problem
+         */
+        void setProblem(Problem* problem) {
+            problem_ = problem;
+        }
+
+        /**
+         * @brief Get the parent problem for this entity
+         * @return Pointer to the parent Problem, or nullptr if not set
+         */
+        Problem* getProblem() const {
+            return problem_;
+        }
+
+        /**
          * @brief Add an attribute to this entity
          *
          * Creates a new attribute instance with the given constructor arguments.
          * If an attribute of this type already exists, it will be replaced.
          *
+         * Automatically enables the attribute type on the parent Problem if set.
+         *
          * @tparam Attr The attribute type (must inherit from Attribute<Attr>)
          * @tparam Args Constructor argument types
          * @param args Constructor arguments forwarded to Attr's constructor
          * @return Reference to the newly created attribute
+         *
+         * Note: Implementation defined after Problem class is complete (in Problem.hpp)
          */
         template<typename Attr, typename... Args>
-        Attr& addAttribute(Args&&... args) {
-            static_assert(std::is_base_of<IAttribute, Attr>::value,
-                "Attr must inherit from IAttribute");
-
-            auto attr = std::make_unique<Attr>(std::forward<Args>(args)...);
-            Attr* ptr = attr.get();
-            attributes_[std::type_index(typeid(Attr))] = std::move(attr);
-            return *ptr;
-        }
+        Attr& addAttribute(Args&&... args);
 
         /**
          * @brief Check if this entity has a specific attribute type
@@ -212,6 +227,7 @@ namespace routing {
         std::unique_ptr<Entity> clone() const {
             auto copy = std::make_unique<Entity>(getID());
             copy->name = name;
+            copy->problem_ = problem_;  // Copy problem reference
             for (const auto& pair : attributes_) {
                 copy->attributes_[pair.first] = pair.second->clone();
             }
@@ -220,6 +236,7 @@ namespace routing {
 
     private:
         std::map<AttributeTypeId, std::unique_ptr<IAttribute>> attributes_;
+        Problem* problem_;  // Parent problem for auto-enabling attributes
     };
 
     /**

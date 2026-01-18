@@ -81,7 +81,7 @@ def read_solomon(filepath: Union[str, Path]) -> _core.Problem:
     # Add vehicles
     for k in range(num_vehicles):
         vehicle = problem.add_vehicle(k)
-        _core.set_vehicle_capacity(vehicle, capacity)
+        vehicle.add_attribute("Stock", capacity)
 
     # Find and parse node data
     node_lines = _find_node_lines(lines)
@@ -112,26 +112,18 @@ def read_solomon(filepath: Union[str, Path]) -> _core.Problem:
         if first_node:
             # First node is depot
             depot = problem.add_depot(node_id)
-            _core.set_depot_location(depot, x, y)
-            _core.set_depot_time_window(depot, ready_time, due_date)
+            depot.add_attribute("GeoNode", x, y)
+            depot.add_attribute("Rendezvous", ready_time, due_date)
             first_node = False
         else:
             # Subsequent nodes are clients
             client = problem.add_client(node_id)
-            _core.set_client_location(client, x, y)
-            _core.set_client_demand(client, demand)
-            _core.set_client_time_window(client, ready_time, due_date)
-            _core.set_client_service_time(client, service_time)
+            client.add_attribute("GeoNode", x, y)
+            client.add_attribute("Consumer", demand)
+            client.add_attribute("Rendezvous", ready_time, due_date)
+            client.add_attribute("ServiceQuery", service_time)
 
-    # Enable required attributes
-    problem.enable_attributes([
-        "GeoNode",
-        "Consumer",
-        "Stock",
-        "Rendezvous",
-        "ServiceQuery"
-    ])
-
+    # Attributes are automatically enabled when added
     return problem
 
 

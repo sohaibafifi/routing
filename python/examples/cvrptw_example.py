@@ -56,20 +56,19 @@ def create_simple_cvrptw():
     builder.add_vehicles(3, capacity=50)
 
     problem = builder.build()
-    problem.enable_attributes(["GeoNode", "Consumer", "Stock", "Rendezvous", "ServiceQuery"])
+    # Attributes are automatically enabled when added
     return problem
 
 
 def create_cvrptw_manual():
-    """Create the same problem using the low-level API."""
+    """Create the same problem using the generic attribute API."""
 
     problem = routing.Problem()
-    problem.enable_attributes(["GeoNode", "Consumer", "Stock", "Rendezvous", "ServiceQuery"])
 
-    # Add depot
+    # Add depot with location and time window
     depot = problem.add_depot(0)
-    routing.set_depot_location(depot, 0, 0)
-    routing.set_depot_time_window(depot, 0, 200)
+    depot.add_attribute("GeoNode", 0, 0)
+    depot.add_attribute("Rendezvous", 0, 200)
 
     # Customer data
     customers = [
@@ -85,19 +84,20 @@ def create_cvrptw_manual():
         (10, 45, 25, 10, 0, 100, 10),
     ]
 
-    # Add customers
+    # Add customers with attributes
     for cid, x, y, demand, tw_open, tw_close, service in customers:
         client = problem.add_client(cid)
-        routing.set_client_location(client, x, y)
-        routing.set_client_demand(client, demand)
-        routing.set_client_time_window(client, tw_open, tw_close)
-        routing.set_client_service_time(client, service)
+        client.add_attribute("GeoNode", x, y)
+        client.add_attribute("Consumer", demand)
+        client.add_attribute("Rendezvous", tw_open, tw_close)
+        client.add_attribute("ServiceQuery", service)
 
-    # Add vehicles
+    # Add vehicles with capacity
     for vid in range(3):
         vehicle = problem.add_vehicle(vid)
-        routing.set_vehicle_capacity(vehicle, 50)
+        vehicle.add_attribute("Stock", 50)
 
+    # Attributes are automatically enabled when added
     return problem
 
 

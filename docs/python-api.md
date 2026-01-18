@@ -1,145 +1,200 @@
 # Python API Reference
 
-The Python bindings provide a high-level interface to the Routing library.
+Modern, type-safe Python bindings for the Routing library with automatic attribute enabling and comprehensive solver support.
 
-## Installation
+---
+
+## 🚀 Quick Start
+
+```python
+import routing
+from routing.constants import Attribute
+
+# Initialize library
+routing.init()
+
+# Create problem
+problem = routing.Problem()
+
+# Add depot
+depot = problem.add_depot(0)
+depot.add_attribute(Attribute.GEONODE, 0, 0)
+
+# Add clients
+client = problem.add_client(1)
+client.add_attribute(Attribute.GEONODE, 10, 20)
+client.add_attribute(Attribute.CONSUMER, 15)
+
+# Add vehicle
+vehicle = problem.add_vehicle(0)
+vehicle.add_attribute(Attribute.STOCK, 100)
+
+# Solve (attributes auto-enabled!)
+solution = routing.solve(problem, "ga", timeout=30)
+
+print(f"Cost: {solution.cost}, Feasible: {solution.is_feasible}")
+```
+
+---
+
+## 📦 Installation
 
 ```bash
 cd python
 pip install -e .
 ```
 
-## Quick Start
+---
+
+## 🎯 Core Concepts
+
+### Attributes (Type-Safe)
+
+Use enums for auto-completion and type safety:
 
 ```python
-import routing
+from routing.constants import Attribute
 
-# Initialize the library (loads all plugins)
-routing.init()
+# Recommended: Using enums
+client.add_attribute(Attribute.GEONODE, 10, 20)
+client.add_attribute(Attribute.CONSUMER, 5)
 
-# List available solvers
-print(routing.list_solvers())
-# ['ga', 'ma', 'vns', 'pso', 'ls', 'alns', 'mip/cplex', 'mip/highs', 'cp/cplex', 'cp/ortools', ...]
+# Also works: Using strings (backward compatible)
+client.add_attribute("GeoNode", 10, 20)
+client.add_attribute("Consumer", 5)
+```
+
+**Available Attributes:**
+
+| Enum | String | Parameters | Use Case |
+|------|--------|------------|----------|
+| `Attribute.GEONODE` | `"GeoNode"` | `x, y` | Coordinates |
+| `Attribute.CONSUMER` | `"Consumer"` | `demand` | Client demand |
+| `Attribute.STOCK` | `"Stock"` | `capacity` | Vehicle capacity |
+| `Attribute.RENDEZVOUS` | `"Rendezvous"` | `open, close` | Time windows |
+| `Attribute.SERVICE_QUERY` | `"ServiceQuery"` | `service_time` | Service duration |
+| `Attribute.PROFITER` | `"Profiter"` | `profit` | Profit value (TOP) |
+| `Attribute.PICKUP` | `"Pickup"` | `demand` | Pickup demand |
+| `Attribute.DELIVERY` | `"Delivery"` | `demand` | Delivery demand |
+| `Attribute.SOFT_TIME_WINDOWS` | `"SoftTimeWindows"` | `wait, delay` | Soft TW penalties |
+| `Attribute.SYNCED` | `"Synced"` | - | Temporal sync |
+
+### Automatic Enabling
+
+Attributes are **automatically enabled** when added to entities - no manual `enable_attributes()` needed!
+
+```python
+# Attributes auto-enable on first use
+depot.add_attribute(Attribute.GEONODE, 0, 0)  # ✅ GeoNode enabled
+client.add_attribute(Attribute.CONSUMER, 15)   # ✅ Consumer enabled
+
+# Just solve - no enable_attributes() call needed!
+solution = routing.solve(problem, "ga", timeout=30)
 ```
 
 ---
 
-## Core Functions
+## 📚 API Reference
 
-### `routing.init()`
+### Initialization
 
-Initialize the routing library. Must be called before using any other functionality.
+#### `routing.init()`
+
+Initialize the routing library. **Must be called before any other operations.**
 
 ```python
 import routing
 routing.init()
 ```
 
-:::{note}
-This function registers all plugins and initializes the solver registry.
-It only needs to be called once at the start of your program.
-:::
-
 ---
 
-### `routing.list_solvers()`
+### Discovery Functions
 
-Returns a list of available solver names.
+#### `routing.list_solvers()`
+
+Get list of available solver names.
 
 ```python
 solvers = routing.list_solvers()
-# ['ga', 'ma', 'vns', 'pso', 'ls', 'alns', 'cp/cplex', 'cp/ortools', 'mip/cplex', 'mip/highs', ...]
+# Returns: ['ga', 'ma', 'vns', 'pso', 'ls', 'alns', 'mip', 'cp', ...]
 ```
 
-**Returns:** `List[str]` - List of solver identifiers
+#### `routing.list_attributes()`
 
----
-
-### `routing.create_solver(name, problem)`
-
-Create a solver instance for a problem.
+Get list of available attribute types.
 
 ```python
-solver = routing.create_solver("ga", problem)
+attrs = routing.list_attributes()
+# Returns: ['GeoNode', 'Consumer', 'Stock', 'Rendezvous', ...]
 ```
 
-**Parameters:**
+#### `routing.get_attribute_info()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `name` | `str` | Solver name (from `list_solvers()`) |
-| `problem` | `Problem` | The problem instance to solve |
-
-**Returns:** `Solver` - A solver instance
-
-**Example:**
+Get detailed attribute information.
 
 ```python
-problem = routing.load_solomon("c101.txt")
-solver = routing.create_solver("ga", problem)
-solver.set_param_int("iterMax", 10000)
-solver.solve(60.0)
+info = routing.get_attribute_info()
+print(info['GeoNode']['description'])
+# "Coordinates (x, y) for distance calculation"
+print(info['GeoNode']['parameters'])
+# ['x: float', 'y: float']
 ```
 
----
+#### `routing.get_problem_types()`
 
-## Problem Loading
-
-### `routing.load_solomon(filepath)`
-
-Load a Solomon-format CVRPTW instance.
+Get attribute requirements for common problem types.
 
 ```python
-problem = routing.load_solomon("data/CVRPTW/Solomon/10/c101.txt")
+types = routing.get_problem_types()
+print(types['CVRPTW'])
+# ['GeoNode', 'Consumer', 'Stock', 'Rendezvous', 'ServiceQuery']
 ```
 
-**Parameters:**
+#### `routing.get_solver_info(solver_name)`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `filepath` | `str` | Path to Solomon format file (.txt) |
-
-**Returns:** `Problem` - A problem instance with CVRPTW attributes
-
-**Example:**
+Get detailed solver information.
 
 ```python
-problem = routing.load_solomon("c101.txt")
-print(f"Clients: {problem.num_clients}")
-print(f"Vehicles: {problem.num_vehicles}")
+info = routing.get_solver_info('ga')
+print(info['description'])
+# "Metaheuristic optimization using evolutionary principles"
+print(info['parameters'])
+# {'iterMax': {...}, 'feasibleOnly': {...}, ...}
+```
+
+#### `routing.print_available_resources()`
+
+Print formatted summary of all available resources.
+
+```python
+routing.print_available_resources()
+# Prints: Solvers, Attributes, Problem Types
 ```
 
 ---
 
-### `routing.load_tsplib(filepath)`
+### Problem Class
 
-Load a TSPLIB/CVRPLIB format instance.
+#### `routing.Problem()`
 
-```python
-problem = routing.load_tsplib("data/CVRP/A/A-n32-k5.vrp")
-```
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `filepath` | `str` | Path to TSPLIB format file (.vrp, .tsp) |
-
-**Returns:** `Problem` - A problem instance
-
----
-
-## Problem Class
-
-### `routing.Problem`
-
-The main class for defining vehicle routing problems.
+Create a new routing problem instance.
 
 ```python
 problem = routing.Problem()
 ```
 
-#### Methods
+**Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `num_clients` | `int` | Number of clients |
+| `num_vehicles` | `int` | Number of vehicles |
+| `num_depots` | `int` | Number of depots |
+| `total_demand` | `int` | Sum of all client demands |
+| `total_capacity` | `int` | Sum of all vehicle capacities |
+
+**Methods:**
 
 ##### `add_depot(id)`
 
@@ -147,6 +202,7 @@ Add a depot to the problem.
 
 ```python
 depot = problem.add_depot(0)
+depot.add_attribute(Attribute.GEONODE, 0, 0)
 ```
 
 ##### `add_client(id)`
@@ -155,6 +211,8 @@ Add a client to the problem.
 
 ```python
 client = problem.add_client(1)
+client.add_attribute(Attribute.GEONODE, 10, 20)
+client.add_attribute(Attribute.CONSUMER, 5)
 ```
 
 ##### `add_vehicle(id)`
@@ -163,312 +221,483 @@ Add a vehicle to the problem.
 
 ```python
 vehicle = problem.add_vehicle(0)
+vehicle.add_attribute(Attribute.STOCK, 100)
+```
+
+##### `get_clients()`, `get_vehicles()`, `get_depots()`
+
+Get lists of all entities.
+
+```python
+for client in problem.get_clients():
+    print(f"Client {client.get_id()}")
+
+for vehicle in problem.get_vehicles():
+    print(f"Vehicle {vehicle.get_id()}")
+```
+
+##### `get_depot(id)`
+
+Get depot by ID.
+
+```python
+depot = problem.get_depot(0)
 ```
 
 ##### `get_distance(i, j)`
 
-Get the distance between two nodes.
+Get distance between two nodes.
 
 ```python
 dist = problem.get_distance(0, 1)  # Depot to client 1
 ```
 
-##### `get_clients()`
+---
 
-Get all clients.
+### Entity Classes
 
-```python
-clients = problem.get_clients()
-for c in clients:
-    print(f"Client {c.get_id()}: ({c.x}, {c.y})")
-```
+All entities (Client, Depot, Vehicle) support generic attribute addition.
 
-##### `get_vehicles()`
+#### Common Methods
 
-Get all vehicles.
+##### `add_attribute(name, *args)`
+
+Add an attribute to the entity. Accepts enum or string.
 
 ```python
-vehicles = problem.get_vehicles()
+# Using enum (recommended)
+client.add_attribute(Attribute.GEONODE, 10, 20)
+client.add_attribute(Attribute.CONSUMER, 15)
+
+# Using string (backward compatible)
+client.add_attribute("GeoNode", 10, 20)
+client.add_attribute("Consumer", 15)
 ```
 
-##### `get_depots()`
+##### `has_attribute(name)`
 
-Get all depots.
+Check if entity has a specific attribute.
 
 ```python
-depots = problem.get_depots()
+if client.has_attribute(Attribute.GEONODE):
+    print(f"Location: ({client.x}, {client.y})")
 ```
+
+##### `get_id()`
+
+Get entity ID.
+
+```python
+id = client.get_id()
+```
+
+#### Entity Properties
+
+Properties return `None` if attribute not set.
+
+**Client:**
+
+| Property | Type | Attribute | Description |
+|----------|------|-----------|-------------|
+| `x` | `float` | GeoNode | X coordinate |
+| `y` | `float` | GeoNode | Y coordinate |
+| `demand` | `int` | Consumer | Demand |
+| `tw_open` | `float` | Rendezvous | Time window open |
+| `tw_close` | `float` | Rendezvous | Time window close |
+| `service_time` | `float` | ServiceQuery | Service duration |
+| `pickup` | `int` | Pickup | Pickup demand |
+| `delivery` | `int` | Delivery | Delivery demand |
+| `profit` | `float` | Profiter | Profit value |
+
+**Depot:**
+
+| Property | Type | Attribute | Description |
+|----------|------|-----------|-------------|
+| `x` | `float` | GeoNode | X coordinate |
+| `y` | `float` | GeoNode | Y coordinate |
+| `tw_open` | `float` | Rendezvous | Operating hours start |
+| `tw_close` | `float` | Rendezvous | Operating hours end |
+
+**Vehicle:**
+
+| Property | Type | Attribute | Description |
+|----------|------|-----------|-------------|
+| `capacity` | `int` | Stock | Vehicle capacity |
+
+---
+
+### Solving
+
+#### `routing.solve(problem, solver_type, timeout, verbose=False)`
+
+Solve a problem with a specific solver.
+
+```python
+solution = routing.solve(
+    problem,
+    solver_type="ga",
+    timeout=30.0,
+    verbose=True
+)
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `problem` | `Problem` | Problem instance |
+| `solver_type` | `str` | Solver name (from `list_solvers()`) |
+| `timeout` | `float` | Max time in seconds |
+| `verbose` | `bool` | Print solving progress |
+
+**Returns:** `Solution` object or `None`
+
+#### `routing.solve_with_callback(problem, callback, solver_type, timeout)`
+
+Solve with improvement callback.
+
+```python
+improvements = []
+
+def on_improvement(solution, cost):
+    improvements.append(cost)
+    print(f"New best: {cost:.2f}")
+
+solution = routing.solve_with_callback(
+    problem,
+    callback=on_improvement,
+    solver_type="ga",
+    timeout=30.0
+)
+```
+
+#### `routing.create_solver(solver_type, problem)`
+
+Create solver instance for manual control.
+
+```python
+solver = routing.create_solver("ga", problem)
+solver.set_param_int("iterMax", 10000)
+solver.set_param_bool("feasibleOnly", True)
+solver.solve(60.0)
+
+solution = solver.get_solution()
+is_optimal = solver.is_optimal()
+stats = solver.get_stats()
+```
+
+---
+
+### Solution Class
 
 #### Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `num_clients` | `int` | Number of clients |
-| `num_vehicles` | `int` | Number of vehicles |
+| `cost` | `float` | Total solution cost |
+| `total_distance` | `float` | Alias for cost |
+| `num_tours` | `int` | Number of routes |
+| `is_feasible` | `bool` | All clients served |
+| `unserved` | `list[int]` | List of unserved client IDs |
+
+#### Methods
+
+##### `get_tours()`
+
+Get all routes.
+
+```python
+for tour in solution.get_tours():
+    print(f"Tour cost: {tour.cost}")
+    print(f"Clients: {tour.get_client_ids()}")
+```
+
+##### `get_tour(index)`
+
+Get route by index.
+
+```python
+tour = solution.get_tour(0)
+```
+
+##### `to_dict()`
+
+Convert to dictionary.
+
+```python
+data = solution.to_dict()
+# {
+#   'cost': 123.45,
+#   'num_tours': 3,
+#   'is_feasible': True,
+#   'tours': [...],
+#   'unserved': []
+# }
+```
+
+##### `clone()`
+
+Create a deep copy.
+
+```python
+solution_copy = solution.clone()
+```
 
 ---
 
-## Entity Classes
+### Tour Class
 
-### Client
-
-Represents a customer location with attributes.
+#### Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `x` | `float` | X coordinate |
-| `y` | `float` | Y coordinate |
-| `demand` | `int` | Demand at this client |
-| `tw_open` | `float` | Time window opening |
-| `tw_close` | `float` | Time window closing |
-| `service_time` | `float` | Service duration |
+| `cost` | `float` | Route cost |
+| `total_distance` | `float` | Alias for cost |
+| `total_demand` | `int` | Sum of client demands |
+
+#### Methods
+
+##### `get_client_ids()`
+
+Get list of client IDs in route.
 
 ```python
-for client in problem.get_clients():
-    print(f"Client at ({client.x}, {client.y})")
-    print(f"  Demand: {client.demand}")
-    print(f"  TW: [{client.tw_open}, {client.tw_close}]")
+clients = tour.get_client_ids()
+# [1, 3, 5, 7]
 ```
 
-### Depot
+##### `to_list()`
 
-Represents a depot location.
+Alias for `get_client_ids()`.
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `x` | `float` | X coordinate |
-| `y` | `float` | Y coordinate |
-| `tw_open` | `float` | Operating hours start |
-| `tw_close` | `float` | Operating hours end |
-
-### Vehicle
-
-Represents a vehicle with capacity.
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `capacity` | `int` | Vehicle capacity |
+```python
+clients = tour.to_list()
+```
 
 ---
 
-## Solver Class
+### Solver Parameters
 
-### Methods
-
-#### `solve(timeout)`
-
-Solve the problem with a time limit.
-
-```python
-found = solver.solve(60.0)  # 60 second timeout
-if found:
-    print(f"Solution cost: {solver.get_objective_value()}")
-```
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `timeout` | `float` | Maximum solving time in seconds |
-
-**Returns:** `bool` - True if a solution was found
-
-#### `get_objective_value()`
-
-Get the objective value of the best solution.
-
-```python
-cost = solver.get_objective_value()
-```
-
-**Returns:** `float` - Objective value (typically total distance)
-
-#### `get_solution()`
-
-Get the solution object.
-
-```python
-solution = solver.get_solution()
-```
-
-#### `is_optimal()`
-
-Check if the solution is proven optimal.
-
-```python
-if solver.is_optimal():
-    print("Optimal solution found!")
-```
-
-#### `get_stats()`
-
-Get solver statistics as a string.
-
-```python
-print(solver.get_stats())
-```
-
-### Parameter Setting
-
-#### `set_param_int(name, value)`
-
-Set an integer parameter.
+#### Setting Parameters
 
 ```python
 solver.set_param_int("iterMax", 10000)
-```
-
-#### `set_param_bool(name, value)`
-
-Set a boolean parameter.
-
-```python
 solver.set_param_bool("feasibleOnly", True)
+solver.set_param_double("infeasiblePenalty", 1000.0)
 ```
 
-#### `set_param_float(name, value)`
-
-Set a float parameter.
-
-```python
-solver.set_param_float("infeasiblePenalty", 1000.0)
-```
-
-### Common Parameters
+#### Common Parameters
 
 | Parameter | Type | Solvers | Description |
 |-----------|------|---------|-------------|
 | `iterMax` | int | GA, MA, VNS, PSO, ALNS | Maximum iterations |
-| `feasibleOnly` | bool | GA, MA | Only generate feasible solutions |
-| `infeasiblePenalty` | float | GA, MA | Penalty for constraint violations |
-| `unservedPenalty` | float | GA, MA | Penalty per unserved client |
-| `reactionFactor` | float | ALNS | Weight update reaction factor (0-1) |
-| `decayFactor` | float | ALNS | Weight decay factor per segment (0-1) |
-| `temperature` | float | ALNS | Initial temperature for simulated annealing |
-| `coolingRate` | float | ALNS | Temperature cooling rate per iteration |
-| `segmentSize` | int | ALNS | Iterations between weight updates |
-| `minTemperature` | float | ALNS | Minimum temperature for acceptance |
-
+| `feasibleOnly` | bool | GA, MA | Only feasible solutions |
+| `infeasiblePenalty` | float | GA, MA | Constraint violation penalty |
+| `unservedPenalty` | float | GA, MA | Unserved client penalty |
+| `reactionFactor` | float | ALNS | Weight update reaction (0-1) |
+| `decayFactor` | float | ALNS | Weight decay per segment (0-1) |
+| `temperature` | float | ALNS | Initial SA temperature |
+| `coolingRate` | float | ALNS | Temperature cooling rate |
+| `segmentSize` | int | ALNS | Iterations between updates |
+| `minTemperature` | float | ALNS | Minimum temperature |
 
 ---
 
-## Solution Class
+### File Loaders
 
-### Properties
+#### `routing.load_solomon(filepath)`
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `cost` | `float` | Total solution cost |
-| `num_routes` | `int` | Number of routes |
-
-### Methods
-
-#### `get_routes()`
-
-Get all routes in the solution.
+Load Solomon CVRPTW instance.
 
 ```python
-for route in solution.get_routes():
-    print(f"Route cost: {route.cost}")
-    for client_id in route.clients:
-        print(f"  -> {client_id}")
+problem = routing.load_solomon("data/c101.txt")
+print(f"{problem.num_clients} clients")
+```
+
+#### `routing.load_tsplib(filepath)`
+
+Load TSPLIB/CVRPLIB instance.
+
+```python
+problem = routing.load_tsplib("data/A-n32-k5.vrp")
 ```
 
 ---
 
-## ProblemBuilder
+### ProblemBuilder (High-Level API)
 
-A fluent API for building problems programmatically.
+Fluent interface for building problems.
 
 ```python
-from routing.problem import ProblemBuilder
+from routing import ProblemBuilder
 
 problem = (ProblemBuilder()
     .with_depot(0, 0, tw_open=0, tw_close=1000)
-    .add_client(1, x=10, y=20, demand=5, tw_open=0, tw_close=200, service_time=10)
-    .add_client(2, x=15, y=25, demand=3, tw_open=50, tw_close=300, service_time=10)
-    .add_client(3, x=20, y=10, demand=8, tw_open=100, tw_close=400, service_time=10)
-    .add_vehicles(count=2, capacity=20)
+    .add_client(x=10, y=20, demand=5, tw_open=0, tw_close=200, service_time=10)
+    .add_client(x=30, y=40, demand=3, tw_open=50, tw_close=300, service_time=10)
+    .add_vehicles(count=2, capacity=50)
     .build())
+
+solution = routing.solve(problem, "ga", timeout=30)
 ```
 
-### Methods
+**Methods:**
 
-#### `with_depot(x, y, tw_open=0, tw_close=inf)`
-
-Set the depot location and operating hours.
-
-#### `add_client(id, x, y, demand, tw_open=0, tw_close=inf, service_time=0)`
-
-Add a client with all attributes.
-
-#### `add_vehicles(count, capacity)`
-
-Add multiple vehicles with the same capacity.
-
-#### `build()`
-
-Build and return the `Problem` instance.
+- `with_depot(x, y, tw_open=None, tw_close=None)`
+- `add_client(x, y, demand, tw_open=None, tw_close=None, service_time=None)`
+- `add_vehicles(count, capacity)`
+- `build()` - Returns Problem instance
 
 ---
 
-## Complete Example
+## 🎓 Complete Examples
+
+### Simple CVRP
 
 ```python
 import routing
+from routing.constants import Attribute
 
-# Initialize
 routing.init()
 
-# Load instance
-problem = routing.load_solomon("data/CVRPTW/Solomon/10/c101.txt")
+problem = routing.Problem()
 
-print(f"Instance: {problem.num_clients} clients, {problem.num_vehicles} vehicles")
+# Depot
+depot = problem.add_depot(0)
+depot.add_attribute(Attribute.GEONODE, 0, 0)
 
-# Try different solvers
+# Clients
+for i in range(1, 11):
+    client = problem.add_client(i)
+    client.add_attribute(Attribute.GEONODE, i * 10, i * 10)
+    client.add_attribute(Attribute.CONSUMER, 5 + i)
+
+# Vehicles
+for v in range(3):
+    vehicle = problem.add_vehicle(v)
+    vehicle.add_attribute(Attribute.STOCK, 50)
+
+# Solve
+solution = routing.solve(problem, "ga", timeout=30)
+
+print(f"Cost: {solution.cost:.2f}")
+print(f"Feasible: {solution.is_feasible}")
+print(f"Routes: {solution.num_tours}")
+```
+
+### CVRPTW with Time Windows
+
+```python
+from routing import ProblemBuilder
+
+problem = (ProblemBuilder()
+    .with_depot(0, 0, tw_open=0, tw_close=1000)
+    .add_client(x=20, y=20, demand=10, tw_open=0, tw_close=100, service_time=10)
+    .add_client(x=30, y=40, demand=15, tw_open=10, tw_close=80, service_time=10)
+    .add_client(x=50, y=30, demand=20, tw_open=20, tw_close=90, service_time=10)
+    .add_vehicles(count=2, capacity=50)
+    .build())
+
+solution = routing.solve(problem, "alns", timeout=60)
+
+for i, tour in enumerate(solution.get_tours()):
+    route = " -> ".join(["0"] + [str(c) for c in tour.get_client_ids()] + ["0"])
+    print(f"Vehicle {i}: {route} (cost: {tour.cost:.2f})")
+```
+
+### Multi-Solver Comparison
+
+```python
+routing.init()
+problem = routing.load_solomon("c101.txt")
+
 results = {}
+for solver in ["ga", "alns", "vns"]:
+    solution = routing.solve(problem, solver, timeout=30)
+    if solution:
+        results[solver] = solution.cost
 
-for solver_name in ["ga", "alns", "mip/highs", "cp/ortools"]:
-    try:
-        solver = routing.create_solver(solver_name, problem)
+# Print results
+for solver, cost in sorted(results.items(), key=lambda x: x[1]):
+    print(f"{solver:10} - Cost: {cost:.2f}")
+```
 
-        if "ga" in solver_name:
-            solver.set_param_int("iterMax", 5000)
+### Using Solver Directly
 
-        if solver.solve(30.0):
-            results[solver_name] = solver.get_objective_value()
-            print(f"{solver_name}: {results[solver_name]:.2f}")
-        else:
-            print(f"{solver_name}: No solution")
+```python
+solver = routing.create_solver("ga", problem)
 
-    except Exception as e:
-        print(f"{solver_name}: Error - {e}")
+# Configure parameters
+solver.set_param_int("iterMax", 5000)
+solver.set_param_bool("feasibleOnly", True)
+solver.set_param_double("infeasiblePenalty", 1000.0)
 
-# Best solver
-if results:
-    best = min(results.items(), key=lambda x: x[1])
-    print(f"\nBest: {best[0]} with cost {best[1]:.2f}")
+# Solve
+if solver.solve(60.0):
+    print(f"Cost: {solver.get_objective_value():.2f}")
+    print(f"Optimal: {solver.is_optimal()}")
+    print(f"Stats:\n{solver.get_stats()}")
+
+    solution = solver.get_solution()
 ```
 
 ---
 
-## Error Handling
+## 🔍 Discovery API Examples
 
 ```python
 import routing
 
-try:
-    routing.init()
+routing.init()
 
-    # File not found
-    problem = routing.load_solomon("nonexistent.txt")
+# List all available resources
+routing.print_available_resources()
 
-except FileNotFoundError as e:
-    print(f"File error: {e}")
+# Check attribute details
+info = routing.get_attribute_info()
+for attr_name, details in info.items():
+    print(f"{attr_name}: {details['description']}")
 
-except RuntimeError as e:
-    print(f"Runtime error: {e}")
+# Get problem type requirements
+types = routing.get_problem_types()
+print(f"CVRPTW needs: {types['CVRPTW']}")
 
-except Exception as e:
-    print(f"Unexpected error: {e}")
+# Get solver information
+ga_info = routing.get_solver_info('ga')
+print(f"GA: {ga_info['description']}")
+print(f"Parameters: {list(ga_info['parameters'].keys())}")
 ```
+
+---
+
+## 🎨 Best Practices
+
+1. **Use enums for attributes** - Better IDE support and type safety
+   ```python
+   from routing.constants import Attribute
+   client.add_attribute(Attribute.GEONODE, 10, 20)  # ✅
+   client.add_attribute("GeoNode", 10, 20)          # ⚠️ Works but less safe
+   ```
+
+2. **Always call `routing.init()`** before using the library
+
+3. **Use ProblemBuilder** for simple problems - cleaner syntax
+
+4. **Leverage discovery functions** - `list_solvers()`, `list_attributes()`
+
+5. **Check solution feasibility** - `solution.is_feasible` before using results
+
+6. **Use `solve_with_callback()`** for long runs - monitor progress
+
+---
+
+## 📖 See Also
+
+- [Attributes Guide](attributes.md) - Detailed attribute documentation
+- [Solver Guide](solvers.md) - Solver comparison and tuning
+- [C++ API](cpp-api.md) - C++ interface documentation
+
+---
+
+**Version:** 0.1.1
+**Last Updated:** 2026-01-18

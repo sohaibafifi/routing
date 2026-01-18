@@ -11,7 +11,11 @@
 #include "plugins/attributes/CapacityPlugin/Stock.hpp"
 #include "plugins/attributes/TimeWindowPlugin/Rendezvous.hpp"
 #include "plugins/attributes/TimeWindowPlugin/ServiceQuery.hpp"
+#include "plugins/attributes/TimeWindowPlugin/SoftTimeWindows.hpp"
 #include "plugins/attributes/ProfitPlugin/Profiter.hpp"
+#include "plugins/attributes/PickupDeliveryPlugin/Pickup.hpp"
+#include "plugins/attributes/PickupDeliveryPlugin/Delivery.hpp"
+#include "plugins/attributes/SyncPlugin/Synced.hpp"
 
 namespace nb = nanobind;
 using namespace routing::attributes;
@@ -78,13 +82,64 @@ void bind_attributes(nb::module_& m) {
             return "<Profit value=" + std::to_string(p.getProfit()) + ">";
         });
 
+    // Pickup - pickup demand (for P&D problems)
+    nb::class_<Pickup>(attrs, "Pickup")
+        .def(nb::init<int>(), nb::arg("demand"),
+             "Create a Pickup attribute")
+        .def_prop_ro("pickup", &Pickup::getPickup, "Pickup demand quantity")
+        .def("__repr__", [](Pickup& p) {
+            return "<Pickup demand=" + std::to_string(p.getPickup()) + ">";
+        });
+
+    // Delivery - delivery demand (for P&D problems)
+    nb::class_<Delivery>(attrs, "Delivery")
+        .def(nb::init<int>(), nb::arg("demand"),
+             "Create a Delivery attribute")
+        .def_prop_ro("delivery", &Delivery::getDelivery, "Delivery demand quantity")
+        .def("__repr__", [](Delivery& d) {
+            return "<Delivery demand=" + std::to_string(d.getDelivery()) + ">";
+        });
+
+    // SoftTimeWindows - soft TW penalties (for CVRPSTW problems)
+    nb::class_<SoftTimeWindows>(attrs, "SoftTimeWindows")
+        .def(nb::init<double, double>(),
+             nb::arg("wait_penalty") = 1.0, nb::arg("delay_penalty") = 1.0,
+             "Create soft time window configuration")
+        .def_prop_ro("wait_penalty", &SoftTimeWindows::getWaitPenalty,
+                     "Penalty for early arrival")
+        .def_prop_ro("delay_penalty", &SoftTimeWindows::getDelayPenalty,
+                     "Penalty for late arrival")
+        .def("__repr__", [](SoftTimeWindows& s) {
+            return "<SoftTimeWindows wait_penalty=" + std::to_string(s.getWaitPenalty()) +
+                   " delay_penalty=" + std::to_string(s.getDelayPenalty()) + ">";
+        });
+
+    // Synced - temporal synchronization (for VRPTWTD problems)
+    nb::class_<Synced>(attrs, "Synced")
+        .def(nb::init<>(), "Create a Synced attribute")
+        .def("add_brother", &Synced::addBrother, nb::arg("brother_id"), nb::arg("delta"),
+             "Add a synchronization relationship")
+        .def("get_brothers_count", &Synced::getBrothersCount,
+             "Get number of sync relationships")
+        .def("get_brother_id", &Synced::getBrotherId, nb::arg("index"),
+             "Get brother ID at index")
+        .def("get_delta", &Synced::getDelta, nb::arg("index"),
+             "Get time delta at index")
+        .def("__repr__", [](Synced& s) {
+            return "<Synced brothers=" + std::to_string(s.getBrothersCount()) + ">";
+        });
+
     // Attribute names for documentation
     attrs.attr("AVAILABLE") = std::vector<std::string>{
-        "GeoNode",      // x, y coordinates
-        "Consumer",     // demand
-        "Stock",        // capacity
-        "TimeWindow",   // open, close times
-        "ServiceTime",  // service duration
-        "Profit"        // profit value
+        "GeoNode",          // x, y coordinates
+        "Consumer",         // demand
+        "Stock",            // capacity
+        "TimeWindow",       // open, close times
+        "ServiceTime",      // service duration
+        "Profit",           // profit value
+        "Pickup",           // pickup demand
+        "Delivery",         // delivery demand
+        "SoftTimeWindows",  // soft TW penalties
+        "Synced"            // temporal sync
     };
 }

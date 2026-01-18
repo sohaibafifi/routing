@@ -88,26 +88,20 @@ def read_tsplib(filepath: Union[str, Path]) -> _core.Problem:
     # Add vehicles
     for k in range(num_vehicles):
         vehicle = problem.add_vehicle(k)
-        _core.set_vehicle_capacity(vehicle, capacity)
+        vehicle.add_attribute("Stock", capacity)
 
     # Add nodes
     for node_id, (x, y) in sorted(coords.items()):
         if node_id in depot_ids:
             depot = problem.add_depot(node_id)
-            _core.set_depot_location(depot, x, y)
+            depot.add_attribute("GeoNode", x, y)
         else:
             client = problem.add_client(node_id)
-            _core.set_client_location(client, x, y)
+            client.add_attribute("GeoNode", x, y)
             demand = demands.get(node_id, 0)
-            _core.set_client_demand(client, demand)
+            client.add_attribute("Consumer", demand)
 
-    # Enable required attributes
-    problem.enable_attributes([
-        "GeoNode",
-        "Consumer",
-        "Stock"
-    ])
-
+    # Attributes are automatically enabled when added
     return problem
 
 

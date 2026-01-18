@@ -41,10 +41,10 @@ class ProblemBuilder:
     ) -> "ProblemBuilder":
         """Add depot with location and optional time window."""
         depot = self._problem.add_depot(0)
-        _core.set_depot_location(depot, x, y)
+        depot.add_attribute("GeoNode", x, y)
         self._needs_geo = True
         if tw_open is not None and tw_close is not None:
-            _core.set_depot_time_window(depot, tw_open, tw_close)
+            depot.add_attribute("Rendezvous", tw_open, tw_close)
             self._needs_rendezvous = True
         self._depot_added = True
         return self
@@ -65,19 +65,19 @@ class ProblemBuilder:
             self._client_id += 1
 
         client = self._problem.add_client(client_id)
-        _core.set_client_location(client, x, y)
+        client.add_attribute("GeoNode", x, y)
         self._needs_geo = True
 
         if demand > 0:
-            _core.set_client_demand(client, demand)
+            client.add_attribute("Consumer", demand)
             self._needs_consumer = True
 
         if tw_open is not None and tw_close is not None:
-            _core.set_client_time_window(client, tw_open, tw_close)
+            client.add_attribute("Rendezvous", tw_open, tw_close)
             self._needs_rendezvous = True
 
         if service_time > 0 or (tw_open is not None and tw_close is not None):
-            _core.set_client_service_time(client, service_time)
+            client.add_attribute("ServiceQuery", service_time)
             self._needs_service = True
 
         return self
@@ -114,7 +114,7 @@ class ProblemBuilder:
             self._vehicle_id += 1
 
         vehicle = self._problem.add_vehicle(vehicle_id)
-        _core.set_vehicle_capacity(vehicle, capacity)
+        vehicle.add_attribute("Stock", capacity)
         self._needs_stock = True
         return self
 
@@ -133,7 +133,7 @@ class ProblemBuilder:
         if not self._depot_added:
             # Add default depot at origin
             depot = self._problem.add_depot(0)
-            _core.set_depot_location(depot, 0, 0)
+            depot.add_attribute("GeoNode", 0, 0)
             self._needs_geo = True
 
         attributes = []

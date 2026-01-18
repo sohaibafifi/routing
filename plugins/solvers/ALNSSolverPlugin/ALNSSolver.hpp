@@ -513,10 +513,43 @@ namespace routing {
         void setSegmentSize(int size) { segmentSize_ = size; }
         void setMinTemperature(double temp) { minTemperature_ = temp; }
 
+        // Validate solution based on feasibleOnly configuration
+        bool isValidSolution(Solution* solution) const {
+            // Check if we should enforce feasibility
+            bool feasibleOnly = true;
+            if (configuration) {
+                try {
+                    feasibleOnly = configuration->getBoolParam("feasibleOnly");
+                } catch (const ParameterNotFound&) {
+                    // Default to true if not set
+                }
+            }
+
+            if (!feasibleOnly) {
+                return true;  // Accept all solutions in relaxed mode
+            }
+
+            // Feasible-only mode: validate solution
+            double cost = solution->getCost();
+            if (cost <= 1e-9) {
+                return false;  // Invalid: cost must be positive
+            }
+
+            // Check that at least one tour has clients
+            for (size_t t = 0; t < solution->getNbTour(); ++t) {
+                if (solution->getTour(t)->getNbClient() > 0) {
+                    return true;  // Valid: has at least one client served
+                }
+            }
+
+            return false;  // Invalid: no clients served
+        }
+
         void setDefaultConfiguration() override {
             this->configuration = new Configuration();
             this->configuration->setIntParam(this->configuration->iterMax,
                     this->problem->clients.size() * this->problem->clients.size());
+            this->configuration->setBoolParam("feasibleOnly", true);  // Enforce valid solutions
         };
 
         bool solve(double timeout = 3600) override {
@@ -562,10 +595,13 @@ namespace routing {
                 double newCost = newSolution->getCost();
                 double delta = newCost - currentCost;
 
+                // Validate solution based on feasibleOnly configuration
+                bool isValid = isValidSolution(newSolution);
+
                 bool accepted = false;
-                if (delta < -1e-9) {
+                if (isValid && delta < -1e-9) {
                     accepted = true;
-                } else if (currentTemperature > minTemperature_) {
+                } else if (isValid && currentTemperature > minTemperature_) {
                     std::uniform_real_distribution<> dis(0.0, 1.0);
                     double probability = std::exp(-delta / currentTemperature);
                     if (dis(gen) < probability) {

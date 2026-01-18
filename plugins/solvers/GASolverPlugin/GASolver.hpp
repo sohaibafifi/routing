@@ -157,7 +157,11 @@ namespace routing {
             auto vehicles = problem->getComposableVehicles();
             size_t numVehicles = vehicles.size();
             if (numVehicles == 0) {
-                numVehicles = 1;
+                // No vehicles available - all clients must be unserved
+                for (auto* client : sequence) {
+                    base->notserved.push_back(client);
+                }
+                return base;
             }
 
             auto* depotEntity = dynamic_cast<Entity*>(depot);
@@ -432,7 +436,7 @@ namespace routing {
             this->configuration = new Configuration();
             this->configuration->setIntParam(this->configuration->iterMax,
                                              this->problem->clients.size() * this->problem->clients.size());
-            this->configuration->setBoolParam("feasibleOnly", false);
+            this->configuration->setBoolParam("feasibleOnly", true);  // Enforce constraints strictly
             this->configuration->setDoubleParam("infeasiblePenalty", 1000.0);
             this->configuration->setDoubleParam("unservedPenalty", 100000.0);
         };

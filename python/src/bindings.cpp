@@ -27,7 +27,7 @@ NB_MODULE(_routing_core, m) {
     )doc";
 
     // Version info
-    m.attr("__version__") = "0.1.0";
+    m.attr("__version__") = "0.1.1";
 
     // Bind all components
     bind_problem(m);
