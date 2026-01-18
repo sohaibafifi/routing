@@ -59,7 +59,7 @@ Extensible design with plugins for attributes, constraints, solvers, and evaluat
 
 ## Architecture Overview
 
-```mermaid
+```{mermaid}
 ---
 config:
   layout: dagre
@@ -347,43 +347,6 @@ ctest --test-dir build --output-on-failure
 
 ---
 
-## Documentation
-
-```{toctree}
-:maxdepth: 2
-:caption: Getting Started
-
-getting-started
-installation
-concepts
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: User Guide
-
-solvers
-attributes
-benchmarks
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: API Reference
-
-api
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: Developer Guide
-
-composable
-plugins
-contributing
-```
-
----
 
 ## Citing
 
