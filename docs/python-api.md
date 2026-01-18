@@ -264,7 +264,111 @@ solution = routing.solve(problem, "alns", timeout=60)
 
 ---
 
+## Visualization
+
+The library includes built-in visualization support using matplotlib.
+
+:::{note}
+Requires matplotlib: `pip install matplotlib`
+:::
+
+### Plot Solution
+
+```python
+from routing.visualization import plot_solution
+
+# Basic plot
+fig, ax = plot_solution(problem, solution)
+
+# Customize
+plot_solution(problem, solution,
+              show_demand=True,
+              show_arrows=True,
+              title="My CVRP Solution",
+              save_path="solution.png")
+```
+
+### Plot Problem
+
+```python
+from routing.visualization import plot_problem
+
+# Show client locations and demands
+fig, ax = plot_problem(problem, show_demand=True)
+```
+
+### Plot Convergence
+
+```python
+from routing.visualization import plot_convergence
+
+# Collect costs during solving
+costs = []
+def callback(solution, cost):
+    costs.append(cost)
+
+solution = routing.solve_with_callback(problem, callback, "ga", 30)
+
+# Plot convergence curve
+plot_convergence(costs, title="GA Convergence")
+```
+
+### Compare Solvers
+
+```python
+from routing.visualization import compare_solutions
+
+solutions = {
+    "GA": routing.solve(problem, "ga", timeout=30),
+    "ALNS": routing.solve(problem, "alns", timeout=30),
+    "VNS": routing.solve(problem, "vns", timeout=30),
+}
+
+# Side-by-side comparison
+compare_solutions(problem, solutions)
+```
+
+### Gantt Chart (Time Windows)
+
+For VRPTW problems, visualize the schedule with time windows:
+
+```python
+from routing.visualization import plot_gantt
+
+# Plot schedule showing time windows and service times
+fig, ax = plot_gantt(problem, solution)
+
+# Customize
+plot_gantt(problem, solution,
+           show_travel=True,     # Show travel time bars
+           show_tw_bounds=True,  # Show time window boundaries
+           speed=1.0,            # Travel speed for time calculation
+           title="Vehicle Schedules")
+```
+
+The Gantt chart shows:
+- **Gray bars**: Time window constraints [open, close]
+- **Colored bars**: Service time at each client
+- **Thin bars**: Travel time between clients (optional)
+
+### Visualization Options
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `show_labels` | `True` | Show client ID labels |
+| `show_demand` | `False` | Show demand values |
+| `show_arrows` | `True` | Show direction arrows |
+| `show_legend` | `True` | Show route legend |
+| `route_width` | `1.5` | Line width for routes |
+| `client_size` | `100` | Marker size for clients |
+| `depot_size` | `200` | Marker size for depot |
+| `figsize` | `(10, 8)` | Figure size |
+| `save_path` | `None` | Path to save figure |
+
+---
+
 ## See Also
 
 - [Attributes](attributes.md) - Detailed attribute documentation
 - [Solvers](solvers.md) - Solver comparison and tuning
+- [Visualization Notebook](https://github.com/sohaibafifi/rihla/blob/develop/python/examples/notebooks/visualization.ipynb) - Interactive examples

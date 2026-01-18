@@ -95,6 +95,20 @@ from .discovery import (
     print_available_resources,
 )
 
+# Import visualization (optional dependency)
+try:
+    from .visualization import (
+        plot_solution,
+        plot_problem,
+        plot_gantt,
+        plot_convergence,
+        create_animation,
+        compare_solutions,
+    )
+    _HAS_VISUALIZATION = True
+except ImportError:
+    _HAS_VISUALIZATION = False
+
 # Convenience aliases
 Solver = SolverBase
 
@@ -152,6 +166,14 @@ __all__ = [
     # File readers
     "load_solomon",
     "load_tsplib",
+
+    # Visualization (if matplotlib available)
+    "plot_solution",
+    "plot_problem",
+    "plot_gantt",
+    "plot_convergence",
+    "create_animation",
+    "compare_solutions",
 
     # Metadata
     "__version__",

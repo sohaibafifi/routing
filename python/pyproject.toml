@@ -29,6 +29,8 @@ keywords = ["vrp", "routing", "optimization", "constraint-programming", "metaheu
 [project.optional-dependencies]
 test = ["pytest>=7.0"]
 dev = ["pytest>=7.0", "black", "isort", "mypy"]
+viz = ["matplotlib>=3.5"]
+all = ["matplotlib>=3.5", "pytest>=7.0"]
 
 [project.urls]
 Homepage = "https://github.com/sohaibafifi/rihla"
