@@ -122,7 +122,7 @@ Powerful for problems with complex constraints like time windows and precedences
 |--------|------|---------|---------|
 |  **CPLEX CP** | `cp/cpo` | IBM CP Optimizer | Commercial |
 |  **OR-Tools** | `cp/ortools` | Google OR-Tools CP-SAT | Open-source (Apache 2.0) |
-|  **XCSP3** | `cp/xcsp3` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
+|  **XCSP3** | `cp/ace` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
 
 ### XCSP3 Integration
 
@@ -147,7 +147,7 @@ This enables interoperability with broader constraint programming ecosystem.
 ### Example: Export to XCSP3
 
 ```python
-solver = routing.create_solver("cp/xcsp3", problem)
+solver = routing.create_solver("cp/ace", problem)
 solver.export_model("routing_problem.xml")
 ```
 
@@ -195,7 +195,7 @@ flowchart TD
 | Adaptive exploration of neighborhoods | `alns` with custom parameters |
 | Proven optimality needed | `mip/cplex` or `mip/highs` |
 | Complex time windows | `cp/ortools` or `cp/cpo` |
-| Benchmarking/Research | `cp/xcsp3` for export |
+| Benchmarking/Research | `cp/ace` for export |
 | Open-source only | `mip/highs`, `cp/ortools`, `alns` |
 
 ### ALNS vs Other Metaheuristics

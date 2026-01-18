@@ -91,7 +91,7 @@ class Solver:
         """
         Add default CP generators (routing, capacity, time windows).
 
-        Only applies to CP/XCSP3 solvers.
+        Only applies to cp/ace solvers.
         """
         if self._solver is None:
             self._create_solver()
@@ -130,7 +130,7 @@ class Solver:
 
     @verbose.setter
     def verbose(self, value: bool):
-        """Set verbose flag (CP/XCSP3 only)."""
+        """Set verbose flag (cp/ace only)."""
         self._verbose = bool(value)
         if self._solver is None:
             return

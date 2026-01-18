@@ -317,7 +317,7 @@ cmake -S . -B build -DORTOOLS_ROOT=/opt/or-tools
 :::{admonition} No Installation Required
 :class: tip
 
-XCSP3 export is built into the library - no additional dependencies needed!
+XCSP3 export is built into the library - no additional dependencies needed! The exported model is then solved using ACE solver.
 :::
 
 **Compatible External Solvers:**
@@ -331,7 +331,7 @@ XCSP3 export is built into the library - no additional dependencies needed!
 
 **Usage:**
 ```python
-solver = routing.create_solver("cp/xcsp3", problem)
+solver = routing.create_solver("cp/ace", problem)
 solver.export_model("problem.xml")  # Export to file
 ```
 

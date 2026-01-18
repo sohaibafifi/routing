@@ -121,7 +121,7 @@ void bind_solver(nb::module_& m) {
                 return;
             }
             throw std::runtime_error("Verbose flag is not supported for solver: " + solver.name());
-        }, nb::arg("verbose"), "Enable verbose logging (CP/XCSP3 only)")
+        }, nb::arg("verbose"), "Enable verbose logging (cp/ace only)")
         .def("set_param_bool", [](ISolver& solver, const std::string& name, bool value) {
             if (auto* gaSolver = dynamic_cast<plugins::GASolverWrapper*>(&solver)) {
                 gaSolver->setBoolParam(name, value);

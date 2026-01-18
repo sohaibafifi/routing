@@ -155,7 +155,7 @@ def main():
 
     # Solve with MIP
     print("3. Solving with mip")
-    solution_mip = routing.solve(problem, "mip", timeout=30, verbose=True)
+    solution_mip = routing.solve(problem, "mip/highs", timeout=30, verbose=True)
     print_solution(solution_mip)
     results.append(("MIP", solution_mip.cost if solution_mip else float('inf')))
 
@@ -167,13 +167,13 @@ def main():
 
     # Solve using CP Solver
     print("5. Solving with cp")
-    solution_cp = routing.solve(problem, "cp", timeout=30, verbose=True)
+    solution_cp = routing.solve(problem, "cp/cpo", timeout=30, verbose=True)
     print_solution(solution_cp)
     results.append(("Constraint Programming", solution_cp.cost if solution_cp else float('inf')))
 
     # Solve using xcsp Solver
     print("6. Solving with xcsp3")
-    solution_xcsp = routing.solve(problem, "xcsp3", timeout=30, verbose=True)
+    solution_xcsp = routing.solve(problem, "cp/ace", timeout=30, verbose=True)
     print_solution(solution_xcsp)
     results.append(("XCSP3", solution_xcsp.cost if solution_xcsp else float('inf')))
 

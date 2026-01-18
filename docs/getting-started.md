@@ -22,7 +22,7 @@ This guide walks you through installing and using the Routing library for the fi
 | CPLEX | Commercial MIP/CP solver | `mip/cplex`, `cp/cpo` |
 | HiGHS | Open-source MIP solver | `mip/highs` |
 | OR-Tools | Open-source CP-SAT solver | `cp/ortools` |
-| [XCSP3](https://www.xcsp.org/) | CP modeling format export | `cp/xcsp3` |
+| [XCSP3/ACE](https://www.xcsp.org/) | CP modeling format export | `cp/ace` |
 
 ---
 

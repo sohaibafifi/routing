@@ -27,7 +27,7 @@ Runtime composition of problem features. No deep inheritance hierarchies needed.
 :link: solvers
 :link-type: doc
 
-GA, MA, VNS, PSO, ALNS, LS, MIP (CPLEX/HiGHS), CP (CPLEX/OR-Tools) - all unified under one API.
+GA, MA, VNS, PSO, ALNS, LS, MIP (CPLEX/HiGHS/GUROBI), CP (CPO/OR-Tools/ACE) - all unified under one API.
 :::
 
 :::{grid-item-card} Python & C++

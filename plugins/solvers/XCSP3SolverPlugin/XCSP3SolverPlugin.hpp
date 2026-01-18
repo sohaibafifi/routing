@@ -14,7 +14,7 @@ public:
 
     void initialize(PluginRegistry& registry) override {
         // Register XCSP3 solver with type/backend format
-        registry.registerSolver("cp/xcsp3",
+        registry.registerSolver("cp/ace",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<cp::XCSP3Solver>(problem);
             });
