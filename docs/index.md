@@ -11,6 +11,24 @@
 <span style="color: #666;">Combining metaheuristics, constraint programming, and mixed-integer programming with a composable attribute system.</span>
 </div>
 
+```{toctree}
+:hidden:
+:maxdepth: 2
+
+getting-started
+installation
+solvers
+attributes
+composable
+plugins
+concepts
+benchmarks
+contributing
+python-api
+cpp-api
+api
+```
+
 ::::{grid} 1 2 2 3
 :gutter: 3
 
