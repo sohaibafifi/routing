@@ -24,7 +24,7 @@ public:
 
         // CP Optimizer (CPLEX backend)
 #ifdef CPLEX_FOUND
-        registry.registerSolver("cp/cplex",
+        registry.registerSolver("cp/cpo",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<cp::CPSolver>(problem, "cpoptimizer");
             });

@@ -19,7 +19,7 @@ This guide walks you through installing and using the Routing library for the fi
 
 | Dependency | Purpose | Required For |
 |------------|---------|--------------|
-| CPLEX | Commercial MIP/CP solver | `mip/cplex`, `cp/cplex` |
+| CPLEX | Commercial MIP/CP solver | `mip/cplex`, `cp/cpo` |
 | HiGHS | Open-source MIP solver | `mip/highs` |
 | OR-Tools | Open-source CP-SAT solver | `cp/ortools` |
 | [XCSP3](https://www.xcsp.org/) | CP modeling format export | `cp/xcsp3` |
@@ -60,7 +60,7 @@ print("Available solvers:", routing.list_solvers())
 Expected output:
 
 ```
-Available solvers: ['ga', 'ma', 'vns', 'cp/cplex', 'cp/ortools', 'mip/cplex', 'mip/highs', ...]
+Available solvers: ['ga', 'ma', 'vns', 'cp/cpo', 'cp/ortools', 'mip/cplex', 'mip/highs', ...]
 ```
 :::
 
@@ -267,7 +267,7 @@ Best for small instances or when proven optimality is needed.
 |--------|------|---------|
 | MIP (CPLEX) | `mip/cplex` | IBM CPLEX |
 | MIP (HiGHS) | `mip/highs` | Open-source |
-| CP (CPLEX) | `cp/cplex` | IBM CP Optimizer |
+| CP (CPLEX) | `cp/cpo` | IBM CP Optimizer |
 | CP (OR-Tools) | `cp/ortools` | Google OR-Tools |
 | CP ([XCSP3](https://www.xcsp.org/)) | `cp/xcsp3` | Export to XML format |
 
@@ -323,7 +323,7 @@ pip install -e . --no-build-isolation
 
 ```python
 >>> routing.list_solvers()
-['ga', 'ma', 'vns']  # Missing mip/cplex, cp/cplex
+['ga', 'ma', 'vns']  # Missing mip/cplex, cp/cpo
 ```
 
 CPLEX not found during build. Install CPLEX and rebuild:

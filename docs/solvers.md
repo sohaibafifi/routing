@@ -127,7 +127,7 @@ Powerful for problems with complex constraints like time windows and precedences
 
 | Solver | Name | Backend | License |
 |--------|------|---------|---------|
-|  **CPLEX CP** | `cp/cplex` | IBM CP Optimizer | Commercial |
+|  **CPLEX CP** | `cp/cpo` | IBM CP Optimizer | Commercial |
 |  **OR-Tools** | `cp/ortools` | Google OR-Tools CP-SAT | Open-source (Apache 2.0) |
 |  **XCSP3** | `cp/xcsp3` | [XCSP3](https://www.xcsp.org/) Format | Open standard |
 
@@ -210,7 +210,7 @@ flowchart TD
 | Best quality, large instance | `ma` or `alns` with high `iterMax` |
 | Adaptive exploration of neighborhoods | `alns` with custom parameters |
 | Proven optimality needed | `mip/cplex` or `mip/highs` |
-| Complex time windows | `cp/ortools` or `cp/cplex` |
+| Complex time windows | `cp/ortools` or `cp/cpo` |
 | Benchmarking/Research | `cp/xcsp3` for export |
 | Open-source only | `mip/highs`, `cp/ortools`, `alns` |
 

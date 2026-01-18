@@ -394,7 +394,7 @@ print("Available solvers:", solvers)
 
 # Expected output includes some of:
 # - 'ga', 'ma', 'vns', 'pso', 'ls' (metaheuristics, always available)
-# - 'mip/cplex', 'cp/cplex' (if CPLEX installed)
+# - 'mip/cplex', 'cp/cpo' (if CPLEX installed)
 # - 'mip/highs' (if HiGHS installed)
 # - 'cp/ortools' (if OR-Tools installed)
 ```
