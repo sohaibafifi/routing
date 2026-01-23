@@ -21,34 +21,38 @@ pip install -e ".[dev]"
 
 ```python
 import routing
+from routing.constants import Attribute
+
+routing.init()
 
 # Create a problem
 problem = routing.Problem()
 
 # Add depot
 depot = problem.add_depot(0)
-routing.set_depot_location(depot, 0, 0)
+depot.add_attribute(Attribute.GEONODE, 0, 0)
 
 # Add clients
 c1 = problem.add_client(1)
-routing.set_client_location(c1, 10, 20)
-routing.set_client_demand(c1, 5)
+c1.add_attribute(Attribute.GEONODE, 10, 20)
+c1.add_attribute(Attribute.CONSUMER, 5)
 
 c2 = problem.add_client(2)
-routing.set_client_location(c2, 30, 40)
-routing.set_client_demand(c2, 3)
+c2.add_attribute(Attribute.GEONODE, 30, 40)
+c2.add_attribute(Attribute.CONSUMER, 3)
 
 # Add vehicle
 v = problem.add_vehicle(0)
-routing.set_vehicle_capacity(v, 100)
+v.add_attribute(Attribute.STOCK, 100)
 
 # Solve
 solution = routing.solve(problem, "ga", timeout=30)
 
 # Results
-print(f"Cost: {solution.cost}")
-for tour in solution.get_tours():
-    print(f"Tour: {tour.get_client_ids()}")
+if solution:
+    print(f"Cost: {solution.cost}")
+    for tour in solution.get_tours():
+        print(f"Tour: {tour.get_client_ids()}")
 ```
 
 ## Using the Builder API
