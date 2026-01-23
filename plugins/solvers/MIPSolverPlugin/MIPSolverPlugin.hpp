@@ -10,6 +10,7 @@
 #include "core/interfaces/IMIPBackend.hpp"
 #include "MIPSolver.hpp"
 #include "CPLEXMIPBackend.hpp"
+#include "GurobiMIPBackend.hpp"
 #include "HiGHSMIPBackend.hpp"
 
 namespace routing {
@@ -19,8 +20,9 @@ namespace plugins {
  * @brief Plugin for MIP-based solvers with pluggable backends
  *
  * Registers MIP solver variants using different backends:
- * - "mip" / "auto": Auto-select best available (CPLEX > HiGHS)
+ * - "mip" / "auto": Auto-select best available (CPLEX > Gurobi > HiGHS)
  * - "cplex": CPLEX backend (commercial)
+ * - "gurobi": Gurobi backend (commercial)
  * - "highs": HiGHS backend (open-source)
  */
 class MIPSolverPlugin : public IPlugin {
@@ -33,6 +35,13 @@ public:
 #ifdef CPLEX_FOUND
         registry.registerMIPBackend("cplex", []() -> std::unique_ptr<mip::IMIPBackend> {
             return std::make_unique<mip::CPLEXMIPBackend>();
+        });
+#endif
+
+        // Register Gurobi backend factory
+#ifdef GUROBI_FOUND
+        registry.registerMIPBackend("gurobi", []() -> std::unique_ptr<mip::IMIPBackend> {
+            return std::make_unique<mip::GurobiMIPBackend>();
         });
 #endif
 
@@ -49,6 +58,13 @@ public:
         registry.registerSolver("mip/cplex",
             [](Problem* problem) -> std::unique_ptr<ISolver> {
                 return std::make_unique<MIPSolver>(problem, "cplex");
+            });
+#endif
+
+#ifdef GUROBI_FOUND
+        registry.registerSolver("mip/gurobi",
+            [](Problem* problem) -> std::unique_ptr<ISolver> {
+                return std::make_unique<MIPSolver>(problem, "gurobi");
             });
 #endif
 

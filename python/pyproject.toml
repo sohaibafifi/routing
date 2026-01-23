@@ -43,6 +43,7 @@ cmake.args = [
     "-DROUTING_BUILD_CPLEX=ON",
     "-DROUTING_BUILD_ORTOOLS=ON",
     "-DROUTING_BUILD_PYTHON=ON",
+    "-DROUTING_BUILD_GRB=ON",
 ]
 wheel.packages = ["routing"]
 

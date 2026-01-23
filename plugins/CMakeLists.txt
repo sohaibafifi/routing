@@ -11,6 +11,11 @@ if(CPLEX_FOUND)
     target_link_libraries(routing_plugins PUBLIC ${CPLEX_LIBRARIES})
 endif()
 
+# Link Gurobi if available
+if(GUROBI_FOUND)
+    target_link_libraries(routing_plugins PUBLIC ${GUROBI_LIBRARIES})
+endif()
+
 # Link HiGHS if available
 if(HIGHS_FOUND)
     target_link_libraries(routing_plugins PUBLIC ${HIGHS_LIBRARIES})

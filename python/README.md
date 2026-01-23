@@ -59,15 +59,17 @@ if solution:
 
 ```python
 from routing.problem import ProblemBuilder
+import routing
 
 problem = (ProblemBuilder()
     .with_depot(0, 0)
     .add_client(1, x=10, y=20, demand=5)
-    .add_client(2, x=30, y=40, demand=3, tw_open=8, tw_close=12)
+    .add_client(2, x=30, y=40, demand=3, tw_open=0, tw_close=200)
     .add_vehicles(3, capacity=100)
     .build())
 
 solution = routing.solve(problem, "vns", timeout=60)
+print(solution is None, solution)
 ```
 
 ## Available Solvers
@@ -77,7 +79,10 @@ solution = routing.solve(problem, "vns", timeout=60)
 - `ma` - Memetic Algorithm
 - `pso` - Particle Swarm Optimization
 - `ls` - Local Search
-- `mip` - Mixed Integer Programming (CPLEX)
+- `mip` - Mixed Integer Programming (auto backend)
+- `mip/cplex` - Mixed Integer Programming (CPLEX)
+- `mip/gurobi` - Mixed Integer Programming (Gurobi)
+- `mip/highs` - Mixed Integer Programming (HiGHS)
 - `cp` - Constraint Programming (CP Optimizer)
 
 ## Available Attributes
