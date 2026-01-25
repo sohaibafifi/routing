@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "routing"
-version = "0.1.1"
+version = "0.2.0"
 description = "A composable, multi-solver VRP framework"
 readme = "README.md"
 license = {text = "Proprietary - Research Use Only"}
